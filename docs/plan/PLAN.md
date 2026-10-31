@@ -382,7 +382,7 @@ Each task lists **Depends**, **Do**, **Accept** (commands and checks that must p
   - Accept: slopes measured on rest windows within 20% of target over 5 seeds; no single 5-minute window departs from the drifting mean by more than the quiet-day spread (the drift is slow, not spiky).
   - Commit: `feat(sim): add sleep debt drift scenario`
 
-- [ ] **T3.7 exercise_block**
+- [x] **T3.7 exercise_block**
   - Depends: T3.1
   - Do: activity high for 30 min, HR toward 150 through the model's `beta1` term, exponential recovery (tau 3 min); `motion: true` throughout the block.
   - Accept: HR peaks at 150 +/- 8; HR minus the model's prediction stays within +/- 5 bpm (the model explains it); motion flag true for at least 95% of block windows.

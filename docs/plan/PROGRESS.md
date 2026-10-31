@@ -1,9 +1,10 @@
 
-## T3.6 sleep_debt_drift (done) 2026-10-30
-- What: `sleep_debt_drift.yaml` (6 d): W1 resting HR +1 bpm/day, RMSSD -3 ms/day via `drift_per_day`, W1 only (D22). Expect block: no spike events, cardio yellow from day 4 with a drift reason, attribution individual.
-- Verify: `make check` green. Fast test checks truth slopes and W1-only; the slow test (`pytest -m slow`, 62 s for 5 seeds) against a paired quiet control: measured HR slope within 20% of 1 bpm/day, RMSSD slope within 20% of -3 ms/day, and no 5-minute window departs from the truth line by more than the quiet-day spread.
-- Commit: see git log (feat(sim): add sleep debt drift scenario)
-- Notes: slow tests run under `make sim-eval` (T3.10) and `make check-all`.
+## T3.7 exercise_block (done) 2026-10-30
+- What: `exercise_block.yaml` (2 h): W1 exercises 30 min from +30 min (act 1.2 g, recovery tau 3 min); expect `quiet: [cardio]`. `Snapshot.hr_model` added to the physiology model (its own explanation of HR, no offsets or noise).
+- Verify: `make check` green. Seeds 1 to 5: 1-minute mean HR peaks at 147.4 to 149.8 (target 150 +/- 8); HR minus model within 3.8 bpm (limit 5); motion true for all 360 block messages, false before the block; start and end events name W1.
+- Commit: see git log (feat(sim): add exercise block scenario)
+- Notes: the model comparison uses the state held from each 5 s window start, which is what drives that window's beats.
+ (T3.10) and `make check-all`.
 dled in T3.10).
 .
 ommit: see git log (feat(sim): add scrubber failure scenario)

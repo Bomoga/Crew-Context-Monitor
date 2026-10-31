@@ -46,6 +46,7 @@ class Snapshot:
 
     t: float
     hr_target: float
+    hr_model: float  # the model's explanation of HR: no scenario offsets, no noise
     rmssd_target: float
     spo2: int
     skin_c: float
@@ -115,7 +116,8 @@ class CrewPhysiology:
 
     def _compute(self, t: float, act: float, cabin: float) -> Snapshot:
         p = self.p
-        hr = self.predict_hr(t, self._act_f, cabin) + self._offset_fn("hr", t) + self._n_hr
+        hr_model = self.predict_hr(t, self._act_f, cabin)
+        hr = hr_model + self._offset_fn("hr", t) + self._n_hr
         rm = (
             p["rmssd0"]
             * (1.0 + self._circ_rmssd(t))
@@ -133,6 +135,7 @@ class CrewPhysiology:
         return Snapshot(
             t=t,
             hr_target=hr,
+            hr_model=hr_model,
             rmssd_target=max(p["rmssd_min"], rm),
             spo2=spo2,
             skin_c=self._skin,

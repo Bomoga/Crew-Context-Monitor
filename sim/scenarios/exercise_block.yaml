@@ -1,0 +1,16 @@
+name: exercise_block
+title: Exercise block (W1)
+description: >
+  W1 exercises for 30 minutes. Heart rate climbs toward 150 bpm through the model's activity
+  term and recovers with a 3 minute time constant. The model explains the rise, so nothing should
+  fire.
+duration: 2h
+crew: [W1, W2, W3]
+events:
+  - at: 30m
+    name: exercise_block
+    label: W1 exercise block begins
+    effects:
+      - {target: crew.W1.act, op: exercise, act: 1.2, for: 30m, recovery_tau: 3m}
+expect:
+  - {quiet: [cardio]}
