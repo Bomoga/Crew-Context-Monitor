@@ -11,7 +11,7 @@ from collections.abc import Sequence
 from ccm_sim import __version__
 from ccm_sim.engine import World, build_world, run_world
 from ccm_sim.playlist import load_playlist, run_playlist
-from ccm_sim.replay import CsvWriter, MqttRecorder, read_rows, replay
+from ccm_sim.replay import CsvSink, CsvWriter, MqttRecorder, read_rows, replay
 from ccm_sim.scenario import ScenarioError, load_scenario
 from ccm_sim.sinks import JsonlSink, MqttSink, Sink
 from ccm_sim.timeutil import DEFAULT_START, parse_duration, parse_iso
@@ -54,7 +54,10 @@ def build_parser() -> argparse.ArgumentParser:
 
     srv = sub.add_parser("serve-mock", help="serve the mock API (and built dashboard) on a port")
     srv.add_argument("--scenario", default="scrubber_failure")
-    srv.add_argument("--speed", default="60", help="simulated seconds per real second, or 'max'")
+    srv.add_argument(
+        "--speed",
+        help="simulated seconds per real second, or 'max' (default 60; a playlist uses its own)",
+    )
     srv.add_argument("--port", type=int, default=8000)
     srv.add_argument("--host", default="127.0.0.1")
     srv.add_argument("--seed", type=int, default=1)
@@ -68,7 +71,9 @@ def build_parser() -> argparse.ArgumentParser:
 
     gen = sub.add_parser("generate", help="write a scenario to a JSONL file at max speed")
     common(gen)
-    gen.add_argument("--out", required=True, help="output JSONL path")
+    gen.add_argument(
+        "--out", required=True, help="output path: JSONL, or a replay CSV if it ends in .csv"
+    )
     return parser
 
 
@@ -136,7 +141,7 @@ def _serve_mock(args: argparse.Namespace) -> int:
     from ccm_sim.mockapi.app import create_app
     from ccm_sim.mockapi.state import MockState
 
-    speed = _parse_speed(args.speed)
+    speed = _parse_speed(args.speed) if args.speed else None
     ahead = parse_duration(args.fast_forward) if args.fast_forward else 0.0
     try:
         state = MockState(
@@ -227,7 +232,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     if args.command == "replay":
         return _replay(args)
     if args.command == "generate":
-        sink: Sink = JsonlSink(args.out)
+        sink: Sink = CsvSink(args.out) if str(args.out).endswith(".csv") else JsonlSink(args.out)
         try:
             _run(args, sink, DEFAULT_START, "max")
         finally:

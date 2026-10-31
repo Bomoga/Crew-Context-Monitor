@@ -549,7 +549,7 @@ Copy rules apply to every view (from the onboarding doc): one plain sentence per
   - Accept: `make e2e` green for every scenario.
   - Commit: `test(e2e): verify dashboard states for every scenario`
 
-- [ ] **T7.2 Demo runbook and targets**
+- [x] **T7.2 Demo runbook and targets**
   - Depends: T7.1
   - Do: `make demo-mock`, `make demo-live`; `docs/demo.md` maps the 8-step v2 demo script to commands, marks which steps need hardware, and documents the `--replay` fallback line.
   - Accept: every command in `docs/demo.md` runs (hardware steps excepted, marked as such).

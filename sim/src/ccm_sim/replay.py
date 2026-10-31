@@ -143,6 +143,30 @@ def replay(
     return len(rows)
 
 
+class CsvSink:
+    """A sink that writes a replay CSV, so ``ccm-sim generate --out FILE.csv`` makes a recording."""
+
+    def __init__(self, path: str | Path) -> None:
+        self._writer = CsvWriter(path)
+
+    def open_node(
+        self, key: str, will_topic: str | None, will_payload: dict[str, Any] | None
+    ) -> None:
+        return None
+
+    def publish(self, record: Record) -> None:
+        self._writer.add(record)
+
+    def drop_node(self, key: str, offline: Record) -> None:
+        self._writer.add(offline)
+
+    def restore_node(self, key: str) -> None:
+        return None
+
+    def close(self) -> None:
+        self._writer.close()
+
+
 class MqttRecorder:
     """Subscribes to ``ccm/#`` and writes every message to a replay CSV."""
 

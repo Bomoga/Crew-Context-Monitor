@@ -29,6 +29,7 @@ from ccm_sim.expectations import (
 from ccm_sim.mockapi import templates as tpl
 from ccm_sim.mockapi.earth import EarthQueue
 from ccm_sim.physiology import circadian_hr, load_physiology
+from ccm_sim.playlist import Playlist, is_playlist, load_playlist
 from ccm_sim.publisher import Publisher
 from ccm_sim.scenario import load_scenario
 from ccm_sim.sinks import Record
@@ -177,7 +178,7 @@ class MockState:
     def __init__(
         self,
         scenario: str = "scrubber_failure",
-        speed: float | str = 60.0,
+        speed: float | str | None = 60.0,
         seed: int = 1,
         t0: float | None = None,
         crew: list[str] | None = None,
@@ -200,26 +201,39 @@ class MockState:
     def configure(
         self,
         scenario: str,
-        speed: float | str,
+        speed: float | str | None,
         seed: int = 1,
         t0: float | None = None,
         crew: list[str] | None = None,
         learning: bool = False,
         fast_forward: float = 0.0,
     ) -> None:
+        """Start over on a scenario, or on a playlist such as ``demo`` whose steps run in turn."""
         self.stop()
         start = float(int(t0 if t0 is not None else time.time()))
-        world = build_world(load_scenario(scenario), seed, start, crew)  # may raise: build first
+        playlist = load_playlist(scenario) if is_playlist(scenario) else None
+        first = playlist.steps[0].scenario if playlist else scenario
+        world = build_world(load_scenario(first), seed, start, crew)  # may raise: build first
+        total = (
+            sum(load_scenario(s.scenario).duration for s in playlist.steps)
+            if playlist
+            else world.duration
+        )
         with self.lock:
             self.scenario_name = scenario
-            self.speed = speed
+            self.playlist: Playlist | None = playlist
+            self._step = 0
+            self._crew_arg = crew
+            self.speed = speed if speed is not None else (60.0 if playlist is None else None)
             self.seed = seed
             self.learning = learning
             self.world: World = world
-            self.t0 = self.world.t0
-            self.t_end = self.t0 + self.world.duration
+            self.worlds: list[World] = [world]
+            self.t0 = world.t0
+            self.t_end = self.t0 + total
+            self._world_end = self.t0 + world.duration
             self.t_now = self.t0
-            self.rollups = Rollups(self.t0, self.world.duration)
+            self.rollups = Rollups(self.t0, total)
             self.nodes: dict[str, NodeInfo] = {}
             self.sim_events: list[dict[str, Any]] = []
             self.node_events: list[dict[str, Any]] = []
@@ -252,12 +266,63 @@ class MockState:
         if fast_forward > 0:
             self.advance_to(self.t0 + fast_forward)
 
+    def _world_at(self, t: float) -> World:
+        """The step's world that covers simulated time ``t`` (the first one before any step)."""
+        current = self.worlds[0]
+        for w in self.worlds:
+            if w.t0 <= t:
+                current = w
+        return current
+
+    def _next_world(self) -> bool:
+        """Build and switch to the playlist's next step; False when there is none."""
+        if self.playlist is None or self._step + 1 >= len(self.playlist.steps):
+            return False
+        self._step += 1
+        step = self.playlist.steps[self._step]
+        world = build_world(
+            load_scenario(step.scenario),
+            self.seed + self._step,
+            self._world_end,
+            self._crew_arg,
+            seq_start=self.world.seq_state(),
+        )
+        self.sim_events.append(
+            {
+                "scenario": self.playlist.name,
+                "name": f"demo_step_{self._step + 1}",
+                "label": step.label,
+                "phase": "mark",
+                "t_meas": self._world_end,
+                "crew": None,
+            }
+        )
+        self.world = world
+        self.worlds.append(world)
+        self._world_end = world.t0 + world.duration
+        self._publisher = Publisher(
+            world.sources, StoreSink(self), SimClock(world.t0, "max"), world.t0
+        )
+        return True
+
+    def _step_speed(self) -> float | str:
+        if self.speed is not None:
+            return self.speed
+        assert self.playlist is not None
+        return self.playlist.steps[self._step].speed
+
     def advance_to(self, t_sim: float) -> None:
         """Run the scenario synchronously, at once, up to simulated time ``t_sim``."""
         with self.lock:
             target = min(t_sim, self.t_end)
-            self._publisher.run(target, finish=False, start=not self._started)
-            self._started = True
+            while True:
+                self._publisher.run(
+                    min(target, self._world_end), finish=False, start=not self._started
+                )
+                self._started = True
+                if target > self._world_end and self._next_world():
+                    continue
+                break
             self.t_now = max(self.t_now, target)
             self.finished = target >= self.t_end
 
@@ -266,15 +331,18 @@ class MockState:
         if self._thread is not None and self._thread.is_alive():
             return
         self._stopping = False
-        self._publisher.clock = SimClock(self.t_now, self.speed)
 
         def loop() -> None:
             try:
-                self._publisher.run(self.t_end, finish=False, start=not self._started)
-                self._started = True
-                with self.lock:
-                    self.t_now = self.t_end
-                    self.finished = True
+                while True:
+                    self._publisher.clock = SimClock(self.t_now, self._step_speed())
+                    self._publisher.run(self._world_end, finish=False, start=not self._started)
+                    self._started = True
+                    with self.lock:
+                        self.t_now = max(self.t_now, self._world_end)
+                        if not self._next_world():
+                            self.finished = True
+                            return
             except StopRun:
                 return
 
@@ -474,7 +542,7 @@ class MockState:
     def status_at(self, t: float) -> dict[str, Any]:
         crews = list(self.world.crew)
         learning = any(t < self.baseline_start[c] + LEARNING_S for c in crews)
-        states = states_at(self.world, t)
+        states = states_at(self._world_at(t), t)
         if learning:
             states = {d: DomainState("green", None, (), None) for d in DOMAINS}
         facts = {d: self._facts(d, states[d], t) for d in DOMAINS}
@@ -564,12 +632,13 @@ class MockState:
         }
 
     def _correlation(self, t: float, cardio: tpl.Facts) -> dict[str, Any] | None:
-        wanted = correlation_at(self.world, t)
+        world = self._world_at(t)
+        wanted = correlation_at(world, t)
         if wanted is None:
             return None
         lags = [
             float(e.args["start"].get("lag", 0.0)) / 60.0
-            for e in self.world.truth.effects
+            for e in world.truth.effects
             if e.op == "coupled" and e.args["driver"] == "cabin.co2"
         ]
         lo, hi = wanted["lag_min"]
@@ -697,7 +766,7 @@ class MockState:
         out: list[dict[str, float]] = []
         last = times[0] if times else 0.0
         for t in times:
-            z = self.world.truth.offset(target, t) / sigma
+            z = self._world_at(t).truth.offset(target, t) / sigma
             for _ in range(max(int((t - last) // 60.0), 1)):
                 pos = max(0.0, pos + z - 0.25)
                 neg = max(0.0, neg - z - 0.25)
@@ -736,7 +805,8 @@ class MockState:
                         False,
                     )
                 )
-            for card in parse_cards(self.world):
+            cards = [c for w in self.worlds for c in parse_cards(w)]
+            for card in cards:
                 if card.level == "green" or card.t_from > self.t_now:
                     continue
                 f = self._facts(
@@ -763,14 +833,17 @@ class MockState:
                         False,
                     )
                 )
-            corr = correlation_at(self.world, self.t_now)
-            if corr is not None:
+            for w in self.worlds:
+                if not any("correlation" in e for e in w.scenario.expect):
+                    continue
                 starts = [
                     c.t_from
-                    for c in parse_cards(self.world)
+                    for c in parse_cards(w)
                     if c.domain == "cardio" and c.attribution == "cabin" and c.level != "green"
                 ]
-                cardio = self.status_at(min(starts))["correlation"] if starts else None
+                if not starts or min(starts) > self.t_now:
+                    continue
+                cardio = self.status_at(min(starts))["correlation"]
                 if cardio is not None:
                     items.append(
                         _event(
@@ -795,7 +868,10 @@ class MockState:
         """Queue a summary for every card that has turned red so far (once each)."""
         with self.lock:
             reds = [
-                c for c in parse_cards(self.world) if c.level == "red" and c.t_from <= self.t_now
+                c
+                for w in self.worlds
+                for c in parse_cards(w)
+                if c.level == "red" and c.t_from <= self.t_now
             ]
             for card in sorted(reds, key=lambda c: c.t_from):
                 state = DomainState(

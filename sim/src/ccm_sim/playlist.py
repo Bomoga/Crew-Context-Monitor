@@ -27,6 +27,15 @@ class Playlist:
     steps: list[Step]
 
 
+def is_playlist(name: str) -> bool:
+    """True if ``scenarios/<name>.yaml`` exists and is a playlist (has ``steps``)."""
+    path = SCENARIOS_DIR / f"{name}.yaml"
+    if not path.exists():
+        return False
+    raw = yaml.safe_load(path.read_text(encoding="utf-8"))
+    return isinstance(raw, dict) and "steps" in raw
+
+
 def load_playlist(name: str) -> Playlist:
     path = SCENARIOS_DIR / f"{name}.yaml"
     if not path.exists():

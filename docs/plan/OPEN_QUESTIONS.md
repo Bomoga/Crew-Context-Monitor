@@ -11,3 +11,4 @@ Never waited on. Confirm items come from PLAN.md Section 2.
 - Pi OS Bookworm Python version: the plan assumes 3.11+; confirm on the Pi.
 - WESAD/OSDR-derived physiology ranges (T2.8) were skipped because the dataset is not present. To enable: extract WESAD, set `CCM_WESAD_DIR`, and add `sim/tools/derive_params.py`.
 - Backend: scrubber_failure expects Cardiovascular yellow 75 min after CO2 passes yellow (PLAN said 25 min, which the proportional coupling cannot make detectable; D24). Please confirm the oracle line (RMSSD 8 ms or HR 10 bpm) and the time.
+- Demo script: the v2 eight-step demo script was not available to the build loop, so docs/demo.md reconstructs the eight steps from the plan's scenario library and demo playlist (steps 4 needs the real wearable). Please check the step order and wording against the real script.

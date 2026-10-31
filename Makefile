@@ -8,8 +8,10 @@ VBIN := $(shell if [ -d $(VENV)/Scripts ]; then echo $(VENV)/Scripts; else echo 
 DASH := dashboard
 SCENARIO ?= scrubber_failure
 SPEED ?= 60
+BROKER ?= localhost:1883
+REPLAY ?=
 
-.PHONY: setup lint test contracts types dashboard-check check sim-eval build serve-mock dashboard-dev e2e check-all clean
+.PHONY: setup lint test contracts types dashboard-check check sim-eval build serve-mock demo-mock demo-live dashboard-dev e2e check-all clean
 
 setup:
 	$(PYTHON) -m venv $(VENV)
@@ -44,6 +46,18 @@ build:
 
 serve-mock: build
 	$(VBIN)/ccm-sim serve-mock --scenario $(SCENARIO) --speed $(SPEED) --port 8000
+
+demo-mock: build
+	$(VBIN)/ccm-sim serve-mock --scenario demo --port 8000
+
+# Publish the demo to a real broker. With hardware W1 live this runs W2 and W3 (D10). Set
+# REPLAY=data/demo.csv to replay a recording instead (the fallback if the live run fails).
+demo-live:
+ifeq ($(REPLAY),)
+	$(VBIN)/ccm-sim run --playlist demo --crew W2,W3 --broker $(BROKER)
+else
+	$(VBIN)/ccm-sim replay --file $(REPLAY) --speed 60 --retime --broker $(BROKER)
+endif
 
 dashboard-dev:
 	cd $(DASH) && npm run dev
