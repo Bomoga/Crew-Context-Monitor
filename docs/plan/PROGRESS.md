@@ -1,12 +1,10 @@
 
-## T6.7 Earth queue panel (done) 2026-10-30
-- What: `EarthQueuePanel` on Home: items with tier, size in bytes, approval state, summary, a "What would be sent" payload preview, and an Approve button; pending items first; "Next comms window in N min" counted from `next_window_t` minus the API time (not the wall clock, since simulated time can run fast). Approve is optimistic (shown approved at once), kept approved from the server's reply until polling agrees, and rolled back with an alert if the request fails.
-- Verify: `make check` green; 71 vitest tests: list contents from the `earth_queue.pending` fixture, ordering, countdown from `next_window_t`, one POST to `/api/earth-queue/q-2/approve` and the item stays approved, optimistic state before the server answers then rollback plus alert on a 500, empty queue message.
-- Commit: see git log (feat(dashboard): add earth queue panel)
-- Notes: the test helper `mockApi` now accepts a Response or a promise to control timing and status.
-follows the crew strip.
-- Commit: see git log (feat(dashboard): add fused co2 and pulse-rate variability timeline)
-- Notes: test setup now stubs `fetch` (no network in tests; `mockApi` in helpers routes by URL) and gives Recharts a size, since jsdom has no layout.
+## T6.8 Domain detail view (done) 2026-10-31
+- What: `/domain/:name` shows the card's level, reason and next step, the detector line (name, state, detail), and 6-hour series charts with the baseline band and the yellow/red limit lines drawn from the API (`MetricChart`; limit lines extend the axis so they are always visible). Cardiovascular: heart rate, pulse-rate variability and heart-rate residual for the selected crew member plus the model coefficients (beta0, beta1, beta2). Air: CO2 and VOC. Thermal: cabin and skin temperature. Radiation: counts per minute with the Poisson threshold line and the sentence "Why not a fixed threshold? ...". Unknown domains show "Domain not found" inside the shell with a way back.
+- Verify: `make check` green; 77 vitest tests: each domain's charts, baseline bands, limit lines (2 for CO2, 1 for temperature and for the Poisson line), detector text, model coefficients (38.2, 21.5, 0.7), the radiation sentence with "proxy", and the not-found case.
+- Commit: see git log (feat(dashboard): add domain detail view)
+- Notes: the baseline band and limits are whatever the API sends; the dashboard decides nothing.
+work in tests; `mockApi` in helpers routes by URL) and gives Recharts a size, since jsdom has no layout.
 rs.tsx` (`renderRoute(path, polled(...))`, `status("air_yellow")`, `fixture(name)`).
 held back and the status bar shows the longest remaining time.
 5.3 formalises the copy-rule tests for `templates.py`.

@@ -493,7 +493,7 @@ Copy rules apply to every view (from the onboarding doc): one plain sentence per
   - Accept: tests: approve calls the endpoint once, updates state, rolls back on a 500; countdown renders from `next_window_t`.
   - Commit: `feat(dashboard): add earth queue panel`
 
-- [ ] **T6.8 Domain detail view**
+- [x] **T6.8 Domain detail view**
   - Depends: T6.6
   - Do: `/domain/:name`: raw series with baseline band, limit lines, detector state, model coefficients for Cardiovascular; Radiation shows the Poisson threshold line and one sentence on why a fixed threshold misfires.
   - Accept: tests for each domain fixture; unknown domain shows a not-found message inside the shell.
