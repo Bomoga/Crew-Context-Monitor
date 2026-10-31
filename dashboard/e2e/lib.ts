@@ -23,15 +23,19 @@ export async function open(page: Page, path: string) {
   }
 }
 
-/** Restart the mock on a scenario, already `fastForward` simulated seconds in. */
+/**
+ * Restart the mock on a scenario, already `fastForward` simulated seconds in. With speed "max" the
+ * mock runs no clock and stays frozen at that moment.
+ */
 export async function useScenario(
   request: APIRequestContext,
   name: string,
   fastForward = 0,
-  speed = 60,
+  speed: number | "max" = 60,
 ) {
   const response = await request.post("/api/_mock/scenario", {
     data: { name, speed, fast_forward: fastForward },
+    timeout: 120_000, // a week of simulated data takes a while to generate
   });
   expect(response.ok()).toBeTruthy();
 }

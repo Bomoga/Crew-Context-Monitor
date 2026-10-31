@@ -1,12 +1,10 @@
 
-## T6.14 Copy-rule tests (done) 2026-10-31
-- What: `test/copy.ts` (the PLAN P6 rules as a scanner over rendered text: no "caused by", no z-scores, no "HRV" or "heart-rate variability", any text that mentions radiation also says "proxy"; a reason is one sentence with a number and a comparison to baseline or the normal band) and `test/copy-rules.test.tsx`, which renders the home page with all nine status fixtures and every domain, history, events, settings and unknown-domain route, checks the footer on every one, the Hardware or Simulator word on every crew chip, and that each status sentence and card reason appears on screen.
-- Verify: `make check` green, 153 vitest tests. Proof the suite bites: with `status.air_yellow.json`'s reason temporarily changed to "...; caused by the scrubber." two tests failed with `says "caused by" (write "consistent with")`, then the file was restored with `git checkout` and the suite passed again.
-- Commit: see git log (test(dashboard): enforce copy rules on every view)
-- Notes: the correlation sentence ("Pulse-rate variability began dropping 20 min after CO2 passed 2.5 mmHg.") is held to the wording rules but is not a "reason", so it has no baseline comparison. The thermal fixture's reason compares to the normal band, so "normal band" counts as a comparison.
-he card links now take their name from their content, and the scale buttons are named "Mood 4 Good".
-- Commit: see git log (feat(dashboard): add responsive layout and accessibility fixes)
-- Notes: e2e needs `dashboard/dist` built first and the ccm-sim venv script; `CCM_BASE_URL` points it at an already running server.
+## T7.1 End-to-end per scenario (done) 2026-10-31
+- What: `ccm-sim scenarios expected` exports, from each scenario's `expect:` block, checkpoint times with the expected card levels, attribution and crew, whether a correlation is expected, the simulated events of the last six hours, and the offline nodes (`ccm_sim.expectations.checkpoints`). `e2e/scenarios.spec.ts` reads that JSON (not the API under test), and for every scenario restarts the mock with `POST /api/_mock/scenario` frozen at each checkpoint (speed "max", `fast_forward` = the offset), loads the built dashboard, and checks card levels and level words, the status bar's worst state, the cardio attribution text ("N of 3 crew show lower pulse-rate variability" or "Only W2 changed; cabin within normal"), crew chip levels and Online/Offline, the correlation lag label, one dashed timeline marker per simulated event, and the offline banner. Full-page screenshots go to `dashboard/test-results/scenarios/` (gitignored).
+- Verify: `make check` green. `npx playwright test` (all specs): 56 passed in 2.4 min, including 34 scenario checkpoints over all 11 scenarios (each scenario takes under 60 s; the slowest are quiet_week 38 s and sleep_debt_drift 33 s, which regenerate a week of data).
+- Commit: see git log (test(e2e): verify dashboard states for every scenario)
+- Notes: frozen checkpoints replace running a scenario in real time, because windowed states (radiation yellow lasts 10 simulated minutes) would be missed by a 5 s poll at high speed. The spec restores the shared mock to scrubber_failure when it finishes.
+` points it at an already running server.
 with `--version`, one smoke test, Makefile `setup`, `lint`, `test`, `check`.
 - Verify: `make check` green (ruff, ruff format, mypy, 1 pytest pass); `.venv/Scripts/ccm-sim --version` prints `ccm-sim 0.1.0`.
 - Commit: see git log (build(sim): add python package skeleton and tooling)

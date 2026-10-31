@@ -38,7 +38,7 @@ def build_parser() -> argparse.ArgumentParser:
     run.add_argument("--broker", help="host:port of the MQTT broker (default: print JSONL)")
 
     scen = sub.add_parser("scenarios", help="list scenarios or check their expectations")
-    scen.add_argument("action", choices=["list", "check"])
+    scen.add_argument("action", choices=["list", "check", "expected"])
     scen.add_argument("names", nargs="*", help="scenario names (default: all)")
 
     rec = sub.add_parser("record", help="record ccm/# from a broker to a replay CSV")
@@ -91,6 +91,8 @@ def _scenarios(action: str, names: list[str]) -> int:
     from ccm_sim.scenario import list_scenarios
 
     names = names or list_scenarios()
+    if action == "expected":
+        return _expected(names)
     if action == "list":
         for name in names:
             print(name)
@@ -184,6 +186,23 @@ def _replay(args: argparse.Namespace) -> int:
         print("stopped", file=sys.stderr)
     finally:
         sink.close()
+    return 0
+
+
+def _expected(names: list[str]) -> int:
+    """Print the expected states at checkpoint times, as JSON, for the end-to-end tests."""
+    import json
+
+    from ccm_sim.expectations import checkpoints
+
+    out: dict[str, object] = {}
+    for name in names:
+        world = build_world(load_scenario(name), 1, DEFAULT_START)
+        out[name] = {
+            "duration": world.duration,
+            "checkpoints": checkpoints(world, max_points=2 if world.duration > 86400 else 6),
+        }
+    print(json.dumps(out, indent=1))
     return 0
 
 

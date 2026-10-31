@@ -145,3 +145,32 @@ def test_radiation_states_follow_the_windows() -> None:
     w = world_of("solar_particle_event")
     levels = {m: states_at(w, T0 + m * M)["radiation"].level for m in (65, 75, 85, 105, 115)}
     assert levels == {65: "green", 75: "yellow", 85: "red", 105: "red", 115: "green"}
+
+
+def test_checkpoints_cover_each_expected_state() -> None:
+    from ccm_sim.expectations import checkpoints
+
+    cps = checkpoints(world_of("scrubber_failure"))
+    domains = ("cardio", "air", "thermal", "radiation")
+    summary = ["".join(c["cards"][d]["level"][0] for d in domains) for c in cps]
+    assert (
+        summary[0] == "gggg" and "gygg" in summary and "grgg" in summary and summary[-1] == "yrgg"
+    )
+    assert [c["correlation"] for c in cps][-1] is True
+    assert cps[-1]["cards"]["cardio"]["attribution"] == "cabin"
+    assert cps[-1]["sim_events"] == [
+        "Scrubber fault begins",
+        "CO2 passes 2.5 mmHg",
+        "CO2 passes 3.0 mmHg",
+    ]
+    offsets = [c["offset"] for c in cps]
+    assert offsets == sorted(offsets) and all(120 <= o <= 14400 - 60 for o in offsets)
+
+
+def test_checkpoints_name_the_offline_node_during_a_dropout() -> None:
+    from ccm_sim.expectations import checkpoints
+
+    cps = checkpoints(world_of("ble_dropout"))
+    assert [c["offline"] for c in cps] == [[], ["W1"], []]
+    cps = checkpoints(world_of("sleep_debt_drift"), max_points=2)
+    assert len(cps) == 2 and cps[-1]["cards"]["cardio"]["crew"] == ["W1"]

@@ -230,6 +230,58 @@ def _cardio_attribution(world: World, crew: tuple[str, ...]) -> str | None:
     return None
 
 
+# -- checkpoints for the end-to-end tests ------------------------------------------------------
+
+SIX_HOURS = 6 * 3600.0
+
+
+def checkpoints(world: World, max_points: int = 6) -> list[dict[str, Any]]:
+    """Times at which a dashboard should show particular states, with the expected states.
+
+    Each entry has the offset in seconds from the scenario start, the expected level, attribution
+    and crew of each card, whether a correlation is expected, the labels of the simulated events
+    published so far, and the nodes that are offline.
+    """
+    end = world.t0 + world.duration
+    candidates = {180.0}
+    for c in parse_cards(world):
+        for edge in (c.t_from, c.t_until):
+            if world.t0 < edge < end:
+                candidates.add(edge - world.t0 + 180.0)
+    for s in world.truth.silences:
+        candidates.add((s.t_start + s.t_end) / 2.0 - world.t0)
+        candidates.add(s.t_end - world.t0 + 120.0)
+    candidates.add(world.duration - 120.0)
+    usable = sorted(t for t in candidates if 120.0 <= t <= world.duration - 60.0)
+    picked: list[float] = []
+    for t in usable:  # drop points within five minutes of the one before
+        if not picked or t - picked[-1] >= 300.0:
+            picked.append(t)
+    while len(picked) > max_points:  # thin evenly but keep the first and the last
+        del picked[len(picked) // 2]
+    out: list[dict[str, Any]] = []
+    for offset in picked:
+        t = world.t0 + offset
+        states = states_at(world, t)
+        out.append(
+            {
+                "offset": offset,
+                "cards": {
+                    d: {
+                        "level": states[d].level,
+                        "attribution": states[d].attribution,
+                        "crew": list(states[d].crew),
+                    }
+                    for d in DOMAINS
+                },
+                "correlation": correlation_at(world, t) is not None,
+                "sim_events": [e.label for e in world.events if e.t <= t and e.t >= t - SIX_HOURS],
+                "offline": sorted(s.node for s in world.truth.silences if s.t_start <= t < s.t_end),
+            }
+        )
+    return out
+
+
 # -- the consistency check ---------------------------------------------------------------------
 
 

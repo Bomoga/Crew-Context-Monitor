@@ -543,7 +543,7 @@ Copy rules apply to every view (from the onboarding doc): one plain sentence per
 
 ### P7. End-to-end, demo and handoff (closes gate G4)
 
-- [ ] **T7.1 End-to-end per scenario**
+- [x] **T7.1 End-to-end per scenario**
   - Depends: T6.15, T3.10
   - Do: Playwright suite that, for each scenario, starts `serve-mock` at high speed (choose the speed so each run takes under 60 s), waits for each expected state, and asserts card levels, attribution text and timeline markers; saves screenshots to the gitignored report folder.
   - Accept: `make e2e` green for every scenario.
