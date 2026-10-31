@@ -1,7 +1,9 @@
 
-## T6.9 History view (done) 2026-10-31
-- What: `/history` with selectors for measure (12 metrics), crew member (disabled for cabin measures) and time span (24 hours or 7 days, default 7 days at hourly steps), the trend chart with baseline band and limit lines, and a CUSUM panel (`CusumChart`: the two sums plus the alarm line, with a plain-language caption) shown when the API sends `cusum`.
-- Verify: `make check` green; 83 vitest tests assert the requested query strings: `metric=prv&crew=W1&hours=168&step=3600` at first, then `metric=hr&crew=W1...`, `crew=W3`, `hours=24&step=600`, and `metric=co2_mmhg&hours=168&step=3600` with no crew; the CUSUM alarm line appears once; a measure without CUSUM says so; CO2 shows both limit lines.
+## T6.10 Events view (done) 2026-10-31
+- What: `/events`: chronological log, newest first (UTC time, kind, sentence, crew and domain), kind filter (All, Spikes, Drifts, Links, Simulated events, Check-ins, Nodes), a "Simulated" badge on simulator events, and check-ins styled as muted context ("Check-in (context)"). Refreshes every 10 s.
+- Verify: `make check` green; 88 vitest tests with `events_mixed`: newest first, badge only on e-120, check-in text and muted class, each filter shows only its kind, All restores everything, empty state.
+- Commit: see git log (feat(dashboard): add events view)
+co2_mmhg&hours=168&step=3600` with no crew; the CUSUM alarm line appears once; a measure without CUSUM says so; CO2 shows both limit lines.
 - Commit: see git log (feat(dashboard): add history view)
 - Notes: the crew selector shares the selection with the crew strip.
 son line), detector text, model coefficients (38.2, 21.5, 0.7), the radiation sentence with "proxy", and the not-found case.

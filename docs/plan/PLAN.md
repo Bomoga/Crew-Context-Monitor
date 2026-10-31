@@ -505,7 +505,7 @@ Copy rules apply to every view (from the onboarding doc): one plain sentence per
   - Accept: tests switch metric and crew and assert the requested query parameters.
   - Commit: `feat(dashboard): add history view`
 
-- [ ] **T6.10 Events view**
+- [x] **T6.10 Events view**
   - Depends: T6.3
   - Do: chronological log, newest first, kind filter, "Simulated" badge on simulator events, check-ins shown as context.
   - Accept: tests with `events_mixed`.
