@@ -370,7 +370,7 @@ Each task lists **Depends**, **Do**, **Accept** (commands and checks that must p
   - Accept: CO2 stays below yellow; W3 HR trend starts 30 min before the CO2 trend; the truth channels show no coupling between them.
   - Commit: `feat(sim): add coincident trends scenario`
 
-- [ ] **T3.5 solar_particle_event**
+- [x] **T3.5 solar_particle_event**
   - Depends: T3.1
   - Do: cpm rate steps 18 to 240 for 40 min, then back to 18.
   - Accept (5 seeds): every 10-minute window fully inside the step has $N > \lambda + 4\sqrt{\lambda}$ against the 18 cpm baseline; windows before and after do not (allow at most one exceedance across all quiet windows of all seeds).

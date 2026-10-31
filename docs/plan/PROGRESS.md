@@ -1,9 +1,10 @@
 
-## T3.4 coincident_trends (done) 2026-10-30
-- What: `coincident_trends.yaml` (6 h): W3 resting HR +6 bpm over 3 h from +1 h; cabin CO2 800 to 1300 ppm over 3 h from +1.5 h (about 1 mmHg, under yellow). Two separate events, no `coupled` effect.
-- Verify: `make check` green. Tests: CO2 never reaches yellow; the W3 trend starts 30 min before the CO2 trend; truth has no coupling; removing the CO2 event leaves W3's messages byte-identical, removing the HR event leaves the cabin messages byte-identical.
-- Commit: see git log (feat(sim): add coincident trends scenario)
-- Notes: independence comes from named random streams (`crew.W3.*` versus `cabin.C1`). expect block: `quiet: [cardio, air]` and `no_correlation: true` (handled in T3.10).
+## T3.5 solar_particle_event (done) 2026-10-30
+- What: `solar_particle_event.yaml` (3 h): cpm 18 to 240 for 40 min from +1 h, then back; start and end events published; expect block: radiation yellow 70 to 80 min, red 80 to 110 min, green from 110 min.
+- Verify: `make check` green. 5 seeds: all four 10-minute windows inside the step exceed 180 + 4*sqrt(180) = 233.67 counts; at most one quiet-window exceedance across all seeds (test allows one).
+- Commit: see git log (feat(sim): add solar particle event scenario)
+- Notes: windows are tumbling and aligned to the scenario start; the step is window-aligned (starts at 1 h).
+ew.W3.*` versus `cabin.C1`). expect block: `quiet: [cardio, air]` and `no_correlation: true` (handled in T3.10).
 .
 ommit: see git log (feat(sim): add scrubber failure scenario)
 - Notes: see D21 for the interpretation of the "red raised above the ramp peak" test and the 5 minute tolerance.

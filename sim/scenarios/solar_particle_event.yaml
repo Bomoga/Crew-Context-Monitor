@@ -1,0 +1,17 @@
+name: solar_particle_event
+title: Solar particle event
+description: >
+  The Geiger rate steps from 18 to 240 counts per minute for 40 minutes, then returns to 18.
+  Windowed Poisson testing should flag it; a fixed threshold would misfire on the way in and out.
+duration: 3h
+crew: [W1, W2, W3]
+events:
+  - at: 1h
+    name: solar_particle_event
+    label: Solar particle event begins
+    effects:
+      - {target: cabin.cpm, op: rate, cpm: 240, for: 40m}
+expect:
+  - {card: radiation, level: yellow, from: 70m, until: 80m}
+  - {card: radiation, level: red, from: 80m, until: 110m}
+  - {card: radiation, level: green, from: 110m}
