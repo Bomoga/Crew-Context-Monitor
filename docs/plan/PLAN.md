@@ -450,7 +450,7 @@ Each task lists **Depends**, **Do**, **Accept** (commands and checks that must p
 
 Copy rules apply to every view (from the onboarding doc): one plain sentence per reason with a number and a baseline comparison; no raw z-scores on home; HRV is always "pulse-rate variability"; radiation is always a "proxy"; "consistent with", never "caused by"; footer "Decision-support prototype, not a medical device" on every screen; source badge (Hardware or Simulator) on every crew chip; the check-in never changes a color.
 
-- [ ] **T6.1 Scaffold and generated types**
+- [~] **T6.1 Scaffold and generated types**
   - Depends: T1.4
   - Do: Vite React TS app in `dashboard/` with the deps from Section 5; Vite proxy `/api` to `127.0.0.1:8000`; scripts `lint`, `typecheck`, `test`, `build`, `gen:types`, `check:types-fresh` (regenerate then `git diff --exit-code`), `e2e`. Wire into `make setup`, `make check`, `make types`. Two commits.
   - Accept: `make check` runs the dashboard steps green; `npm run gen:types` output is committed and fresh.
