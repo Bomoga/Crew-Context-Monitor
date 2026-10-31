@@ -1,0 +1,18 @@
+name: individual_illness
+title: Individual illness (W2)
+description: >
+  Only W2 changes: resting heart rate +12 bpm, pulse-rate variability -15 ms and skin
+  temperature +0.8 C, ramped over 2 hours (D12). The cabin stays normal.
+duration: 8h
+crew: [W1, W2, W3]
+events:
+  - at: 1h
+    name: w2_illness
+    label: W2 illness begins
+    effects:
+      - {target: crew.W2.hr, op: ramp, delta: 12, over: 2h}
+      - {target: crew.W2.rmssd, op: ramp, delta: -15, over: 2h}
+      - {target: crew.W2.skin, op: ramp, delta: 0.8, over: 2h}
+expect:
+  - {card: cardio, level: yellow, from: 3h, attribution: individual, crew: [W2]}
+  - {card: air, level: green}

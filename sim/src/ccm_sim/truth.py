@@ -85,7 +85,7 @@ class Truth:
             unit = unit_of(target)
             base = self.baselines.base(target)
             effect = Effect(spec.op, target, start, end, args, base, unit)
-            if spec.op == "ramp":
+            if spec.op == "ramp" and "to" in args:
                 effect.to_value = resolve_value(args["to"], unit, self.thresholds)
             if spec.op == "coupled":
                 effect.thr_value = threshold_in_unit(

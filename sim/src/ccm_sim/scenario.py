@@ -77,7 +77,7 @@ def _effect(raw: dict[str, Any]) -> EffectSpec:
     needs = {
         "set": ("value",),
         "step": ("delta", "for"),
-        "ramp": ("to", "over"),
+        "ramp": ("over",),
         "drift_per_day": ("delta",),
         "coupled": ("driver", "start", "gain_at_peak"),
         "exercise": ("act", "for"),
@@ -87,6 +87,8 @@ def _effect(raw: dict[str, Any]) -> EffectSpec:
     missing = [k for k in needs if k not in args]
     if missing:
         raise ScenarioError(f"effect {op!r} is missing {missing}")
+    if op == "ramp" and ("to" in args) == ("delta" in args):
+        raise ScenarioError("effect 'ramp' needs exactly one of 'to' or 'delta'")
     return EffectSpec(op, raw.get("target"), args)
 
 

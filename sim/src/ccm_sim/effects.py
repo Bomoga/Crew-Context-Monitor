@@ -105,7 +105,8 @@ class Effect:
         if self.op == "step":
             return float(a["delta"])
         if self.op == "ramp":
-            return (self.to_value - self.base) * min(1.0, u / float(a["over"]))
+            full = float(a["delta"]) if "delta" in a else self.to_value - self.base
+            return full * min(1.0, u / float(a["over"]))
         if self.op == "drift_per_day":
             days = float(a["days"]) if "days" in a else u / 86400.0
             return float(a["delta"]) * min(u / 86400.0, days)

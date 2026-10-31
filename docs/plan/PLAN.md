@@ -358,7 +358,7 @@ Each task lists **Depends**, **Do**, **Accept** (commands and checks that must p
   - Accept (5 seeds): CO2 crosses yellow and red per `thresholds.yaml`; each crew's 5-minute RMSSD starts falling 20 +/- 3 min after the yellow crossing; a test that loads a modified thresholds file with red raised above the ramp peak fails with a clear message.
   - Commit: `feat(sim): add scrubber failure scenario`
 
-- [ ] **T3.3 individual_illness**
+- [x] **T3.3 individual_illness**
   - Depends: T3.1
   - Do: per D12.
   - Accept (5 seeds): W2 shifts as specified within 10%; W1 and W3 means stay within 1 bpm / 3 ms of their quiet values; CO2 and cabin temperature stay inside normal.

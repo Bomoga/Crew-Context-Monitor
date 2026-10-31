@@ -1,8 +1,10 @@
 
-## T3.2 scrubber_failure (done) 2026-10-30
-- What: `sim/scenarios/scrubber_failure.yaml` per Appendix B and D6: CO2 ramps to 1.3 x red over 3 h from +30 min; RMSSD -12 ms and HR +6 bpm at peak, coupled to CO2 above yellow with a 20 min lag; events "Scrubber fault begins", "CO2 passes 2.5 mmHg", "CO2 passes 3.0 mmHg"; expect block from B.1. Mark labels now print one decimal for round values.
-- Verify: `make check` green; 14 scenario tests over seeds 1 to 5 pass: measured CO2 crosses yellow and red within 5 min of the marks; response onset 20 +/- 3 min after the yellow crossing; paired-control RMSSD fall over 6 ms and HR rise between 4 and 8 bpm in the last 20 min; thresholds guard test fails with a message naming thresholds.yaml.
-- Commit: see git log (feat(sim): add scrubber failure scenario)
+## T3.3 individual_illness (done) 2026-10-30
+- What: `individual_illness.yaml` (8 h, onset +1 h): W2 resting HR +12 bpm, RMSSD -15 ms, skin +0.8 C, ramped over 2 h (D12). Added a relative form to `ramp`: exactly one of `to` (absolute) or `delta` (relative to baseline).
+- Verify: `make check` green; 16 tests over seeds 1 to 5: W2 shifts within 10% of spec versus a paired quiet control (settled window 5 h to 8 h); W1 and W3 within 1 bpm / 3 ms of control; cabin CO2 under 2.0 mmHg and temperature inside 18 to 27 C; the event names only W2.
+- Commit: see git log (feat(sim): add individual illness scenario)
+- Notes: expect block uses `from: 3h`, `crew: [W2]` for T3.10. Paired control = `quiet_day` with the same seed, start and duration.
+ommit: see git log (feat(sim): add scrubber failure scenario)
 - Notes: see D21 for the interpretation of the "red raised above the ramp peak" test and the 5 minute tolerance.
 ines. `ramp` and `set` hold after finishing unless `for` is given; an event emits an end event only if every effect has `for` (or it has `end_label`). Coupled effects follow the noise-free driver level; peak excess is computed from the truth, and a driver that never crosses its threshold raises an error mentioning thresholds.yaml (D6). `silence` is parsed into `truth.silences` and implemented in T3.9. `expect:` is only loosely schema-checked until T3.10.
 `, `dist`, `node_modules` without trailing slash so check-ignore matches nonexistent paths.
