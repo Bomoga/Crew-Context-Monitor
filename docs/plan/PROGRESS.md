@@ -44,3 +44,9 @@ atform: Windows 11 with Git Bash.
 - Verify: `make check` green, 16 tests; `ppm_to_mmhg(5000)` within 1e-9 of 3.8; loader rejects a missing `air.co2.red` and a leaf without `source`.
 - Commit: see git log (feat(contracts): add co2 unit conversion and provisional thresholds)
 - Notes: threshold paths are dotted (`air.co2.red`); `Thresholds.co2_ppm(level)` gives the ppm value at the configured cabin pressure. Cabin pressure lives in the file as `cabin.pressure_mmhg`.
+
+## T2.1 Clock and random streams (done) 2026-10-30
+- What: `SimClock(start, speed|"max", real_now, sleep)` with `now()` and `sleep_until()`; `rng.stream(seed, name)` using PCG64 with a SHA-256 spawn key per stream name.
+- Verify: `make check` green, 28 tests; speed 60 gives 60 sim seconds per fake real second; `max` never sleeps; same seed byte-identical; W1's stream unchanged when W3 draws.
+- Commit: see git log (feat(sim): add simulation clock and seeded random streams)
+- Notes: use stream names like `crew.W1.ibi`, `cabin.co2` so each process has its own numbers.

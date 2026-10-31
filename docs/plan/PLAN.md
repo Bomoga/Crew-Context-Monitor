@@ -295,7 +295,7 @@ Each task lists **Depends**, **Do**, **Accept** (commands and checks that must p
 
 ### P2. Simulator core
 
-- [ ] **T2.1 Clock and random streams**
+- [x] **T2.1 Clock and random streams**
   - Depends: T1.4
   - Do: `SimClock(start, speed)` where `speed` is a float or `"max"`; `now()`, `sleep_until(t_sim)`; an injectable real-time source for tests. `rng.py`: per-stream generators derived from `(seed, stream_name)` so adding a crew member does not change another member's numbers.
   - Accept: tests: at speed 60 one fake real second advances 60 sim seconds; `max` never sleeps; same seed gives byte-identical output; adding W3 leaves W1's stream identical.
