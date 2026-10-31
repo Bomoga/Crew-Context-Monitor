@@ -337,11 +337,12 @@ Each task lists **Depends**, **Do**, **Accept** (commands and checks that must p
   - Accept: test passes, or the documented skip path is followed exactly.
   - Commit: `test(sim): add mqtt broker integration test`
 
-- [ ] **T2.8 (optional) WESAD/OSDR-derived parameters**
+- [x] **T2.8 (optional) WESAD/OSDR-derived parameters**
   - Depends: T2.3
   - Do: only if `CCM_WESAD_DIR` is set and points at an extracted WESAD copy: a script `sim/tools/derive_params.py` that computes resting HR and RMSSD ranges and writes `sim/params/physiology.derived.yaml` with `source: WESAD`. Otherwise mark `[x]` with the note "skipped, dataset not present" and add an `OPEN_QUESTIONS.md` line.
   - Accept: script runs on the dataset, or the skip note exists.
   - Commit: `feat(sim): derive physiology ranges from wesad` (or `chore(plan): skip optional wesad derivation`)
+  - Notes: skipped, dataset not present (`CCM_WESAD_DIR` unset).
 
 ### P3. Scenarios (closes gate G2)
 

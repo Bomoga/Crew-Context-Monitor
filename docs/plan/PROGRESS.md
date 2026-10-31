@@ -86,3 +86,9 @@ atform: Windows 11 with Git Bash.
 - Verify: `make check` green, 82 tests, integration test passed 4 times in a row (about 2 s). 10 sim minutes at max speed delivered 360 wearable and 60 cabin messages; a late subscriber saw retained `online` on all four status topics; `MqttSink.kill_node("W2")` delivered the `offline` last will.
 - Commit: see git log (test(sim): add mqtt broker integration test)
 - Notes: no mosquitto on this host, so amqtt was the broker; no skip needed, no BLOCKERS entry.
+
+## T2.8 (optional) WESAD/OSDR-derived parameters (done, skipped) 2026-10-30
+- What: skipped, dataset not present (`CCM_WESAD_DIR` unset). Plan values from D11 stay in `sim/params/physiology.yaml`.
+- Verify: skip note in PLAN.md and OPEN_QUESTIONS.md.
+- Commit: see git log (chore(plan): skip optional wesad derivation)
+- Notes: nothing depends on this task.
