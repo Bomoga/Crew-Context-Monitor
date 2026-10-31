@@ -463,7 +463,7 @@ Copy rules apply to every view (from the onboarding doc): one plain sentence per
   - Accept: Vitest with fake timers: polls at 5 s, marks stale at 15 s, recovers; a malformed fixture logs a violation in dev mode.
   - Commit: `feat(dashboard): add typed api client with status polling`
 
-- [ ] **T6.3 App shell**
+- [x] **T6.3 App shell**
   - Depends: T6.2
   - Do: router with `/`, `/domain/:name`, `/history`, `/events`, `/settings`; nav; footer on every route; a reserved banner slot for stale or offline state so nothing shifts; level color tokens (Tailwind) and the level word (D14).
   - Accept: test renders every route and finds the footer text; banner slot height is constant with and without a banner.

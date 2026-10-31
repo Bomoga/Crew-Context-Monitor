@@ -1,10 +1,10 @@
 
-## T6.2 API client and polling (done) 2026-10-30
-- What: `src/api/client.ts` (typed `api.*` for every endpoint; `ApiError`; in dev builds each response is checked against its contract schema with ajv, loaded by dynamic import so production bundles drop it, and violations go to `console.error` without delaying the data), `src/api/validate.ts`, `src/hooks/usePolling.ts` (generic poller: aborts the previous request and everything on unmount, 1 s clock tick for staleness) and `useStatus` (5 s poll, stale after 15 s).
-- Verify: `make check` green. Vitest with fake timers: polls on mount then every 5 s; stale at 16 s of failures with the last data kept; recovers on the next success; first-request-never-succeeds is stale; unmount aborts and stops polling; a hung request is aborted by the next poll; a malformed response logs `contract violation in /api/status`; non-2xx throws `ApiError` with the API's `detail`; query strings and POST/PUT bodies.
-- Commit: see git log (feat(dashboard): add typed api client with status polling)
-- Notes: other views reuse `usePolling` (or fetch once with `api.*`). `refresh()` triggers an immediate poll.
-ves by default (matches the `earth_queue.pending` fixture). Reset-baseline ignores `metric` (any value restarts that crew member's learning timer); while any crew member is learning, all alerts are held back and the status bar shows the longest remaining time.
+## T6.3 App shell (done) 2026-10-30
+- What: react-router routes `/`, `/domain/:name`, `/history`, `/events`, `/settings` (placeholders filled by later tasks), `Layout` with title, main nav (current page marked), reserved `Banner` slot (fixed 3rem height; says stale, offline nodes, waiting or unreachable), `main`, and the footer "Decision-support prototype, not a medical device" on every route. `StatusProvider` shares the polled status. Design tokens in `styles/index.css` (light and dark, level text/background/mark colors with at least 4.5:1 contrast pairs); `LevelBadge` shows color plus word (D14) at a fixed size; `lib/levels.ts` has the words, ranks, domain names and order.
+- Verify: `make check` green; 25 vitest tests: every route renders its title and the footer (unknown domain stays inside the shell), nav marks the current page, the banner slot keeps one height with no banner, a stale banner and an offline banner, and the badge size classes are identical across levels. `npm run build` works (84 kB gzip JS; ajv and schemas are not in the bundle).
+- Commit: see git log (feat(dashboard): add app shell, routes and footer)
+- Notes: jsdom has no layout, so the real bounding-box checks happen in Playwright (T6.13). Test helpers: `test/helpers.tsx` (`renderRoute(path, polled(...))`, `status("air_yellow")`, `fixture(name)`).
+held back and the status bar shows the longest remaining time.
 5.3 formalises the copy-rule tests for `templates.py`.
  paths.
 
