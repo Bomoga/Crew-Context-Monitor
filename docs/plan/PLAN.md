@@ -255,7 +255,7 @@ Each task lists **Depends**, **Do**, **Accept** (commands and checks that must p
   - Accept: `make check` exits 0; `git check-ignore data/x.jsonl .venv dashboard/dist` lists all three.
   - Commit: `chore(repo): scaffold repository layout and tracking docs`
 
-- [ ] **T0.3 Python package skeleton**
+- [x] **T0.3 Python package skeleton**
   - Depends: T0.2
   - Do: `sim/pyproject.toml` (package `ccm_sim`, src layout, console script `ccm-sim`), deps from Section 5, ruff config (line length 100), mypy strict on `src/`, `ccm_sim/cli.py` with `--version`, one smoke test; Makefile `setup`, `lint`, `test`, `check` wired for Python.
   - Accept: `make setup && make check`; `.venv/bin/ccm-sim --version` prints a version.

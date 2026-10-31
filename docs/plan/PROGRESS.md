@@ -12,3 +12,9 @@
 - Verify: `make check` exits 0; `git check-ignore data/x.jsonl .venv dashboard/dist` lists all three.
 - Commit: see git log (chore(repo): scaffold repository layout and tracking docs)
 - Notes: gitignore uses `.venv`, `dist`, `node_modules` without trailing slash so check-ignore matches nonexistent paths.
+
+## T0.3 Python package skeleton (done) 2026-10-30
+- What: `sim/pyproject.toml` (src layout, `ccm-sim` script, ruff line length 100, mypy strict), `ccm_sim.cli` with `--version`, one smoke test, Makefile `setup`, `lint`, `test`, `check`.
+- Verify: `make check` green (ruff, ruff format, mypy, 1 pytest pass); `.venv/Scripts/ccm-sim --version` prints `ccm-sim 0.1.0`.
+- Commit: see git log (build(sim): add python package skeleton and tooling)
+- Notes: pytest default addopts `-m 'not slow'`; `slow` marker registered. `types-jsonschema` added to dev extras.
