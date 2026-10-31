@@ -261,7 +261,7 @@ Each task lists **Depends**, **Do**, **Accept** (commands and checks that must p
   - Accept: `make setup && make check`; `.venv/bin/ccm-sim --version` prints a version.
   - Commit: `build(sim): add python package skeleton and tooling`
 
-- [ ] **T0.4 CI workflow**
+- [x] **T0.4 CI workflow**
   - Depends: T0.3
   - Do: `.github/workflows/ci.yml` with a Python job (3.11, `make setup check`) and a dashboard job guarded by `hashFiles('dashboard/package.json') != ''`.
   - Accept: `python -c "import yaml,sys; yaml.safe_load(open('.github/workflows/ci.yml'))"`; `actionlint` passes if installed.

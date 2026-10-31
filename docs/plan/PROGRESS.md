@@ -18,3 +18,9 @@
 - Verify: `make check` green (ruff, ruff format, mypy, 1 pytest pass); `.venv/Scripts/ccm-sim --version` prints `ccm-sim 0.1.0`.
 - Commit: see git log (build(sim): add python package skeleton and tooling)
 - Notes: pytest default addopts `-m 'not slow'`; `slow` marker registered. `types-jsonschema` added to dev extras.
+
+## T0.4 CI workflow (done) 2026-10-30
+- What: `.github/workflows/ci.yml` with a Python job and a dashboard job guarded by `hashFiles('dashboard/package.json') != ''`.
+- Verify: yaml parses (jobs python, dashboard); `make check` green; actionlint not installed, skipped.
+- Commit: see git log (ci: add check workflow for python and dashboard)
+- Notes: the dashboard job reruns `make setup check` with Node 20 so the dashboard steps run once they exist in the Makefile.
