@@ -281,7 +281,7 @@ Each task lists **Depends**, **Do**, **Accept** (commands and checks that must p
   - Accept: `make contracts`.
   - Commit: `feat(contracts): define dashboard api schemas and fixtures`
 
-- [ ] **T1.3 Units and provisional thresholds**
+- [x] **T1.3 Units and provisional thresholds**
   - Depends: T1.1
   - Do: `contracts/thresholds.yaml` per D5, each value with `source:` and `status: provisional`. `ccm_sim/units.py` (`ppm_to_mmhg`, `mmhg_to_ppm`, cabin pressure parameter) and `ccm_sim/thresholds.py` loader.
   - Accept: tests show `ppm_to_mmhg(5000)` equals 3.8 within 1e-9 at 760 mmHg (the OCHMO brief states 0.5% CO2 = 3.8 mmHg; do not use `==` on floats) and the round trip holds within 1e-9; loader rejects a missing key.
