@@ -1,9 +1,10 @@
 
-## T3.1 Scenario engine and quiet baselines (done) 2026-10-30
-- What: scenario YAML + `scenario.schema.json`; `scenario.py` (load, validate, durations), `effects.py` (ops set, step, ramp, drift_per_day, coupled, exercise, rate, silence), `truth.py` (noise-free levels/offsets per target, minute series, conditions, first-crossing marks), `engine.build_world` (timeline of start/end/mark events on `ccm/sim/event`). Scenarios `quiet_day` (24 h), `quiet_week` (7 d, 3 crew); `quiet` is an alias of `quiet_day`.
-- Verify: `make check` green, 102 tests (20 in `test_scenario_engine.py`: one per op, wildcard, events/marks, bad effects). `ccm-sim generate --scenario quiet_week --out data/qw.jsonl`: 24 s, 362,880 wearable (3 x 120,960) and 60,480 cabin records; slow test confirms under 120 s.
-- Commit: see git log (feat(sim): add scenario engine and quiet baselines)
-- Notes: effects are additive offsets on model baselines. `ramp` and `set` hold after finishing unless `for` is given; an event emits an end event only if every effect has `for` (or it has `end_label`). Coupled effects follow the noise-free driver level; peak excess is computed from the truth, and a driver that never crosses its threshold raises an error mentioning thresholds.yaml (D6). `silence` is parsed into `truth.silences` and implemented in T3.9. `expect:` is only loosely schema-checked until T3.10.
+## T3.2 scrubber_failure (done) 2026-10-30
+- What: `sim/scenarios/scrubber_failure.yaml` per Appendix B and D6: CO2 ramps to 1.3 x red over 3 h from +30 min; RMSSD -12 ms and HR +6 bpm at peak, coupled to CO2 above yellow with a 20 min lag; events "Scrubber fault begins", "CO2 passes 2.5 mmHg", "CO2 passes 3.0 mmHg"; expect block from B.1. Mark labels now print one decimal for round values.
+- Verify: `make check` green; 14 scenario tests over seeds 1 to 5 pass: measured CO2 crosses yellow and red within 5 min of the marks; response onset 20 +/- 3 min after the yellow crossing; paired-control RMSSD fall over 6 ms and HR rise between 4 and 8 bpm in the last 20 min; thresholds guard test fails with a message naming thresholds.yaml.
+- Commit: see git log (feat(sim): add scrubber failure scenario)
+- Notes: see D21 for the interpretation of the "red raised above the ramp peak" test and the 5 minute tolerance.
+ines. `ramp` and `set` hold after finishing unless `for` is given; an event emits an end event only if every effect has `for` (or it has `end_label`). Coupled effects follow the noise-free driver level; peak excess is computed from the truth, and a driver that never crosses its threshold raises an error mentioning thresholds.yaml (D6). `silence` is parsed into `truth.silences` and implemented in T3.9. `expect:` is only loosely schema-checked until T3.10.
 `, `dist`, `node_modules` without trailing slash so check-ignore matches nonexistent paths.
 
 ## T0.3 Python package skeleton (done) 2026-10-30

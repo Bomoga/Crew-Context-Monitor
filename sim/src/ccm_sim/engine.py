@@ -80,8 +80,12 @@ class World:
     missing_marks: list[str] = field(default_factory=list)
 
 
+def _fmt(value: float) -> str:
+    return f"{value:.1f}" if abs(value - round(value, 1)) < 1e-9 else f"{value:g}"
+
+
 def _fill(label: str, thresholds: Thresholds) -> str:
-    return _PLACEHOLDER.sub(lambda m: f"{thresholds.value(m.group(1)):g}", label)
+    return _PLACEHOLDER.sub(lambda m: _fmt(thresholds.value(m.group(1))), label)
 
 
 def _event_crew(event: EventSpec) -> str | None:

@@ -352,7 +352,7 @@ Each task lists **Depends**, **Do**, **Accept** (commands and checks that must p
   - Accept: one unit test per op; `ccm-sim generate --scenario quiet_week --out data/qw.jsonl` finishes in under 120 s and contains 3 crew x 7 days of wearable messages.
   - Commit: `feat(sim): add scenario engine and quiet baselines`
 
-- [ ] **T3.2 scrubber_failure**
+- [x] **T3.2 scrubber_failure**
   - Depends: T3.1, T1.3
   - Do: per D6. CO2 ramp start at +30 min; all three crew: RMSSD falls (up to -12 ms at peak) and HR rises (up to +6 bpm at peak), coupled to CO2 above yellow with a 20 min lag; sim events "Scrubber fault begins", "CO2 passes yellow", "CO2 passes red".
   - Accept (5 seeds): CO2 crosses yellow and red per `thresholds.yaml`; each crew's 5-minute RMSSD starts falling 20 +/- 3 min after the yellow crossing; a test that loads a modified thresholds file with red raised above the ramp peak fails with a clear message.
