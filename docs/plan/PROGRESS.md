@@ -1,8 +1,10 @@
 
-## T6.4 Status bar and crew strip (done) 2026-10-30
-- What: `StatusBar` (level badge, the API's sentence, "Next step" action, domain and attribution; while any baseline is learning it shows "Learning. Alerts start in 3 h 20 min" from `learning_ends_t` minus the API time) in one fixed-height frame (`h-24`), `CrewStrip` (chip per crew member: name, level, Hardware or Simulator, Online or Offline; clicking selects the crew member for the timeline via `CrewSelectionProvider`/`useSelectedCrew`), `lib/format.ts` (durations, UTC clock times). Home now shows the status bar and strip.
-- Verify: `make check` green; 41 vitest tests over the `all_green`, `air_yellow`, `air_red_cabin` and `learning` fixtures: sentence, level word, action, attribution; identical frame classes across states; every chip shows Hardware or Simulator; offline chips; chip selection toggles `aria-pressed`.
-- Commit: see git log (feat(dashboard): add status bar and crew strip)
+## T6.5 Risk cards (done) 2026-10-30
+- What: `RiskCards` on Home: four cards in the fixed order Cardiovascular, Air quality, Thermal, Radiation (proxy), each a link to `/domain/:name` with level badge, up to three numbers with baselines, the reason, and the next step when not green. Fixed `h-72` cards in a responsive grid (1, 2 or 4 columns). Missing numbers show a dash.
+- Verify: `make check` green; 59 vitest tests over seven fixtures (all_green, air_yellow, air_red_cabin, cardio_yellow_individual, radiation_red, thermal_red, learning): order, level word, numbers with "baseline", reason, action, link target, identical size classes and wrapper classes in every fixture, and no z-score or z value anywhere in the rendered text.
+- Commit: see git log (feat(dashboard): add risk cards)
+- Notes: card positions are stable because size is fixed; real box positions are measured in Playwright (T6.13).
+(feat(dashboard): add status bar and crew strip)
 - Notes: jsdom cannot measure boxes, so "identical bounding box" is asserted as identical fixed-size classes; Playwright re-checks real boxes in T6.13.
  add app shell, routes and footer)
 - Notes: jsdom has no layout, so the real bounding-box checks happen in Playwright (T6.13). Test helpers: `test/helpers.tsx` (`renderRoute(path, polled(...))`, `status("air_yellow")`, `fixture(name)`).

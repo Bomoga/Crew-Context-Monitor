@@ -1,4 +1,5 @@
 import { CrewStrip } from "../components/CrewStrip";
+import { RiskCards } from "../components/RiskCards";
 import { StatusBar } from "../components/StatusBar";
 
 export default function Home() {
@@ -7,6 +8,7 @@ export default function Home() {
       <h1 className="sr-only">Home</h1>
       <StatusBar />
       <CrewStrip />
+      <RiskCards />
     </div>
   );
 }

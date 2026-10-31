@@ -18,3 +18,9 @@ export function clockTime(t: number): string {
 export function clockTimeSeconds(t: number): string {
   return new Date(t * 1000).toISOString().slice(11, 19);
 }
+
+/** A reading for display: whole numbers stay whole, others get one decimal; null is a dash. */
+export function formatValue(value: number | null): string {
+  if (value === null) return "—";
+  return Number.isInteger(value) ? String(value) : value.toFixed(1);
+}

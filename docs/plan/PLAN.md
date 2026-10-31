@@ -475,7 +475,7 @@ Copy rules apply to every view (from the onboarding doc): one plain sentence per
   - Accept: tests over the `all_green`, `air_yellow`, `air_red_cabin`, `learning` fixtures; the status bar bounding box is identical across them; each chip shows Hardware or Simulator.
   - Commit: `feat(dashboard): add status bar and crew strip`
 
-- [ ] **T6.5 Risk cards**
+- [x] **T6.5 Risk cards**
   - Depends: T6.4
   - Do: four cards in fixed order (Cardiovascular, Air quality, Thermal, Radiation (proxy)), each with level, two or three numbers against baseline, the reason; whole card links to `/domain/:name`.
   - Accept: tests for each level fixture; card positions do not change between fixtures; no z values rendered.
