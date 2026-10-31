@@ -269,7 +269,7 @@ Each task lists **Depends**, **Do**, **Accept** (commands and checks that must p
 
 ### P1. Contracts (closes gate G1)
 
-- [ ] **T1.1 MQTT topics and message schemas**
+- [x] **T1.1 MQTT topics and message schemas**
   - Depends: T0.3
   - Do: `contracts/mqtt/topics.yaml` (topics, publisher, rate, retained, QoS: telemetry 0, status and sim events 1). JSON Schema 2020-12 files per Appendix A.1 to A.4 with `additionalProperties: false`. Examples: at least 2 valid and 3 invalid per schema (missing required, wrong type, out of range). `make contracts` validates them using `ccm_sim.contracts`.
   - Accept: `make contracts` reports every valid example passing and every invalid one failing.
@@ -457,7 +457,7 @@ Copy rules apply to every view (from the onboarding doc): one plain sentence per
   - Commit 1: `build(dashboard): scaffold vite react app with tooling`
   - Commit 2: `feat(dashboard): generate api types from contracts`
 
-- [ ] **T6.2 API client and polling**
+- [x] **T6.2 API client and polling**
   - Depends: T6.1
   - Do: typed client for every endpoint; `useStatus` polls every 5 s with abort on unmount; stale when the last success is older than 15 s; error state keeps the last data; in dev builds ajv validates every response and logs contract violations.
   - Accept: Vitest with fake timers: polls at 5 s, marks stale at 15 s, recovers; a malformed fixture logs a violation in dev mode.
@@ -567,7 +567,7 @@ Copy rules apply to every view (from the onboarding doc): one plain sentence per
   - Accept: commands in the README run on a fresh clone.
   - Commit: `docs(repo): write readme quickstart`
 
-- [ ] **T7.5 Final verification and close-out**
+- [x] **T7.5 Final verification and close-out**
   - Depends: T7.1 to T7.4
   - Do: fresh clone into a temp directory; `make setup && make check-all`; record timings; grep for `TODO`/`FIXME` without a task or blocker reference; write the final report in `PROGRESS.md` (tasks done, blocked, open questions, how to run) and the line `LOOP_COMPLETE`; push; if `gh` is available and authenticated, open a draft PR from `build/sim-dashboard` to `main` titled "Simulator, mock API and dashboard". Run gate G4.
   - Accept: `check-all` green on the fresh clone.
