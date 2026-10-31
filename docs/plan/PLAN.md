@@ -307,7 +307,7 @@ Each task lists **Depends**, **Do**, **Accept** (commands and checks that must p
   - Accept (5 seeds, 1 h quiet): mean HR within 1 bpm of target; median 5-minute RMSSD within 15% of target; when target RMSSD drops by 15 ms, the measured 5-minute RMSSD reaches within 15% of the new target within 10 minutes; beat times strictly increasing; every RR in [300, 2000] ms.
   - Commit: `feat(sim): generate beat-level inter-beat intervals`
 
-- [ ] **T2.3 Crew physiology model**
+- [x] **T2.3 Crew physiology model**
   - Depends: T2.2
   - Do: `physiology.py`: $HR(t) = HR_0 + c_{HR}(t) + \beta_1\,\text{act}(t) + \beta_2\,(T_{\text{cabin}}(t) - 22) + \Delta_{\text{scenario}}(t) + \text{noise}$; RMSSD with circadian term; SpO2 (integer, clamp 90 to 100, noisier under motion); skin temperature as a first-order lag (tau 20 min) toward a cabin-coupled target plus circadian; activity process (rest about 0.06, exercise about 1.2, std of acceleration magnitude in g); `motion = act > 0.3`; battery slow discharge from 4.15 V. Per-crew variation (W2 base HR 66, W3 base HR 58). All values in `sim/params/physiology.yaml` with `source:` (D11).
   - Accept: tests: quiet-day means match params within tolerance; a +3 C cabin step raises HR by `beta2 * 3` within 1 bpm after settling; a rest-to-exercise step raises HR by `beta1 * delta_act` within 3 bpm; skin temperature reaches 63% of a step in 20 +/- 3 min.

@@ -1,0 +1,47 @@
+# Crew physiology parameters (D11). Every parameter carries a `source:`. WESAD/OSDR-derived values
+# may replace the plan values later (T2.8, optional).
+#
+# HR(t) = hr0 + circadian + beta1 * (act_f - act_ref) + beta2 * (T_cabin - 22) + scenario + noise
+# hr0 is the resting heart rate at act_ref and 22 C cabin temperature.
+defaults:
+  hr0: {value: 62, unit: bpm, source: "PLAN D11 (v2 slides)"}
+  rmssd0: {value: 45, unit: ms, source: "PLAN D11 (v2 slides)"}
+  spo2_0: {value: 97, unit: "%", source: "PLAN D11 (v2 slides)"}
+  skin0: {value: 33.4, unit: C, source: "PLAN D11 (v2 slides)"}
+  act_ref: {value: 0.06, unit: g, source: "PLAN T2.3 rest activity"}
+  act_rest: {value: 0.06, unit: g, source: "PLAN T2.3 rest activity"}
+  act_exercise: {value: 1.2, unit: g, source: "PLAN T2.3 exercise activity"}
+  act_motion_threshold: {value: 0.3, unit: g, source: "PLAN T2.3 motion = act > 0.3"}
+  act_rest_noise_sd: {value: 0.015, unit: g, source: "provisional choice"}
+  act_diurnal_amp: {value: 0.02, unit: g, source: "provisional choice"}
+  tau_act_rise_s: {value: 45, unit: s, source: "provisional choice"}
+  tau_act_recover_s: {value: 180, unit: s, source: "PLAN T3.7 recovery tau 3 min"}
+  beta1: {value: 77, unit: bpm/g, source: "provisional: 62 + 77 * (1.2 - 0.06) = 150 bpm (T3.7 target)"}
+  beta2: {value: 0.8, unit: bpm/C, source: "provisional choice"}
+  hr_circ_amp: {value: 3.0, unit: bpm, source: "provisional choice; minimum near 04:00 UTC"}
+  hr_noise_sd: {value: 1.0, unit: bpm, source: "provisional choice"}
+  hr_noise_tau_s: {value: 300, unit: s, source: "provisional choice"}
+  rmssd_circ_frac: {value: 0.08, unit: fraction, source: "provisional choice; maximum near 04:00 UTC"}
+  rmssd_act_gamma: {value: 0.5, unit: 1/g, source: "provisional choice: RMSSD falls with exertion"}
+  rmssd_noise_sd: {value: 2.0, unit: ms, source: "provisional choice"}
+  rmssd_noise_tau_s: {value: 600, unit: s, source: "provisional choice"}
+  rmssd_min: {value: 8, unit: ms, source: "provisional floor"}
+  spo2_noise_sd: {value: 0.6, unit: "%", source: "provisional choice"}
+  spo2_motion_noise_sd: {value: 1.5, unit: "%", source: "PLAN T2.3 noisier under motion"}
+  skin_tau_s: {value: 1200, unit: s, source: "PLAN T2.3 first-order lag, tau 20 min"}
+  skin_cabin_gain: {value: 0.25, unit: C/C, source: "provisional choice"}
+  skin_circ_amp: {value: 0.25, unit: C, source: "provisional choice"}
+  batt_v0: {value: 4.15, unit: V, source: "PLAN T2.3"}
+  batt_v_per_day: {value: 0.12, unit: V/day, source: "provisional choice"}
+
+# Per-crew overrides (W1 uses the defaults).
+crew:
+  W1: {}
+  W2:
+    hr0: {value: 66, unit: bpm, source: "PLAN T2.3 W2 base HR 66"}
+    rmssd0: {value: 42, unit: ms, source: "provisional per-crew variation"}
+    skin0: {value: 33.2, unit: C, source: "provisional per-crew variation"}
+  W3:
+    hr0: {value: 58, unit: bpm, source: "PLAN T2.3 W3 base HR 58"}
+    rmssd0: {value: 50, unit: ms, source: "provisional per-crew variation"}
+    skin0: {value: 33.6, unit: C, source: "provisional per-crew variation"}

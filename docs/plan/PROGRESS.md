@@ -56,3 +56,9 @@ atform: Windows 11 with Git Bash.
 - Verify: `make check` green, 45 tests; 5 seeds: mean HR 61.86 to 62.09 (target 62), median 5-min RMSSD 44.6 to 46.1 (target 45); RMSSD step 45 to 30 reached within 15% inside 10 min; beats strictly increasing; RR within [300, 2000].
 - Commit: see git log (feat(sim): generate beat-level inter-beat intervals)
 - Notes: beats are returned as (closing beat time, interval ms). hr_fn and rmssd_fn are callables of sim time. See D20.
+
+## T2.3 Crew physiology model (done) 2026-10-30
+- What: `ccm_sim.physiology.CrewPhysiology` (5 s grid, state held between points) and `sim/params/physiology.yaml` (every parameter has a `source:`; W2 hr0 66, W3 hr0 58). Offsets enter through `offset_fn(target, t)` for targets `hr`, `rmssd`, `skin`, `spo2`, `act`; `predict_hr()` gives the model's own HR explanation.
+- Verify: `make check` green, 55 tests. Quiet-day means within tolerance for W1 to W3; paired runs: +3 C cabin raises HR by beta2*3 (0.8 bpm per C) within 1 bpm; rest to exercise raises HR by beta1*delta_act within 3 bpm; skin reaches 63% in 1200 +/- 180 s.
+- Commit: see git log (feat(sim): model crew physiology with activity and cabin coupling)
+- Notes: HR is hr0 at act_ref = 0.06 g, so beta1 = 77 bpm/g gives 150 bpm at 1.2 g. Cabin temperature comes in as a callable. T2.5 feeds `hr_fn`/`rmssd_fn` to the beat generator.
