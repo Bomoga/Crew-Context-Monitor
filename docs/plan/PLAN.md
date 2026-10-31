@@ -422,7 +422,7 @@ Each task lists **Depends**, **Do**, **Accept** (commands and checks that must p
 
 ### P5. Mock API
 
-- [ ] **T5.1 Status, history and events**
+- [x] **T5.1 Status, history and events**
   - Depends: T4.1
   - Do: `ccm_sim.mockapi` FastAPI app. Runs the selected scenario in a background thread on a SimClock; keeps 1-minute rollups in memory. `GET /api/status`: card levels and attribution from the active `expect` entries, numbers from the generated data and params baseline, reasons from templates (T5.3). `GET /api/history` and `GET /api/events` per Appendix A. `POST /api/_mock/scenario {name, speed}` switches scenario (dev only, documented as such). CLI `ccm-sim serve-mock --scenario NAME --speed N --port 8000 [--fast-forward] [--learning]`.
   - Accept: TestClient tests: for every scenario, at five sim times spread over its duration, every endpoint response passes `contracts.validate`; card levels at those times equal the expectations.

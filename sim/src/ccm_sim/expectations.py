@@ -123,6 +123,7 @@ class DomainState:
     attribution: str | None
     crew: tuple[str, ...]
     reason: str | None
+    since: float | None = None
 
 
 def states_at(world: World, t: float) -> dict[str, DomainState]:
@@ -130,7 +131,7 @@ def states_at(world: World, t: float) -> dict[str, DomainState]:
     states = {d: DomainState("green", None, (), None) for d in DOMAINS}
     for c in parse_cards(world):
         if c.t_from <= t < c.t_until and RANK[c.level] >= RANK[states[c.domain].level]:
-            states[c.domain] = DomainState(c.level, c.attribution, c.crew, c.reason)
+            states[c.domain] = DomainState(c.level, c.attribution, c.crew, c.reason, c.t_from)
     return states
 
 

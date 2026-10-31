@@ -1,12 +1,10 @@
 
-## T4.1 Record and replay modes (done) 2026-10-30
-- What: `contracts/replay_csv.md` (columns `topic,t_meas,retain,payload_json`; contract 1.1.0, additive, process in D25); `ccm_sim.replay` (CSV writer and reader, `replay()` paced by `t_meas`, `--retime` shift, `MqttRecorder`); `ccm-sim record --broker H:P --out FILE.csv [--duration 30m]` and `ccm-sim replay --file FILE.csv [--speed N|max] [--retime] [--broker H:P]`.
-- Verify: `make check` green. Generate, write CSV, read back: lossless; replay without `--retime` is message-for-message identical; with `--retime` only time fields differ by one constant (spacing kept) and the last message lands at the target time; payloads validate; pacing sleeps sum to span/speed and a buffered flush does not wait; a real-broker test records `ccm/#` to CSV and replays it identically.
-- Commit: see git log (feat(sim): add record and replay modes)
-- Notes: D25 explains the contract bump and that `--retime` makes the recording end when the replay finishes (at `max` speed that is exactly now). Replay reconnects each node with its own client and last will.
-. The will payload carries the connect-time `t`.
-the truth, and a driver that never crosses its threshold raises an error mentioning thresholds.yaml (D6). `silence` is parsed into `truth.silences` and implemented in T3.9. `expect:` is only loosely schema-checked until T3.10.
-`, `dist`, `node_modules` without trailing slash so check-ignore matches nonexistent paths.
+## T5.1 Status, history and events (done) 2026-10-30
+- What: `ccm_sim.mockapi` (`app.py` FastAPI routes `/api/status`, `/api/history`, `/api/events`, dev-only `/api/_mock/scenario` and `/api/_mock/info`; `state.py` runs the scenario in-process, 1-minute rollups, card levels/attribution/correlation from `expect:` entries via `states_at`, numbers from the generated data and parameter baselines; `templates.py` reason sentences). `ccm-sim serve-mock --scenario --speed --port [--fast-forward [DUR]] [--learning]`. Learning mode: baselines learn for 2 h of sim time.
+- Verify: `make check` green. TestClient: for every scenario, at five sim times, status, 12 history metrics and events all pass `contracts.validate` and card levels and attributions equal the expectations (multi-day scenarios are `slow`, run by sim-eval; both passed, 66 s). Story tests for scrubber, illness (W2 only), dropout, history, events, learning, scenario switch and the background thread.
+- Commit: see git log (feat(mockapi): serve status, history and events from scenarios)
+- Notes: all mock crew report `src: "sim"` (honest labelling). Events are chronological ascending with ids `e-N` stable as new events append. The CUSUM curve in History is illustrative, derived from the truth offsets (the mock detects nothing). `MockState.advance_to(t)` is the synchronous hook the tests use; `start()` runs a paced background thread. T5.3 formalises the copy-rule tests for `templates.py`.
+ paths.
 
 ## T0.3 Python package skeleton (done) 2026-10-30
 - What: `sim/pyproject.toml` (src layout, `ccm-sim` script, ruff line length 100, mypy strict), `ccm_sim.cli` with `--version`, one smoke test, Makefile `setup`, `lint`, `test`, `check`.

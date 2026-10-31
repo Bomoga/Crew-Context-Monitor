@@ -40,6 +40,11 @@ def _hour_utc(t: float) -> float:
     return (t % SEC_PER_DAY) / 3600.0
 
 
+def circadian_hr(amp: float, t: float) -> float:
+    """The circadian heart-rate term: minimum near 04:00 UTC, maximum near 16:00 UTC."""
+    return amp * math.cos(2 * math.pi * (_hour_utc(t) - 16.0) / 24.0)
+
+
 @dataclass(frozen=True)
 class Snapshot:
     """Physiology at one grid time."""
@@ -89,7 +94,7 @@ class CrewPhysiology:
 
     # -- model pieces -------------------------------------------------------------------------
     def circadian_hr(self, t: float) -> float:
-        return self.p["hr_circ_amp"] * math.cos(2 * math.pi * (_hour_utc(t) - 16.0) / 24.0)
+        return circadian_hr(self.p["hr_circ_amp"], t)
 
     def _circ_rmssd(self, t: float) -> float:
         return self.p["rmssd_circ_frac"] * math.cos(2 * math.pi * (_hour_utc(t) - 4.0) / 24.0)

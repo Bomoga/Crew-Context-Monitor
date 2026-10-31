@@ -52,6 +52,20 @@ def build_parser() -> argparse.ArgumentParser:
     rep.add_argument("--retime", action="store_true", help="shift times so the replay looks live")
     rep.add_argument("--broker", help="host:port of the MQTT broker (default: print JSONL)")
 
+    srv = sub.add_parser("serve-mock", help="serve the mock API (and built dashboard) on a port")
+    srv.add_argument("--scenario", default="scrubber_failure")
+    srv.add_argument("--speed", default="60", help="simulated seconds per real second, or 'max'")
+    srv.add_argument("--port", type=int, default=8000)
+    srv.add_argument("--host", default="127.0.0.1")
+    srv.add_argument("--seed", type=int, default=1)
+    srv.add_argument(
+        "--fast-forward",
+        nargs="?",
+        const="1h",
+        help="start with this much simulated history already generated (default 1h)",
+    )
+    srv.add_argument("--learning", action="store_true", help="start with baselines still learning")
+
     gen = sub.add_parser("generate", help="write a scenario to a JSONL file at max speed")
     common(gen)
     gen.add_argument("--out", required=True, help="output JSONL path")
@@ -114,6 +128,30 @@ def _run(
     run_world(_world(args, default_start), sink, 1.0 if speed is None else speed)
 
 
+def _serve_mock(args: argparse.Namespace) -> int:
+    import uvicorn
+
+    from ccm_sim.mockapi.app import create_app
+    from ccm_sim.mockapi.state import MockState
+
+    speed = _parse_speed(args.speed)
+    ahead = parse_duration(args.fast_forward) if args.fast_forward else 0.0
+    try:
+        state = MockState(
+            args.scenario,
+            speed,
+            seed=args.seed,
+            learning=args.learning,
+            fast_forward=ahead,
+            start_thread=speed != "max",
+        )
+    except ScenarioError as exc:
+        raise SystemExit(str(exc)) from exc
+    uvicorn.run(create_app(state), host=args.host, port=args.port, log_level="warning")
+    state.stop()
+    return 0
+
+
 def _record(args: argparse.Namespace) -> int:
     host, port = _broker(args.broker)
     writer = CsvWriter(args.out)
@@ -163,6 +201,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = parser.parse_args(argv)
     if args.command == "scenarios":
         return _scenarios(args.action, args.names)
+    if args.command == "serve-mock":
+        return _serve_mock(args)
     if args.command == "record":
         return _record(args)
     if args.command == "replay":
