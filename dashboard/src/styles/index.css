@@ -22,6 +22,9 @@
   --red: #9b1c14;
   --red-bg: #fde3e0;
   --red-mark: #d3342a;
+
+  --series-co2: #b45309;
+  --series-prv: #1d4ed8;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -42,6 +45,9 @@
     --red: #ff9d94;
     --red-bg: #3d1311;
     --red-mark: #ff5a4d;
+
+    --series-co2: #f2b66d;
+    --series-prv: #8fb0ff;
   }
 }
 

@@ -18,12 +18,14 @@ export interface Polled<T> {
 
 /**
  * Calls `fetcher` now and then every `intervalMs`, aborting a request that is still in flight
- * when the next one starts and everything on unmount.
+ * when the next one starts and everything on unmount. A change of `restartKey` (for example the
+ * chosen crew member) polls again at once; the last data stays until the new data arrives.
  */
 export function usePolling<T>(
   fetcher: (signal: AbortSignal) => Promise<T>,
   intervalMs = POLL_MS,
   staleMs = STALE_MS,
+  restartKey: unknown = null,
 ): Polled<T> {
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<Error | null>(null);
@@ -67,7 +69,7 @@ export function usePolling<T>(
       clearInterval(clockTimer);
       controller.current?.abort();
     };
-  }, [poll, intervalMs]);
+  }, [poll, intervalMs, restartKey]);
 
   const reference = lastSuccessAt ?? startedAt;
   return {

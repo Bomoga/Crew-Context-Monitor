@@ -481,7 +481,7 @@ Copy rules apply to every view (from the onboarding doc): one plain sentence per
   - Accept: tests for each level fixture; card positions do not change between fixtures; no z values rendered.
   - Commit: `feat(dashboard): add risk cards`
 
-- [ ] **T6.6 Fused timeline**
+- [x] **T6.6 Fused timeline**
   - Depends: T6.5
   - Do: Recharts chart: cabin CO2 (mmHg, left axis) over the selected crew's pulse-rate variability (ms, right axis), toggle to HR residual; last 6 h; vertical markers for events, with simulated events drawn distinctly; when `correlation` is present, both markers and the lag label appear.
   - Accept: tests with `history_prv_6h`, `events_mixed`, `correlation_active` fixtures: markers count equals events in range; lag label text matches the fixture sentence; toggle switches series.

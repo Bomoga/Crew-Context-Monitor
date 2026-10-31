@@ -1,4 +1,5 @@
 import { render } from "@testing-library/react";
+import { vi } from "vitest";
 import { MemoryRouter } from "react-router";
 import type { Status } from "../src/api/types.gen";
 import { AppRoutes } from "../src/App";
@@ -42,4 +43,27 @@ export function renderRoute(path: string, value: Polled<Status> = polled(status(
       </MemoryRouter>
     </StatusContext.Provider>,
   );
+}
+
+/**
+ * Stub `fetch` with a router: `route(url, init)` returns a JSON body (or `undefined` for a 404).
+ * Every request is recorded in the returned `calls` list.
+ */
+export function mockApi(route: (url: URL, init?: RequestInit) => unknown) {
+  const calls: { url: URL; init?: RequestInit }[] = [];
+  vi.stubGlobal("fetch", (input: string, init?: RequestInit) => {
+    const url = new URL(input, "http://localhost");
+    calls.push({ url, init });
+    const body = route(url, init);
+    if (body === undefined) {
+      return Promise.resolve(new Response('{"detail":"Not Found"}', { status: 404 }));
+    }
+    return Promise.resolve(
+      new Response(JSON.stringify(body), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }),
+    );
+  });
+  return calls;
 }

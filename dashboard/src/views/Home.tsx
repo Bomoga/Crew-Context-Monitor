@@ -1,6 +1,7 @@
 import { CrewStrip } from "../components/CrewStrip";
 import { RiskCards } from "../components/RiskCards";
 import { StatusBar } from "../components/StatusBar";
+import { Timeline } from "../components/Timeline";
 
 export default function Home() {
   return (
@@ -9,6 +10,7 @@ export default function Home() {
       <StatusBar />
       <CrewStrip />
       <RiskCards />
+      <Timeline />
     </div>
   );
 }
