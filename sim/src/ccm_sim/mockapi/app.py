@@ -7,12 +7,14 @@ development only.
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any, Literal
 
 from fastapi import FastAPI, HTTPException, Query
 from pydantic import BaseModel, Field
 
 from ccm_sim.mockapi.state import METRICS, MockState
+from ccm_sim.mockapi.static import default_dist, mount_dashboard
 from ccm_sim.scenario import ScenarioError
 
 MetricName = Literal[
@@ -49,8 +51,11 @@ class ScenarioSwitch(BaseModel):
     speed: float | Literal["max"] = 60.0
 
 
-def create_app(state: MockState | None = None) -> FastAPI:
-    """Build the app around ``state`` (default: scrubber_failure in manual, max-speed mode)."""
+def create_app(state: MockState | None = None, dist: Path | None = None) -> FastAPI:
+    """Build the app around ``state`` (default: scrubber_failure in manual, max-speed mode).
+
+    If ``dist`` (default: ``dashboard/dist``) holds a built dashboard it is served at ``/``.
+    """
     app = FastAPI(title="Crew Context Monitor mock API", version="1.0.0")
     app.state.mock = state or MockState(speed="max")
 
@@ -145,4 +150,5 @@ def create_app(state: MockState | None = None) -> FastAPI:
             "finished": s.finished,
         }
 
+    mount_dashboard(app, dist if dist is not None else default_dist())
     return app

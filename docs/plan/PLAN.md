@@ -440,7 +440,7 @@ Each task lists **Depends**, **Do**, **Accept** (commands and checks that must p
   - Accept: a test renders every template for every scenario state and asserts: no "caused by"; no "z-score" or raw z values; "HRV" never appears without "pulse-rate variability"; radiation text includes "proxy"; every reason contains a digit.
   - Commit: `feat(mockapi): add plain-language reason templates`
 
-- [ ] **T5.4 Static dashboard hosting**
+- [x] **T5.4 Static dashboard hosting**
   - Depends: T5.1
   - Do: if `dashboard/dist` exists, mount it at `/` with SPA fallback (unknown non-`/api` paths return `index.html`); `/api/*` 404s stay JSON.
   - Accept: TestClient: `/history` and `/domain/air` return `index.html` when a fake dist exists; `/api/nope` returns JSON 404.

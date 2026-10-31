@@ -1,7 +1,10 @@
 
-## T5.3 Copy templates and copy-rule tests (done) 2026-10-30
-- What: `mockapi/copyrules.py` (the PLAN P6 rules as a checker: no "caused by", no z-scores, no "HRV", radiation always "proxy", every reason one sentence with a digit) plus `test_mockapi_copy.py`. The templates themselves landed with T5.1; this task adds the proof.
-- Verify: `make check` green. The checker catches each violation kind; every `template_cases()` combination (domain x level x attribution x drift) passes; attribution phrases match the plan ("3 of 3 crew show lower pulse-rate variability since 02:30; cabin CO2 up 2.1 mmHg", "Only W2 changed; cabin within normal", "Not enough data to attribute", the correlation sentence); every status, event and Earth queue string for every scenario at five sim times passes (multi-day scenarios `slow`, run by sim-eval); all valid contract fixtures pass too.
+## T5.4 Static dashboard hosting (done) 2026-10-30
+- What: `mockapi/static.py`: if `dashboard/dist/index.html` exists (or `CCM_DASHBOARD_DIST`, or `create_app(dist=...)`), real files are served as they are and every other non-`/api` path returns `index.html` (`Cache-Control: no-cache`); unknown `/api/*` paths keep the JSON 404. Paths cannot escape the dist folder.
+- Verify: `make check` green. With a fake dist, `/`, `/history`, `/domain/air`, `/events`, `/settings` return index.html; `/assets/app.js` is served as JavaScript; `/api/status` still validates; `/api/nope` is a JSON 404; traversal attempts do not leak a file outside dist; no dist means no static routes.
+- Commit: see git log (feat(mockapi): serve built dashboard with spa fallback)
+- Notes: P5 is complete. The real FastAPI service can reuse `mount_dashboard` as is.
+ll valid contract fixtures pass too.
 - Commit: see git log (feat(mockapi): add plain-language reason templates)
 - Notes: the same rules must be re-implemented for the dashboard in T6.14 (Vitest scans visible text).
 it log (feat(mockapi): add earth queue, settings and check-in)
