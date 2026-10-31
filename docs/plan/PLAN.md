@@ -388,7 +388,7 @@ Each task lists **Depends**, **Do**, **Accept** (commands and checks that must p
   - Accept: HR peaks at 150 +/- 8; HR minus the model's prediction stays within +/- 5 bpm (the model explains it); motion flag true for at least 95% of block windows.
   - Commit: `feat(sim): add exercise block scenario`
 
-- [ ] **T3.8 thermal_fault**
+- [x] **T3.8 thermal_fault**
   - Depends: T3.1
   - Do: cabin temperature 22 to 29 C over 2 h; skin temperature follows through the lag; HR change only through the `beta2` term.
   - Accept: cabin leaves the 18 to 27 C band at the expected time; skin follows within the lag tolerance; HR minus model prediction within +/- 3 bpm.

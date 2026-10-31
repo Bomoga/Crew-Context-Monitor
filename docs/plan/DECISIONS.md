@@ -36,3 +36,7 @@ Measured on a 1 h quiet run at HR 62 and RMSSD target 45 ms, seeds 1 to 5: mean 
 ## D22 Sleep debt drift applies to W1 only (2026-10-30)
 
 T3.6 asks to record the crew choice. The `sleep_debt_drift` scenario drifts W1 only (HR +1 bpm/day, RMSSD -3 ms/day for 6 days). Because W2, W3 and the cabin stay flat, attribution can only say individual, as the v2 scenario library expects. The scenario lasts 6 days; the offsets hold at day 6 values (+6 bpm, -18 ms) if a longer duration is requested.
+
+## D23 Averaging window for "HR minus model" checks (2026-10-30)
+
+T3.7 and T3.8 compare message HR with the model's prediction. A single message HR carries about 1 bpm of AR noise plus 1 to 2 bpm of beat-averaging noise, so single-message comparisons would breach any +/-3 bpm limit by chance. Measured maximum |residual| over 5 seeds of the 5 h thermal run: 1-minute means 2.77 to 3.16 bpm (limit 3, so a few breach by noise alone); 5-minute means 1.82 to 2.14 bpm. The tests use 1-minute means for the 30 minute exercise block (maximum 3.76 against a limit of 5) and 5-minute means for the 5 h thermal run. Tolerances are unchanged from the plan.

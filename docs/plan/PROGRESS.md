@@ -1,13 +1,10 @@
 
-## T3.7 exercise_block (done) 2026-10-30
-- What: `exercise_block.yaml` (2 h): W1 exercises 30 min from +30 min (act 1.2 g, recovery tau 3 min); expect `quiet: [cardio]`. `Snapshot.hr_model` added to the physiology model (its own explanation of HR, no offsets or noise).
-- Verify: `make check` green. Seeds 1 to 5: 1-minute mean HR peaks at 147.4 to 149.8 (target 150 +/- 8); HR minus model within 3.8 bpm (limit 5); motion true for all 360 block messages, false before the block; start and end events name W1.
-- Commit: see git log (feat(sim): add exercise block scenario)
-- Notes: the model comparison uses the state held from each 5 s window start, which is what drives that window's beats.
- (T3.10) and `make check-all`.
-dled in T3.10).
-.
-ommit: see git log (feat(sim): add scrubber failure scenario)
+## T3.8 thermal_fault (done) 2026-10-30
+- What: `thermal_fault.yaml` (5 h): cabin temperature ramps to 29 C over 2 h from +30 min; mark "Cabin passes 27 C"; expect thermal yellow from 24.5 C, red above 27 C, cardio quiet.
+- Verify: `make check` green. Seeds 1 to 5: truth crosses 27 C at 30 + 120 * 5/7 min (within 1 min) and the measured cabin crosses within 5 min of it; measured skin minus a paired control tracks 0.25 * lagged cabin offset (tau 20 min) within 0.12 C; HR minus model (5-minute means) at most 2.14 bpm, and the model's rise net of the circadian term equals beta2 * 7 C within 1 bpm.
+- Commit: see git log (feat(sim): add thermal fault scenario)
+- Notes: see D23 for the averaging window. Skin has no scenario offset; it follows through the physiology lag.
+d scrubber failure scenario)
 - Notes: see D21 for the interpretation of the "red raised above the ramp peak" test and the 5 minute tolerance.
 ines. `ramp` and `set` hold after finishing unless `for` is given; an event emits an end event only if every effect has `for` (or it has `end_label`). Coupled effects follow the noise-free driver level; peak excess is computed from the truth, and a driver that never crosses its threshold raises an error mentioning thresholds.yaml (D6). `silence` is parsed into `truth.silences` and implemented in T3.9. `expect:` is only loosely schema-checked until T3.10.
 `, `dist`, `node_modules` without trailing slash so check-ignore matches nonexistent paths.
