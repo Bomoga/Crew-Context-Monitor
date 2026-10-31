@@ -143,3 +143,11 @@ def test_raising_red_keeps_the_ramp_crossing_red(tmp_path: Path) -> None:
         load_scenario("scrubber_failure"), 1, DEFAULT_START, thresholds=load_thresholds(bad)
     )
     assert "co2_passes_red" in {e.name for e in world.events}
+
+
+def test_a_shortened_run_keeps_the_full_scenario_peak() -> None:
+    full = build_world(load_scenario("scrubber_failure"), 1, DEFAULT_START)
+    short = build_world(load_scenario("scrubber_failure"), 1, DEFAULT_START, duration=3600.0)
+    t = DEFAULT_START + 3500.0
+    assert short.truth.offset("crew.W1.rmssd", t) == full.truth.offset("crew.W1.rmssd", t)
+    assert short.truth.level("cabin.co2", t) == full.truth.level("cabin.co2", t)

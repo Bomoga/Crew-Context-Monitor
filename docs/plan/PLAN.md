@@ -400,7 +400,7 @@ Each task lists **Depends**, **Do**, **Accept** (commands and checks that must p
   - Accept: after the flush, `seq` has no gaps; flushed messages carry `t_meas` inside the silent window; every sim minute of the scenario has at least one cabin message by `t_meas`.
   - Commit: `feat(sim): add wifi and ble dropout scenarios`
 
-- [ ] **T3.10 Scenario expectations and sim-eval**
+- [x] **T3.10 Scenario expectations and sim-eval**
   - Depends: T3.2 to T3.9
   - Do: an `expect:` block in every scenario per Appendix B.3 (encoding the "what the pipeline should show" column of the v2 scenario library). `ccm-sim scenarios check` verifies each expectation is consistent with the truth channels and thresholds (for example, an Air red window lies where CO2 is at or above red). `make sim-eval` runs every scenario x 5 seeds through its physics tests and the consistency check (pytest marker `slow`).
   - Accept: `make sim-eval` green; `ccm-sim scenarios check` lists every scenario as consistent.

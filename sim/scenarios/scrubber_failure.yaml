@@ -22,5 +22,5 @@ marks:
 expect:
   - {card: air, level: yellow, from: "cabin.co2 >= air.co2.yellow", until: "cabin.co2 >= air.co2.red"}
   - {card: air, level: red, from: "cabin.co2 >= air.co2.red"}
-  - {card: cardio, level: yellow, from: "mark:co2_passes_yellow + 25m", attribution: cabin, crew: "*"}
+  - {card: cardio, level: yellow, from: "mark:co2_passes_yellow + 75m", attribution: cabin, crew: "*"}
   - {correlation: {x: co2_mmhg, y: prv, lag_min: [15, 25]}}

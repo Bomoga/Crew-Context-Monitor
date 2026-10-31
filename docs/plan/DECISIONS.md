@@ -40,3 +40,11 @@ T3.6 asks to record the crew choice. The `sleep_debt_drift` scenario drifts W1 o
 ## D23 Averaging window for "HR minus model" checks (2026-10-30)
 
 T3.7 and T3.8 compare message HR with the model's prediction. A single message HR carries about 1 bpm of AR noise plus 1 to 2 bpm of beat-averaging noise, so single-message comparisons would breach any +/-3 bpm limit by chance. Measured maximum |residual| over 5 seeds of the 5 h thermal run: 1-minute means 2.77 to 3.16 bpm (limit 3, so a few breach by noise alone); 5-minute means 1.82 to 2.14 bpm. The tests use 1-minute means for the 30 minute exercise block (maximum 3.76 against a limit of 5) and 5-minute means for the 5 h thermal run. Tolerances are unchanged from the plan.
+
+## D24 Expectation oracle and the scrubber cardio start time (2026-10-30)
+
+`ccm_sim.expectations` checks every `expect:` entry against an oracle derived from the truth channels: Air from the CO2 thresholds, Thermal from the cabin band and a steady skin residual (cabin swing of 2.0 C), Radiation from tumbling 10-minute windows with the Poisson line (yellow after one complete exceeding window, red after two), Cardiovascular from crew offsets (RMSSD change of 8 ms or HR change of 10 bpm, provisional; a 6 bpm resting-HR drift stays below the line so `coincident_trends` is quiet).
+
+PLAN Appendix B.1 gives the scrubber cardio expectation as `mark:co2_passes_yellow + 25m`. With the coupling proportional to CO2 excess, the crew response is only 0.8 ms at that time, so no detector could flag it. The oracle first reaches the line 71 minutes after the yellow crossing, and the scenario ends 106 minutes after, so `scrubber_failure.yaml` now says `+ 75m`. Spec text is otherwise unchanged. The Backend lane should confirm both the detectability line and the time (OPEN_QUESTIONS.md).
+
+A coupled effect's peak excess is taken over the scenario's own duration, not a shortened run, so `--duration 1h` on `scrubber_failure` keeps the full-scale response.

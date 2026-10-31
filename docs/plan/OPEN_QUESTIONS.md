@@ -10,3 +10,4 @@ Never waited on. Confirm items come from PLAN.md Section 2.
 - `main` does not exist locally or on the remote (D17). Who creates it before the T7.5 draft PR?
 - Pi OS Bookworm Python version: the plan assumes 3.11+; confirm on the Pi.
 - WESAD/OSDR-derived physiology ranges (T2.8) were skipped because the dataset is not present. To enable: extract WESAD, set `CCM_WESAD_DIR`, and add `sim/tools/derive_params.py`.
+- Backend: scrubber_failure expects Cardiovascular yellow 75 min after CO2 passes yellow (PLAN said 25 min, which the proportional coupling cannot make detectable; D24). Please confirm the oracle line (RMSSD 8 ms or HR 10 bpm) and the time.

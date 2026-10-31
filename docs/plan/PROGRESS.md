@@ -1,8 +1,10 @@
 
-## T3.9 wifi_dropout and ble_dropout (done) 2026-10-30
-- What: `wifi_dropout.yaml` (C1 silent 8 min from +10 min) and `ble_dropout.yaml` (W1 silent 60 s from +10 min), both `buffer: true`. New `SilencedSource` in the publisher; `Record.action` ("drop"/"restore") and `drop_node`/`restore_node` on every sink: MqttSink kills the socket (broker fires the last will) and reconnects with the saved will; Memory and JSONL sinks write an `offline` status record instead.
-- Verify: `make check` green. Tests: status sequence online, offline, online, offline; no C1 records between the offline and online; flush is 48 cabin messages (12 wearable for BLE) with original `seq` (no gaps) and `t_meas` inside the window; every sim minute has a cabin message; unbuffered silence leaves a seq gap; a real-broker run delivers the last will and `seq` 1..N in order (3 runs in a row).
-- Commit: see git log (feat(sim): add wifi and ble dropout scenarios)
+## T3.10 Scenario expectations and sim-eval (done) 2026-10-30
+- What: `ccm_sim.expectations` (parse `expect:` entries and times, per-domain oracle from the truth channels, `check_expectations`, `states_at`, `correlation_at` for the mock API); `ccm-sim scenarios list|check`; `make sim-eval`; `tests/test_sim_eval.py` (slow, every scenario x 5 seeds: consistency plus schema-valid output for the first hour). All 11 scenarios carry expect blocks.
+- Verify: `make check` green (about 200 tests); `ccm-sim scenarios check` lists all 11 consistent; `make sim-eval` green, 153 tests in 3 min.
+- Commit: see git log (feat(sim): encode scenario expectations and sim-eval)
+- Notes: scrubber cardio expectation moved from +25m to +75m (D24, flagged in OPEN_QUESTIONS). Fixed a bug found by sim-eval: coupled peaks are now computed over the scenario's duration, so shortened runs keep full-scale effects.
+(sim): add wifi and ble dropout scenarios)
 - Notes: the message exactly at the silence end is published normally, not flushed. `MqttSink.drop_node` sleeps 0.2 s so the will lands before the node reconnects. The will payload carries the connect-time `t`.
 the truth, and a driver that never crosses its threshold raises an error mentioning thresholds.yaml (D6). `silence` is parsed into `truth.silences` and implemented in T3.9. `expect:` is only loosely schema-checked until T3.10.
 `, `dist`, `node_modules` without trailing slash so check-ignore matches nonexistent paths.

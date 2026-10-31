@@ -31,6 +31,10 @@ def build_parser() -> argparse.ArgumentParser:
     run.add_argument("--speed", default="1", help="speed multiplier or 'max'")
     run.add_argument("--broker", help="host:port of the MQTT broker (default: print JSONL)")
 
+    scen = sub.add_parser("scenarios", help="list scenarios or check their expectations")
+    scen.add_argument("action", choices=["list", "check"])
+    scen.add_argument("names", nargs="*", help="scenario names (default: all)")
+
     gen = sub.add_parser("generate", help="write a scenario to a JSONL file at max speed")
     common(gen)
     gen.add_argument("--out", required=True, help="output JSONL path")
@@ -51,6 +55,32 @@ def _world(args: argparse.Namespace, default_start: float) -> World:
         raise SystemExit(str(exc)) from exc
 
 
+def _scenarios(action: str, names: list[str]) -> int:
+    from ccm_sim.expectations import check_expectations
+    from ccm_sim.scenario import list_scenarios
+
+    names = names or list_scenarios()
+    if action == "list":
+        for name in names:
+            print(name)
+        return 0
+    failed = 0
+    for name in names:
+        try:
+            world = build_world(load_scenario(name), 1, DEFAULT_START)
+            problems = check_expectations(world)
+        except ScenarioError as exc:
+            problems = [str(exc)]
+        if problems:
+            failed += 1
+            print(f"INCONSISTENT {name}")
+            for line in problems:
+                print(f"  - {line}")
+        else:
+            print(f"consistent   {name}")
+    return 1 if failed else 0
+
+
 def _parse_speed(text: str) -> float | str:
     return "max" if text == "max" else float(text)
 
@@ -63,6 +93,8 @@ def _broker(text: str) -> tuple[str, int]:
 def main(argv: Sequence[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
+    if args.command == "scenarios":
+        return _scenarios(args.action, args.names)
     if args.command == "generate":
         sink: Sink = JsonlSink(args.out)
         try:

@@ -50,6 +50,8 @@ class Truth:
     ) -> None:
         self.t0 = t0
         self.duration = duration
+        # the peak a coupled effect scales to is a property of the scenario, not of a short run
+        self._peak_span = max(duration, scenario.duration)
         self.crew = crew
         self.thresholds = thresholds
         self.baselines = baselines
@@ -104,7 +106,7 @@ class Truth:
             peak = max(
                 (
                     self.driver_level(driver, self.t0 + k * GRID_STEP) - effect.thr_value
-                    for k in range(int(self.duration / GRID_STEP) + 1)
+                    for k in range(int(self._peak_span / GRID_STEP) + 1)
                 ),
                 default=0.0,
             )
