@@ -7,7 +7,7 @@ VBIN := $(shell if [ -d $(VENV)/Scripts ]; then echo $(VENV)/Scripts; else echo 
 
 DASH := dashboard
 
-.PHONY: setup lint test contracts dashboard-check check sim-eval clean
+.PHONY: setup lint test contracts types dashboard-check check sim-eval clean
 
 setup:
 	$(PYTHON) -m venv $(VENV)
@@ -25,8 +25,11 @@ test:
 contracts:
 	$(VBIN)/python -m ccm_sim.contracts
 
+types:
+	cd $(DASH) && npm run gen:types
+
 dashboard-check:
-	@if [ -f $(DASH)/package.json ]; then cd $(DASH) && npm run lint && npm run typecheck && npm test; fi
+	@if [ -f $(DASH)/package.json ]; then cd $(DASH) && npm run lint && npm run typecheck && npm test && npm run check:types-fresh; fi
 
 check: contracts lint test dashboard-check
 

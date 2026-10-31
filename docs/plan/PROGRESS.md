@@ -1,12 +1,10 @@
 
-## T5.4 Static dashboard hosting (done) 2026-10-30
-- What: `mockapi/static.py`: if `dashboard/dist/index.html` exists (or `CCM_DASHBOARD_DIST`, or `create_app(dist=...)`), real files are served as they are and every other non-`/api` path returns `index.html` (`Cache-Control: no-cache`); unknown `/api/*` paths keep the JSON 404. Paths cannot escape the dist folder.
-- Verify: `make check` green. With a fake dist, `/`, `/history`, `/domain/air`, `/events`, `/settings` return index.html; `/assets/app.js` is served as JavaScript; `/api/status` still validates; `/api/nope` is a JSON 404; traversal attempts do not leak a file outside dist; no dist means no static routes.
-- Commit: see git log (feat(mockapi): serve built dashboard with spa fallback)
-- Notes: P5 is complete. The real FastAPI service can reuse `mount_dashboard` as is.
-ll valid contract fixtures pass too.
-- Commit: see git log (feat(mockapi): add plain-language reason templates)
-- Notes: the same rules must be re-implemented for the dashboard in T6.14 (Vitest scans visible text).
+## T6.1 Scaffold and generated types (done) 2026-10-30
+- What: Vite React TypeScript app in `dashboard/` (Tailwind v4, react-router, Recharts, ajv, Vitest with Testing Library and jsdom, Playwright with axe, ESLint, Prettier) with an `/api` dev proxy to 127.0.0.1:8000; scripts `lint`, `typecheck`, `test`, `build`, `gen:types`, `check:types-fresh`, `e2e`. `make setup` runs `npm ci`; `make check` runs the dashboard lint, typecheck, vitest and types-fresh; `make types` regenerates `src/api/types.gen.ts` from `contracts/api`.
+- Verify: `make check` green with the dashboard steps (1 vitest smoke test); `npm run gen:types` output is committed and `check:types-fresh` passes.
+- Commits: 46cbc2e build(dashboard): scaffold vite react app with tooling; then feat(dashboard): generate api types from contracts
+- Notes: versions in D26. Contract schemas for `status.cards` are tupled for TypeScript only (see D26). Playwright browsers are not installed yet (T6.13).
+ame rules must be re-implemented for the dashboard in T6.14 (Vitest scans visible text).
 it log (feat(mockapi): add earth queue, settings and check-in)
 - Notes: crew_only auto-approves by default (matches the `earth_queue.pending` fixture). Reset-baseline ignores `metric` (any value restarts that crew member's learning timer); while any crew member is learning, all alerts are held back and the status bar shows the longest remaining time.
 5.3 formalises the copy-rule tests for `templates.py`.
