@@ -1,12 +1,9 @@
 
-## T6.10 Events view (done) 2026-10-31
-- What: `/events`: chronological log, newest first (UTC time, kind, sentence, crew and domain), kind filter (All, Spikes, Drifts, Links, Simulated events, Check-ins, Nodes), a "Simulated" badge on simulator events, and check-ins styled as muted context ("Check-in (context)"). Refreshes every 10 s.
-- Verify: `make check` green; 88 vitest tests with `events_mixed`: newest first, badge only on e-120, check-in text and muted class, each filter shows only its kind, All restores everything, empty state.
-- Commit: see git log (feat(dashboard): add events view)
-co2_mmhg&hours=168&step=3600` with no crew; the CUSUM alarm line appears once; a measure without CUSUM says so; CO2 shows both limit lines.
-- Commit: see git log (feat(dashboard): add history view)
-- Notes: the crew selector shares the selection with the crew strip.
-son line), detector text, model coefficients (38.2, 21.5, 0.7), the radiation sentence with "proxy", and the not-found case.
+## T6.11 Settings view (done) 2026-10-31
+- What: `/settings`: crew list with a Reset baseline button per member that opens an in-app `ConfirmDialog` (role alertdialog, focus starts on Cancel, Escape cancels, Tab stays inside; the browser `confirm()` is never used); an enroll form (id must be W plus a number, name 1 to 40 characters, checked before any request); three auto-approve checkboxes (crew only, flight surgeon, urgent) that save the whole object optimistically and roll back with an alert on failure.
+- Verify: `make check` green; 97 vitest tests assert request bodies: PUT `/api/settings` `{crew_only:true, flight_surgeon:true, urgent:false}`; POST `/api/settings/enroll` `{id:"W4", name:"Alex"}`; POST `/api/settings/reset-baseline` `{crew:"W2", metric:null}` only after confirmation (none on Cancel or Escape, `window.confirm` never called); bad ids or empty names send nothing; failures show alerts.
+- Commit: see git log (feat(dashboard): add settings view)
+ not-found case.
 - Commit: see git log (feat(dashboard): add domain detail view)
 - Notes: the baseline band and limits are whatever the API sends; the dashboard decides nothing.
 work in tests; `mockApi` in helpers routes by URL) and gives Recharts a size, since jsdom has no layout.

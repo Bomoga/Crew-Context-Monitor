@@ -511,7 +511,7 @@ Copy rules apply to every view (from the onboarding doc): one plain sentence per
   - Accept: tests with `events_mixed`.
   - Commit: `feat(dashboard): add events view`
 
-- [ ] **T6.11 Settings view**
+- [x] **T6.11 Settings view**
   - Depends: T6.3
   - Do: enroll crew, reset baseline (in-app confirm dialog; no browser `confirm()`), auto-approve toggles per tier.
   - Accept: tests assert request bodies; reset requires confirmation.
