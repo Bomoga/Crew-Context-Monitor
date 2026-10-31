@@ -18,8 +18,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest", "ruff", "mypy", "types-PyYAML", "types-jsonschema"]
-broker = ["amqtt"]
+dev = ["pytest", "ruff", "mypy", "types-PyYAML", "types-jsonschema", "amqtt"]
 
 [project.scripts]
 ccm-sim = "ccm_sim.cli:main"

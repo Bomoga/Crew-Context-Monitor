@@ -80,3 +80,9 @@ atform: Windows 11 with Git Bash.
 - Verify: `make check` green, 81 tests. `ccm-sim generate --scenario quiet --duration 2h --out data/q.jsonl` writes 5048 lines: 1440 wearable messages per crew, 720 cabin, 8 status; ordered by `t_meas`; W1 output identical with or without W3.
 - Commit: see git log (feat(sim): publish to mqtt, jsonl and memory sinks)
 - Notes: generate defaults to start 2026-11-01T00:00:00Z and 1 h duration; run defaults to now and prints JSONL without `--broker`. MqttSink is untested until T2.7. Scenario sources plug in through the `Source` protocol.
+
+## T2.7 Broker integration test (done) 2026-10-30
+- What: `tests/conftest.py` `broker` fixture (mosquitto if on PATH, else in-process amqtt 0.12.1 on a free port, else skip with a BLOCKERS pointer) and `test_mqtt_integration.py`. `Publisher.run(finish=False)` added for it. `amqtt` moved into the `dev` extra so CI runs the test.
+- Verify: `make check` green, 82 tests, integration test passed 4 times in a row (about 2 s). 10 sim minutes at max speed delivered 360 wearable and 60 cabin messages; a late subscriber saw retained `online` on all four status topics; `MqttSink.kill_node("W2")` delivered the `offline` last will.
+- Commit: see git log (test(sim): add mqtt broker integration test)
+- Notes: no mosquitto on this host, so amqtt was the broker; no skip needed, no BLOCKERS entry.

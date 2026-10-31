@@ -90,8 +90,11 @@ class Publisher:
             if offline:
                 self.sink.publish(offline)
 
-    def run(self, until: float) -> int:
-        """Publish everything with ``t_meas <= until``; return the number of records sent."""
+    def run(self, until: float, finish: bool = True) -> int:
+        """Publish everything with ``t_meas <= until``; return the number of records sent.
+
+        With ``finish=False`` the offline statuses are left unsent (tests kill nodes instead).
+        """
         sent = 0
         self.start()
         while self.sources:
@@ -102,5 +105,6 @@ class Publisher:
             for record in source.pop():
                 self.sink.publish(record)
                 sent += 1
-        self.finish(until)
+        if finish:
+            self.finish(until)
         return sent

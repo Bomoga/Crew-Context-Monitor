@@ -331,7 +331,7 @@ Each task lists **Depends**, **Do**, **Accept** (commands and checks that must p
   - Accept: `ccm-sim generate --scenario quiet --duration 2h --out data/q.jsonl` writes 1440 wearable messages per crew and 720 cabin messages, plus status records; JSONL round trip test; output order is non-decreasing in `t_meas`.
   - Commit: `feat(sim): publish to mqtt, jsonl and memory sinks`
 
-- [ ] **T2.7 Broker integration test**
+- [x] **T2.7 Broker integration test**
   - Depends: T2.6
   - Do: pytest fixture starts `mosquitto -p <free port>` if on PATH; otherwise tries `amqtt` in-process. Test: subscribe `ccm/#`, run 10 sim minutes at max speed, assert message counts, retained `online` on each status topic, and that killing one node's client delivers its `offline` last will. If neither broker works after 2 attempts, mark the test `skip(reason=...)`, add a `BLOCKERS.md` entry (non-fatal, task still `[x]`), and note it in `OPEN_QUESTIONS.md`.
   - Accept: test passes, or the documented skip path is followed exactly.
