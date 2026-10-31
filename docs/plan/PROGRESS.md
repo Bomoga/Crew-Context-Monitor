@@ -62,3 +62,9 @@ atform: Windows 11 with Git Bash.
 - Verify: `make check` green, 55 tests. Quiet-day means within tolerance for W1 to W3; paired runs: +3 C cabin raises HR by beta2*3 (0.8 bpm per C) within 1 bpm; rest to exercise raises HR by beta1*delta_act within 3 bpm; skin reaches 63% in 1200 +/- 180 s.
 - Commit: see git log (feat(sim): model crew physiology with activity and cabin coupling)
 - Notes: HR is hr0 at act_ref = 0.06 g, so beta1 = 77 bpm/g gives 150 bpm at 1.2 g. Cabin temperature comes in as a callable. T2.5 feeds `hr_fn`/`rmssd_fn` to the beat generator.
+
+## T2.4 Cabin environment and radiation counts (done) 2026-10-30
+- What: `ccm_sim.cabin.CabinModel` (10 s grid; CO2, temperature, RH, VOC, PM as integers, Geiger `c10s` Poisson and `cpm` as the rolling 60 s sum), `sim/params/cabin.yaml`, and a shared `ccm_sim.params` loader that physiology now uses too.
+- Verify: `make check` green, 68 tests. 5 seeds x 6 h: mean cpm within 1 of 18, c10s variance/mean in [0.8, 1.2], all fields inside schema ranges; offsets for co2, temp and cpm take effect.
+- Commit: see git log (feat(sim): model cabin environment and radiation counts)
+- Notes: scenario hooks are `offset_fn(target, t)` with targets co2 (ppm), temp (C), rh, voc and cpm (counts per minute). `CabinModel.temp_fn` feeds `CrewPhysiology.cabin_temp_fn`.

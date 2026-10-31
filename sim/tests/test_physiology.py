@@ -5,13 +5,8 @@ import numpy as np
 import pytest
 import yaml
 
-from ccm_sim.physiology import (
-    PARAMS_DIR,
-    CrewPhysiology,
-    ParamsError,
-    Snapshot,
-    load_physiology,
-)
+from ccm_sim.params import PARAMS_DIR, ParamsError
+from ccm_sim.physiology import CrewPhysiology, Snapshot, load_physiology
 
 T0 = 1_760_000_000.0
 DAY = 86400.0

@@ -11,42 +11,28 @@ import math
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
 
 import numpy as np
 import yaml
 
+from ccm_sim.params import PARAMS_DIR, flatten
 from ccm_sim.rng import stream
 
 DT = 5.0
 CABIN_T_REF = 22.0
 SEC_PER_DAY = 86400.0
-PARAMS_DIR = Path(__file__).resolve().parents[2] / "params"
 _CHUNK = 2048
 
 OffsetFn = Callable[[str, float], float]
 
 
-class ParamsError(ValueError):
-    """Raised when a parameter file is malformed or a parameter has no source."""
-
-
-def _flatten(block: dict[str, Any], where: str) -> dict[str, float]:
-    out: dict[str, float] = {}
-    for name, leaf in block.items():
-        if not isinstance(leaf, dict) or "value" not in leaf or not leaf.get("source"):
-            raise ParamsError(f"{where}.{name} needs a value and a source")
-        out[name] = float(leaf["value"])
-    return out
-
-
 def load_physiology(path: Path | None = None) -> dict[str, dict[str, float]]:
     """Return ``{crew_id: params}`` with the defaults merged under each crew override."""
     raw = yaml.safe_load((path or PARAMS_DIR / "physiology.yaml").read_text(encoding="utf-8"))
-    defaults = _flatten(raw["defaults"], "defaults")
+    defaults = flatten(raw["defaults"], "defaults")
     crews: dict[str, dict[str, float]] = {}
     for crew_id, override in raw["crew"].items():
-        crews[crew_id] = {**defaults, **_flatten(override or {}, f"crew.{crew_id}")}
+        crews[crew_id] = {**defaults, **flatten(override or {}, f"crew.{crew_id}")}
     return crews
 
 

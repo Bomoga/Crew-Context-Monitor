@@ -313,7 +313,7 @@ Each task lists **Depends**, **Do**, **Accept** (commands and checks that must p
   - Accept: tests: quiet-day means match params within tolerance; a +3 C cabin step raises HR by `beta2 * 3` within 1 bpm after settling; a rest-to-exercise step raises HR by `beta1 * delta_act` within 3 bpm; skin temperature reaches 63% of a step in 20 +/- 3 min.
   - Commit: `feat(sim): model crew physiology with activity and cabin coupling`
 
-- [ ] **T2.4 Cabin environment and radiation counts**
+- [x] **T2.4 Cabin environment and radiation counts**
   - Depends: T2.1
   - Do: `cabin.py`: CO2 ppm baseline with noise and a crew-metabolic diurnal term; temperature, RH, VOC index, PM1/PM2.5/PM10 as integers; Geiger counts as Poisson per 10 s (`c10s`) at rate cpm/6, and `cpm` as the rolling 60 s sum. Params in `sim/params/cabin.yaml`.
   - Accept (5 seeds, 6 h): mean cpm within 1 of 18; `c10s` variance/mean between 0.8 and 1.2; all fields inside schema ranges.
