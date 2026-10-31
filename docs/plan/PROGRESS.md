@@ -50,3 +50,9 @@ atform: Windows 11 with Git Bash.
 - Verify: `make check` green, 28 tests; speed 60 gives 60 sim seconds per fake real second; `max` never sleeps; same seed byte-identical; W1's stream unchanged when W3 draws.
 - Commit: see git log (feat(sim): add simulation clock and seeded random streams)
 - Notes: use stream names like `crew.W1.ibi`, `cabin.co2` so each process has its own numbers.
+
+## T2.2 Beat-level inter-beat intervals (done) 2026-10-30
+- What: `ccm_sim.beats`: `BeatGenerator` (incremental, `advance_to(t_end)`), `generate_beats`, `rmssd`. AR(1) plus respiratory term per Appendix C.
+- Verify: `make check` green, 45 tests; 5 seeds: mean HR 61.86 to 62.09 (target 62), median 5-min RMSSD 44.6 to 46.1 (target 45); RMSSD step 45 to 30 reached within 15% inside 10 min; beats strictly increasing; RR within [300, 2000].
+- Commit: see git log (feat(sim): generate beat-level inter-beat intervals)
+- Notes: beats are returned as (closing beat time, interval ms). hr_fn and rmssd_fn are callables of sim time. See D20.

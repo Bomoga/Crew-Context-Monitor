@@ -301,7 +301,7 @@ Each task lists **Depends**, **Do**, **Accept** (commands and checks that must p
   - Accept: tests: at speed 60 one fake real second advances 60 sim seconds; `max` never sleeps; same seed gives byte-identical output; adding W3 leaves W1's stream identical.
   - Commit: `feat(sim): add simulation clock and seeded random streams`
 
-- [ ] **T2.2 Beat-level inter-beat intervals**
+- [x] **T2.2 Beat-level inter-beat intervals**
   - Depends: T2.1
   - Do: `beats.py` per Appendix C: RR from target HR(t) and target RMSSD(t), AR(1) beat-to-beat term, small respiratory term; produce beat times and integer-ms intervals.
   - Accept (5 seeds, 1 h quiet): mean HR within 1 bpm of target; median 5-minute RMSSD within 15% of target; when target RMSSD drops by 15 ms, the measured 5-minute RMSSD reaches within 15% of the new target within 10 minutes; beat times strictly increasing; every RR in [300, 2000] ms.

@@ -32,3 +32,7 @@ The build host is Windows 11 with Git Bash. GNU Make comes from `C:\msys64\usr\b
 ## D19 Extra API schemas and fixture naming (2026-10-30)
 
 Two schemas beyond the plan's list: `checkin_response` (the `{ok, event_id}` reply in Appendix A.10) and `settings_update` (the PUT body, the `auto_approve` object), so the dashboard has a generated type and a validator for every request and response. Fixture files are named `<kind>.<name>.json`; the plan's state names map to `status.<name>` for the nine status states, `earth_queue.pending` (earth_queue_pending), `history.prv_6h` (history_prv_6h) and `events.mixed` (events_mixed). `status.cards` is enforced as exactly four entries in the fixed order cardio, air, thermal, radiation via `prefixItems`. `source_mode` allows `mock` or `live`; `thresholds_status` allows `provisional` or `final`.
+
+## D20 Beat generator calibration factor (2026-10-30)
+
+Measured on a 1 h quiet run at HR 62 and RMSSD target 45 ms, seeds 1 to 5: mean HR 61.86 to 62.09 bpm; median 5-minute RMSSD 44.6 to 46.1 ms (about 1% above target). No calibration factor is needed; `BeatGenerator(calibration=1.0)` stays the default. Phi 0.3, respiratory amplitude 3 ms, period 4 s.
