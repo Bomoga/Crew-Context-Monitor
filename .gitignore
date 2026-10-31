@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+build/
+# Node
+node_modules
+dist
+# Generated data and reports
+data/
+playwright-report/
+test-results/
+# Secrets
+.env
+.env.*

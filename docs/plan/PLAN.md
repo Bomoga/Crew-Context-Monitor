@@ -249,7 +249,7 @@ Each task lists **Depends**, **Do**, **Accept** (commands and checks that must p
   - Accept: `git branch --show-current` prints `build/sim-dashboard`; versions recorded.
   - Commit: `chore(repo): record toolchain and start build branch`
 
-- [ ] **T0.2 Repository skeleton and tracking files**
+- [x] **T0.2 Repository skeleton and tracking files**
   - Depends: T0.1
   - Do: `README.md` (one paragraph, prototype disclaimer, link to this plan), `.gitignore` (Python, Node, `.venv`, `dist`, `data/`, Playwright reports, `.env`), `.editorconfig`, `.gitattributes` (`* text=auto eol=lf`), `docs/plan/DECISIONS.md` (Section 2 table as D1 to D16), `BLOCKERS.md`, `OPEN_QUESTIONS.md` (seed it with the "Confirm with" column of Section 2 and "repository license"), a `Makefile` whose `check` target exists and passes.
   - Accept: `make check` exits 0; `git check-ignore data/x.jsonl .venv dashboard/dist` lists all three.

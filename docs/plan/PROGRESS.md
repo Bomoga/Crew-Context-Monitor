@@ -6,3 +6,9 @@
 - Verify: `git branch --show-current` prints `build/sim-dashboard`.
 - Commit: see git log (chore(repo): record toolchain and start build branch)
 - Notes: run make with `PATH="/c/msys64/usr/bin:$PATH"`. Windows venv uses `.venv/Scripts`, not `.venv/bin`; the Makefile must handle both (T0.2/T0.3). No mosquitto, so T2.7 will use amqtt or the skip path.
+
+## T0.2 Repository skeleton and tracking files (done) 2026-10-30
+- What: README, .gitignore, .editorconfig, .gitattributes, Makefile stub with `check`, DECISIONS (D1 to D16 plus D17, D18), BLOCKERS, OPEN_QUESTIONS.
+- Verify: `make check` exits 0; `git check-ignore data/x.jsonl .venv dashboard/dist` lists all three.
+- Commit: see git log (chore(repo): scaffold repository layout and tracking docs)
+- Notes: gitignore uses `.venv`, `dist`, `node_modules` without trailing slash so check-ignore matches nonexistent paths.
