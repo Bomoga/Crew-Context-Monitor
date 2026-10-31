@@ -18,7 +18,8 @@ DOCS = [n for n in DOC_NAMES if (REPO / n).exists()]
 FENCE = re.compile(r"```bash\n(.*?)```", re.DOTALL)
 BACKTICK = re.compile(r"`([^`\n]+)`")
 PATH_ROOTS = ("docs/", "sim/", "contracts/", "dashboard/", ".github/")
-GENERATED = ("data/", "dist/", "node_modules/", ".venv/", "test-results/")
+# build outputs and caches: absent on a fresh clone, so a doc may name them anywhere in a path
+GENERATED = {"data", "dist", "node_modules", ".venv", "test-results", "playwright-report"}
 
 
 def make_targets() -> set[str]:
@@ -101,7 +102,7 @@ def test_file_paths_in_backticks_exist(name: str) -> None:
             continue
         if not token.startswith(PATH_ROOTS) and not token.startswith("scenarios/"):
             continue
-        if token.startswith(GENERATED):
+        if GENERATED & set(Path(token).parts):
             continue
         candidates = [REPO / token, REPO / "sim" / token]
         assert any(c.exists() for c in candidates), f"{name}: {token!r} does not exist"
