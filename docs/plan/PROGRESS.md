@@ -1,8 +1,10 @@
 
-## T6.3 App shell (done) 2026-10-30
-- What: react-router routes `/`, `/domain/:name`, `/history`, `/events`, `/settings` (placeholders filled by later tasks), `Layout` with title, main nav (current page marked), reserved `Banner` slot (fixed 3rem height; says stale, offline nodes, waiting or unreachable), `main`, and the footer "Decision-support prototype, not a medical device" on every route. `StatusProvider` shares the polled status. Design tokens in `styles/index.css` (light and dark, level text/background/mark colors with at least 4.5:1 contrast pairs); `LevelBadge` shows color plus word (D14) at a fixed size; `lib/levels.ts` has the words, ranks, domain names and order.
-- Verify: `make check` green; 25 vitest tests: every route renders its title and the footer (unknown domain stays inside the shell), nav marks the current page, the banner slot keeps one height with no banner, a stale banner and an offline banner, and the badge size classes are identical across levels. `npm run build` works (84 kB gzip JS; ajv and schemas are not in the bundle).
-- Commit: see git log (feat(dashboard): add app shell, routes and footer)
+## T6.4 Status bar and crew strip (done) 2026-10-30
+- What: `StatusBar` (level badge, the API's sentence, "Next step" action, domain and attribution; while any baseline is learning it shows "Learning. Alerts start in 3 h 20 min" from `learning_ends_t` minus the API time) in one fixed-height frame (`h-24`), `CrewStrip` (chip per crew member: name, level, Hardware or Simulator, Online or Offline; clicking selects the crew member for the timeline via `CrewSelectionProvider`/`useSelectedCrew`), `lib/format.ts` (durations, UTC clock times). Home now shows the status bar and strip.
+- Verify: `make check` green; 41 vitest tests over the `all_green`, `air_yellow`, `air_red_cabin` and `learning` fixtures: sentence, level word, action, attribution; identical frame classes across states; every chip shows Hardware or Simulator; offline chips; chip selection toggles `aria-pressed`.
+- Commit: see git log (feat(dashboard): add status bar and crew strip)
+- Notes: jsdom cannot measure boxes, so "identical bounding box" is asserted as identical fixed-size classes; Playwright re-checks real boxes in T6.13.
+ add app shell, routes and footer)
 - Notes: jsdom has no layout, so the real bounding-box checks happen in Playwright (T6.13). Test helpers: `test/helpers.tsx` (`renderRoute(path, polled(...))`, `status("air_yellow")`, `fixture(name)`).
 held back and the status bar shows the longest remaining time.
 5.3 formalises the copy-rule tests for `templates.py`.

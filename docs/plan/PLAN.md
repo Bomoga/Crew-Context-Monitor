@@ -469,7 +469,7 @@ Copy rules apply to every view (from the onboarding doc): one plain sentence per
   - Accept: test renders every route and finds the footer text; banner slot height is constant with and without a banner.
   - Commit: `feat(dashboard): add app shell, routes and footer`
 
-- [ ] **T6.4 Status bar and crew strip**
+- [x] **T6.4 Status bar and crew strip**
   - Depends: T6.3
   - Do: status bar shows the worst card's sentence, attribution and action in one line; learning state shows the time until alerts start; crew strip with one chip per crew (level, online, source badge), clicking a chip selects the crew for the timeline.
   - Accept: tests over the `all_green`, `air_yellow`, `air_red_cabin`, `learning` fixtures; the status bar bounding box is identical across them; each chip shows Hardware or Simulator.
