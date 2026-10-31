@@ -555,7 +555,7 @@ Copy rules apply to every view (from the onboarding doc): one plain sentence per
   - Accept: every command in `docs/demo.md` runs (hardware steps excepted, marked as such).
   - Commit: `docs(demo): add simulator and dashboard demo runbook`
 
-- [ ] **T7.3 Backend handoff**
+- [x] **T7.3 Backend handoff**
   - Depends: T7.1
   - Do: `docs/handoff-backend.md`: contract v1 and the change process; `/api` prefix and static mount code; the CO2 conversion location; `thresholds.yaml` as the source of limits; scenario `expect` blocks as the eval oracle for `make eval`; `quiet_week` JSONL for baseline pre-seeding; open items from `OPEN_QUESTIONS.md`.
   - Accept: every file path and command in the doc exists or runs.
