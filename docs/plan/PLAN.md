@@ -325,7 +325,7 @@ Each task lists **Depends**, **Do**, **Accept** (commands and checks that must p
   - Accept: 10,000 generated messages all pass `contracts.validate`; `seq` strictly +1 per node; `t_meas` spacing exactly 5 s and 10 s.
   - Commit: `feat(sim): build schema-valid wearable and cabin messages`
 
-- [ ] **T2.6 Sinks, publisher and CLI**
+- [x] **T2.6 Sinks, publisher and CLI**
   - Depends: T2.5
   - Do: `Sink` protocol; `MemorySink`, `JsonlSink` (one `{"topic":..., "payload":..., "retain":...}` per line), `MqttSink` (paho v2, one client per node per D10, last will on the node's status topic, retained `online` on connect). Publisher merges node streams by `t_meas` and paces by the clock. CLI: `ccm-sim run --scenario NAME [--speed N|max] [--crew W1,W2,W3] [--broker host:port] [--seed N] [--start ISO]` and `ccm-sim generate --scenario NAME --out FILE.jsonl [--seed N]` (max speed, no broker). Until P3 exists, `--scenario quiet` is built in.
   - Accept: `ccm-sim generate --scenario quiet --duration 2h --out data/q.jsonl` writes 1440 wearable messages per crew and 720 cabin messages, plus status records; JSONL round trip test; output order is non-decreasing in `t_meas`.

@@ -74,3 +74,9 @@ atform: Windows 11 with Git Bash.
 - Verify: `make check` green, 74 tests (about 10 s, mostly schema validation). 10,000 generated messages pass `contracts.validate`; `seq` rises by 1 per node starting at 1; `t_meas` spacing exactly 5 s and 10 s.
 - Commit: see git log (feat(sim): build schema-valid wearable and cabin messages)
 - Notes: nodes expose `next_t` (the next `t_meas`) so the publisher in T2.6 can merge streams. First message is at `t0 + period`, `seq` 1.
+
+## T2.6 Sinks, publisher and CLI (done) 2026-10-30
+- What: `sinks` (Record, MemorySink, JsonlSink, MqttSink with one paho v2 client per node and last will, `kill_node`), `publisher` (Source protocol, NodeSource, Publisher merging by `t_meas`, online/offline status records), `engine` (World, built-in `quiet`), `timeutil`, CLI `ccm-sim run` and `ccm-sim generate`.
+- Verify: `make check` green, 81 tests. `ccm-sim generate --scenario quiet --duration 2h --out data/q.jsonl` writes 5048 lines: 1440 wearable messages per crew, 720 cabin, 8 status; ordered by `t_meas`; W1 output identical with or without W3.
+- Commit: see git log (feat(sim): publish to mqtt, jsonl and memory sinks)
+- Notes: generate defaults to start 2026-11-01T00:00:00Z and 1 h duration; run defaults to now and prints JSONL without `--broker`. MqttSink is untested until T2.7. Scenario sources plug in through the `Source` protocol.
