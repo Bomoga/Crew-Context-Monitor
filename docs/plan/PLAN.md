@@ -319,7 +319,7 @@ Each task lists **Depends**, **Do**, **Accept** (commands and checks that must p
   - Accept (5 seeds, 6 h): mean cpm within 1 of 18; `c10s` variance/mean between 0.8 and 1.2; all fields inside schema ranges.
   - Commit: `feat(sim): model cabin environment and radiation counts`
 
-- [ ] **T2.5 Message builders**
+- [x] **T2.5 Message builders**
   - Depends: T2.3, T2.4
   - Do: `messages.py`: wearable message every 5 s of sim time (ibi = beats in the window, `hr = round(60000 / mean(ibi))`), cabin message every 10 s; `seq` per node from 1, step 1; `t_meas` = window end; `t_node` = `t_meas` plus a per-node offset (within 2 s) and 30 ppm drift; `src`, `crew`; `finger` handling per D15.
   - Accept: 10,000 generated messages all pass `contracts.validate`; `seq` strictly +1 per node; `t_meas` spacing exactly 5 s and 10 s.

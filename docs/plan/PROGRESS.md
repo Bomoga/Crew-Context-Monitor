@@ -68,3 +68,9 @@ atform: Windows 11 with Git Bash.
 - Verify: `make check` green, 68 tests. 5 seeds x 6 h: mean cpm within 1 of 18, c10s variance/mean in [0.8, 1.2], all fields inside schema ranges; offsets for co2, temp and cpm take effect.
 - Commit: see git log (feat(sim): model cabin environment and radiation counts)
 - Notes: scenario hooks are `offset_fn(target, t)` with targets co2 (ppm), temp (C), rh, voc and cpm (counts per minute). `CabinModel.temp_fn` feeds `CrewPhysiology.cabin_temp_fn`.
+
+## T2.5 Message builders (done) 2026-10-30
+- What: `ccm_sim.messages`: `WearableNode` (5 s, ibi from the beat generator, `hr = round(60000/mean(ibi))`, D15 no-finger via `finger_fn`), `CabinNode` (10 s, optional Geiger fields), `status_message`, `sim_event_message`, topic constants. `t_node` = `t_meas` + per-node offset (within 1.9 s) + 30 ppm drift.
+- Verify: `make check` green, 74 tests (about 10 s, mostly schema validation). 10,000 generated messages pass `contracts.validate`; `seq` rises by 1 per node starting at 1; `t_meas` spacing exactly 5 s and 10 s.
+- Commit: see git log (feat(sim): build schema-valid wearable and cabin messages)
+- Notes: nodes expose `next_t` (the next `t_meas`) so the publisher in T2.6 can merge streams. First message is at `t0 + period`, `seq` 1.
