@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ccm.local/sim/scenarios/scenario.schema.json",
+  "title": "Simulator scenario file",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["name", "title", "duration", "crew", "expect"],
+  "$defs": {
+    "durationOnly": {"anyOf": [{"type": "string", "pattern": "^[0-9.]+\\s*[smhd]?$"}, {"type": "number"}]},
+    "thresholdRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["threshold"],
+      "properties": {"threshold": {"type": "string"}, "factor": {"type": "number"}}
+    },
+    "effect": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["op"],
+      "properties": {
+        "op": {"enum": ["set", "step", "ramp", "drift_per_day", "coupled", "exercise", "rate", "silence"]},
+        "target": {"type": "string", "pattern": "^(cabin\\.[a-z0-9_]+|crew\\.([*]|W[0-9]+)\\.[a-z0-9_]+)$"},
+        "value": {"type": "number"},
+        "delta": {"type": "number"},
+        "for": {"$ref": "#/$defs/durationOnly"},
+        "to": {"oneOf": [{"type": "number"}, {"$ref": "#/$defs/thresholdRef"}]},
+        "over": {"$ref": "#/$defs/durationOnly"},
+        "days": {"type": "number", "exclusiveMinimum": 0},
+        "driver": {"type": "string"},
+        "start": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["above_threshold"],
+          "properties": {
+            "above_threshold": {"type": "string"},
+            "lag": {"$ref": "#/$defs/durationOnly"}
+          }
+        },
+        "gain_at_peak": {"type": "number"},
+        "act": {"type": "number", "minimum": 0},
+        "recovery_tau": {"$ref": "#/$defs/durationOnly"},
+        "cpm": {"type": "number", "minimum": 0},
+        "node": {"type": "string", "pattern": "^[WC][0-9]+$"},
+        "buffer": {"type": "boolean"}
+      }
+    }
+  },
+  "properties": {
+    "name": {"type": "string", "pattern": "^[a-z0-9_]+$"},
+    "title": {"type": "string", "minLength": 1},
+    "description": {"type": "string"},
+    "duration": {"$ref": "#/$defs/durationOnly"},
+    "crew": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^W[0-9]+$"}},
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["at", "name", "label", "effects"],
+        "properties": {
+          "at": {"$ref": "#/$defs/durationOnly"},
+          "name": {"type": "string", "pattern": "^[a-z0-9_]+$"},
+          "label": {"type": "string", "minLength": 1},
+          "end_label": {"type": "string", "minLength": 1},
+          "effects": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/effect"}}
+        }
+      }
+    },
+    "marks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["when", "name", "label"],
+        "properties": {
+          "when": {"type": "string"},
+          "name": {"type": "string", "pattern": "^[a-z0-9_]+$"},
+          "label": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "expect": {"type": "array", "items": {"type": "object"}}
+  }
+}

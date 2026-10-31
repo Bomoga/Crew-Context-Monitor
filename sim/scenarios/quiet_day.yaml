@@ -1,0 +1,9 @@
+name: quiet_day
+title: Quiet day (false-alarm baseline)
+description: Nothing happens for 24 hours. Used to measure false alarms.
+duration: 24h
+crew: [W1, W2, W3]
+events: []
+marks: []
+expect:
+  - {quiet: [cardio, air, thermal, radiation]}

@@ -1,19 +1,10 @@
 
-## T1.4 Contract loader, version and freeze (done) 2026-10-30
-- What: `contracts/VERSION` 1.0.0, `CHANGELOG.md`, `README.md` (topics, fields, units, API routes, change process), tests for the version and changelog. The loader and the all-examples test came in T1.1.
-- Verify: `make contracts` 15 schemas, 36 valid passing, 53 invalid failing, 0 problems; `make check` green (18 tests). Gate G1 passed.
-- Commit: see git log (feat(contracts): freeze contract v1.0.0)
-- Notes: contract changes now need the Section 9 process. Pushed `build/sim-dashboard` at G1.
-atform: Windows 11 with Git Bash.
-- Verify: `git branch --show-current` prints `build/sim-dashboard`.
-- Commit: see git log (chore(repo): record toolchain and start build branch)
-- Notes: run make with `PATH="/c/msys64/usr/bin:$PATH"`. Windows venv uses `.venv/Scripts`, not `.venv/bin`; the Makefile must handle both (T0.2/T0.3). No mosquitto, so T2.7 will use amqtt or the skip path.
-
-## T0.2 Repository skeleton and tracking files (done) 2026-10-30
-- What: README, .gitignore, .editorconfig, .gitattributes, Makefile stub with `check`, DECISIONS (D1 to D16 plus D17, D18), BLOCKERS, OPEN_QUESTIONS.
-- Verify: `make check` exits 0; `git check-ignore data/x.jsonl .venv dashboard/dist` lists all three.
-- Commit: see git log (chore(repo): scaffold repository layout and tracking docs)
-- Notes: gitignore uses `.venv`, `dist`, `node_modules` without trailing slash so check-ignore matches nonexistent paths.
+## T3.1 Scenario engine and quiet baselines (done) 2026-10-30
+- What: scenario YAML + `scenario.schema.json`; `scenario.py` (load, validate, durations), `effects.py` (ops set, step, ramp, drift_per_day, coupled, exercise, rate, silence), `truth.py` (noise-free levels/offsets per target, minute series, conditions, first-crossing marks), `engine.build_world` (timeline of start/end/mark events on `ccm/sim/event`). Scenarios `quiet_day` (24 h), `quiet_week` (7 d, 3 crew); `quiet` is an alias of `quiet_day`.
+- Verify: `make check` green, 102 tests (20 in `test_scenario_engine.py`: one per op, wildcard, events/marks, bad effects). `ccm-sim generate --scenario quiet_week --out data/qw.jsonl`: 24 s, 362,880 wearable (3 x 120,960) and 60,480 cabin records; slow test confirms under 120 s.
+- Commit: see git log (feat(sim): add scenario engine and quiet baselines)
+- Notes: effects are additive offsets on model baselines. `ramp` and `set` hold after finishing unless `for` is given; an event emits an end event only if every effect has `for` (or it has `end_label`). Coupled effects follow the noise-free driver level; peak excess is computed from the truth, and a driver that never crosses its threshold raises an error mentioning thresholds.yaml (D6). `silence` is parsed into `truth.silences` and implemented in T3.9. `expect:` is only loosely schema-checked until T3.10.
+`, `dist`, `node_modules` without trailing slash so check-ignore matches nonexistent paths.
 
 ## T0.3 Python package skeleton (done) 2026-10-30
 - What: `sim/pyproject.toml` (src layout, `ccm-sim` script, ruff line length 100, mypy strict), `ccm_sim.cli` with `--version`, one smoke test, Makefile `setup`, `lint`, `test`, `check`.

@@ -346,7 +346,7 @@ Each task lists **Depends**, **Do**, **Accept** (commands and checks that must p
 
 ### P3. Scenarios (closes gate G2)
 
-- [ ] **T3.1 Scenario engine and quiet baselines**
+- [x] **T3.1 Scenario engine and quiet baselines**
   - Depends: T2.6
   - Do: `scenario.py` + `effects.py` per Appendix B: YAML loader validated by `sim/scenarios/scenario.schema.json`; duration parsing; effect ops `set`, `step`, `ramp`, `drift_per_day`, `coupled`, `exercise`, `rate`, `silence`; truth channels (`truth.py`) recording every applied offset per target per minute; sim events published to `ccm/sim/event` at each event's start and end. Scenarios `quiet_day` (24 h) and `quiet_week` (7 d, 3 crew).
   - Accept: one unit test per op; `ccm-sim generate --scenario quiet_week --out data/qw.jsonl` finishes in under 120 s and contains 3 crew x 7 days of wearable messages.
