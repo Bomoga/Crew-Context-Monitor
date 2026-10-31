@@ -1,12 +1,10 @@
 
-## T6.1 Scaffold and generated types (done) 2026-10-30
-- What: Vite React TypeScript app in `dashboard/` (Tailwind v4, react-router, Recharts, ajv, Vitest with Testing Library and jsdom, Playwright with axe, ESLint, Prettier) with an `/api` dev proxy to 127.0.0.1:8000; scripts `lint`, `typecheck`, `test`, `build`, `gen:types`, `check:types-fresh`, `e2e`. `make setup` runs `npm ci`; `make check` runs the dashboard lint, typecheck, vitest and types-fresh; `make types` regenerates `src/api/types.gen.ts` from `contracts/api`.
-- Verify: `make check` green with the dashboard steps (1 vitest smoke test); `npm run gen:types` output is committed and `check:types-fresh` passes.
-- Commits: 46cbc2e build(dashboard): scaffold vite react app with tooling; then feat(dashboard): generate api types from contracts
-- Notes: versions in D26. Contract schemas for `status.cards` are tupled for TypeScript only (see D26). Playwright browsers are not installed yet (T6.13).
-ame rules must be re-implemented for the dashboard in T6.14 (Vitest scans visible text).
-it log (feat(mockapi): add earth queue, settings and check-in)
-- Notes: crew_only auto-approves by default (matches the `earth_queue.pending` fixture). Reset-baseline ignores `metric` (any value restarts that crew member's learning timer); while any crew member is learning, all alerts are held back and the status bar shows the longest remaining time.
+## T6.2 API client and polling (done) 2026-10-30
+- What: `src/api/client.ts` (typed `api.*` for every endpoint; `ApiError`; in dev builds each response is checked against its contract schema with ajv, loaded by dynamic import so production bundles drop it, and violations go to `console.error` without delaying the data), `src/api/validate.ts`, `src/hooks/usePolling.ts` (generic poller: aborts the previous request and everything on unmount, 1 s clock tick for staleness) and `useStatus` (5 s poll, stale after 15 s).
+- Verify: `make check` green. Vitest with fake timers: polls on mount then every 5 s; stale at 16 s of failures with the last data kept; recovers on the next success; first-request-never-succeeds is stale; unmount aborts and stops polling; a hung request is aborted by the next poll; a malformed response logs `contract violation in /api/status`; non-2xx throws `ApiError` with the API's `detail`; query strings and POST/PUT bodies.
+- Commit: see git log (feat(dashboard): add typed api client with status polling)
+- Notes: other views reuse `usePolling` (or fetch once with `api.*`). `refresh()` triggers an immediate poll.
+ves by default (matches the `earth_queue.pending` fixture). Reset-baseline ignores `metric` (any value restarts that crew member's learning timer); while any crew member is learning, all alerts are held back and the status bar shows the longest remaining time.
 5.3 formalises the copy-rule tests for `templates.py`.
  paths.
 
