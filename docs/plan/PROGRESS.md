@@ -1,9 +1,10 @@
 
-## T5.1 Status, history and events (done) 2026-10-30
-- What: `ccm_sim.mockapi` (`app.py` FastAPI routes `/api/status`, `/api/history`, `/api/events`, dev-only `/api/_mock/scenario` and `/api/_mock/info`; `state.py` runs the scenario in-process, 1-minute rollups, card levels/attribution/correlation from `expect:` entries via `states_at`, numbers from the generated data and parameter baselines; `templates.py` reason sentences). `ccm-sim serve-mock --scenario --speed --port [--fast-forward [DUR]] [--learning]`. Learning mode: baselines learn for 2 h of sim time.
-- Verify: `make check` green. TestClient: for every scenario, at five sim times, status, 12 history metrics and events all pass `contracts.validate` and card levels and attributions equal the expectations (multi-day scenarios are `slow`, run by sim-eval; both passed, 66 s). Story tests for scrubber, illness (W2 only), dropout, history, events, learning, scenario switch and the background thread.
-- Commit: see git log (feat(mockapi): serve status, history and events from scenarios)
-- Notes: all mock crew report `src: "sim"` (honest labelling). Events are chronological ascending with ids `e-N` stable as new events append. The CUSUM curve in History is illustrative, derived from the truth offsets (the mock detects nothing). `MockState.advance_to(t)` is the synchronous hook the tests use; `start()` runs a paced background thread. T5.3 formalises the copy-rule tests for `templates.py`.
+## T5.2 Earth queue, settings and check-in (done) 2026-10-30
+- What: `mockapi/earth.py` (`EarthQueue`: seeded with one item per tier, a summary queued once each time a card turns red, tier by domain: radiation urgent, air and thermal flight_surgeon, cardio crew_only; `bytes` is the UTF-8 length of the compact payload; items are carried by the first 30-minute comms window after approval). Routes: `GET /api/earth-queue`, `POST /api/earth-queue/{id}/approve`, `GET|PUT /api/settings`, `POST /api/settings/enroll`, `POST /api/settings/reset-baseline`, `POST /api/checkin`.
+- Verify: `make check` green. Responses validate against the contracts; approving twice returns the identical item; with a tier's auto-approve on, new items of that tier arrive approved while items already waiting do not; reset-baseline puts a crew member back in learning for 2 h; renaming shows in `/api/status`; a check-in adds a `checkin` event, flips `checkin_due` and leaves every card, crew and status level unchanged; bad bodies get 422, unknown crew 404.
+- Commit: see git log (feat(mockapi): add earth queue, settings and check-in)
+- Notes: crew_only auto-approves by default (matches the `earth_queue.pending` fixture). Reset-baseline ignores `metric` (any value restarts that crew member's learning timer); while any crew member is learning, all alerts are held back and the status bar shows the longest remaining time.
+5.3 formalises the copy-rule tests for `templates.py`.
  paths.
 
 ## T0.3 Python package skeleton (done) 2026-10-30

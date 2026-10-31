@@ -428,7 +428,7 @@ Each task lists **Depends**, **Do**, **Accept** (commands and checks that must p
   - Accept: TestClient tests: for every scenario, at five sim times spread over its duration, every endpoint response passes `contracts.validate`; card levels at those times equal the expectations.
   - Commit: `feat(mockapi): serve status, history and events from scenarios`
 
-- [ ] **T5.2 Earth queue, settings and check-in**
+- [x] **T5.2 Earth queue, settings and check-in**
   - Depends: T5.1
   - Do: in-memory Earth queue seeded with one item per tier, plus a generated summary each time a card turns red (payload compact, `bytes` = UTF-8 length); `POST /api/earth-queue/{id}/approve`; settings get/put, enroll, reset-baseline (resets the mock's learning timer for that crew); `POST /api/checkin` adds a `checkin` event and never changes a level.
   - Accept: schema-valid responses; approving twice is idempotent; auto-approve on a tier approves new items of that tier; a check-in leaves every card level unchanged.

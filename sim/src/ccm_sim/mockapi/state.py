@@ -27,6 +27,7 @@ from ccm_sim.expectations import (
     states_at,
 )
 from ccm_sim.mockapi import templates as tpl
+from ccm_sim.mockapi.earth import EarthQueue
 from ccm_sim.physiology import circadian_hr, load_physiology
 from ccm_sim.publisher import Publisher
 from ccm_sim.scenario import load_scenario
@@ -227,6 +228,21 @@ class MockState:
                 c: (self.t0 if learning else self.t0 - 86400.0) for c in self.world.crew
             }
             self._last_ibi: dict[str, int] = {}
+            self.auto_approve = {"crew_only": True, "flight_surgeon": False, "urgent": False}
+            self.settings_crew = [
+                {"id": c, "name": c, "enrolled_t": self.t0 - 7 * 86400.0} for c in self.world.crew
+            ]
+            mean_hr = sum(self._crew_param(c, "hr0") for c in self.world.crew) / len(
+                self.world.crew
+            )
+            self.queue = EarthQueue(
+                self.t0,
+                self.auto_approve,
+                (
+                    "Daily crew summary: all four domains normal; "
+                    f"resting HR {mean_hr:.0f}, baseline {mean_hr:.0f}."
+                ),
+            )
             self._cabin_temp = self._cabin_params["temp_base"]
             self._publisher = Publisher(
                 self.world.sources, StoreSink(self), SimClock(self.t0, "max"), self.t0
@@ -493,7 +509,11 @@ class MockState:
         worst_domain = max(DOMAINS, key=lambda d: (RANK[facts[d].level], -WORST_ORDER.index(d)))
         worst = facts[worst_domain]
         if learning:
-            ends = min(self.baseline_start[c] + LEARNING_S for c in crews)
+            ends = max(
+                self.baseline_start[c] + LEARNING_S
+                for c in crews
+                if t < self.baseline_start[c] + LEARNING_S
+            )
             crew_status = {
                 "level": "green",
                 "domain": None,
@@ -510,6 +530,7 @@ class MockState:
                 "action": tpl.card_action(worst),
             }
         cardio = facts["cardio"]
+        names = {e["id"]: e["name"] for e in self.settings_crew}
         crew_rows = []
         for c in crews:
             node = self.nodes.get(c)
@@ -517,7 +538,7 @@ class MockState:
             crew_rows.append(
                 {
                     "id": c,
-                    "name": c,
+                    "name": names.get(c, c),
                     "src": "sim",
                     "online": node.state == "online" if node else True,
                     "level": cardio.level if c in cardio.crew else "green",
@@ -768,6 +789,60 @@ class MockState:
             if since is not None:
                 items = [e for e in items if e["t"] > since]
             return {"events": items[-limit:]}
+
+    # -- Earth queue and settings -------------------------------------------------------------
+    def sync_queue(self) -> None:
+        """Queue a summary for every card that has turned red so far (once each)."""
+        with self.lock:
+            reds = [
+                c for c in parse_cards(self.world) if c.level == "red" and c.t_from <= self.t_now
+            ]
+            for card in sorted(reds, key=lambda c: c.t_from):
+                state = DomainState(
+                    card.level, card.attribution, card.crew, card.reason, card.t_from
+                )
+                summary = tpl.card_reason(self._facts(card.domain, state, card.t_from))
+                self.queue.queue_red(card.domain, card.t_from, summary, self.auto_approve)
+
+    def earth_queue(self) -> dict[str, Any]:
+        with self.lock:
+            self.sync_queue()
+            return self.queue.view(self.t_now)
+
+    def approve_item(self, item_id: str) -> dict[str, Any] | None:
+        with self.lock:
+            self.sync_queue()
+            return self.queue.approve(item_id, self.t_now)
+
+    def settings(self) -> dict[str, Any]:
+        with self.lock:
+            return {
+                "crew": [dict(c) for c in self.settings_crew],
+                "auto_approve": dict(self.auto_approve),
+            }
+
+    def set_auto_approve(self, tiers: dict[str, bool]) -> dict[str, Any]:
+        with self.lock:
+            self.sync_queue()  # items already waiting keep the settings they arrived under
+            self.auto_approve.update(tiers)
+            return self.settings()
+
+    def enroll(self, crew_id: str, name: str) -> dict[str, Any]:
+        with self.lock:
+            for entry in self.settings_crew:
+                if entry["id"] == crew_id:
+                    entry["name"] = name
+                    return self.settings()
+            self.settings_crew.append({"id": crew_id, "name": name, "enrolled_t": self.t_now})
+            return self.settings()
+
+    def reset_baseline(self, crew_id: str, metric: str | None) -> dict[str, Any]:
+        """Restart the mock's learning timer for a crew member (any metric)."""
+        with self.lock:
+            if crew_id not in self.world.crew:
+                raise KeyError(crew_id)
+            self.baseline_start[crew_id] = self.t_now
+            return self.settings()
 
     def add_checkin(self, body: dict[str, Any]) -> dict[str, Any]:
         """Record a check-in as context; it never changes a card level."""
