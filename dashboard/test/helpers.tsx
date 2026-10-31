@@ -46,8 +46,8 @@ export function renderRoute(path: string, value: Polled<Status> = polled(status(
 }
 
 /**
- * Stub `fetch` with a router: `route(url, init)` returns a JSON body (or `undefined` for a 404).
- * Every request is recorded in the returned `calls` list.
+ * Stub `fetch` with a router: `route(url, init)` returns a JSON body, a `Response` or a promise of
+ * one (to control timing), or `undefined` for a 404. Every request is recorded in `calls`.
  */
 export function mockApi(route: (url: URL, init?: RequestInit) => unknown) {
   const calls: { url: URL; init?: RequestInit }[] = [];
@@ -55,6 +55,7 @@ export function mockApi(route: (url: URL, init?: RequestInit) => unknown) {
     const url = new URL(input, "http://localhost");
     calls.push({ url, init });
     const body = route(url, init);
+    if (body instanceof Response || body instanceof Promise) return Promise.resolve(body);
     if (body === undefined) {
       return Promise.resolve(new Response('{"detail":"Not Found"}', { status: 404 }));
     }

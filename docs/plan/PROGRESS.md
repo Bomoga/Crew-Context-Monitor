@@ -1,7 +1,10 @@
 
-## T6.6 Fused timeline (done) 2026-10-30
-- What: `Timeline` on Home: Recharts chart of cabin CO2 (mmHg, left axis) over the selected crew member's pulse-rate variability (ms, right axis) for the last 6 h, a toggle to HR residual (bpm), vertical event markers (solid for observed, dashed for simulated, with a legend sentence), and, when the status has a correlation, the lag band and the API's lag sentence above the chart. Data refreshes every 15 s and restarts when the crew selection or series changes (`usePolling` gained a `restartKey`). Chart has a text alternative (`role="img"` with a label).
-- Verify: `make check` green; 65 vitest tests. With `history_prv_6h`, `events_mixed` and `correlation_active`: marker count equals events in range (an 8-hour-old event is excluded), simulated markers are distinguishable, the lag label equals the fixture sentence and the band appears only with a correlation, the toggle requests `hr_resid` and changes heading and chart label, and the chart follows the crew strip.
+## T6.7 Earth queue panel (done) 2026-10-30
+- What: `EarthQueuePanel` on Home: items with tier, size in bytes, approval state, summary, a "What would be sent" payload preview, and an Approve button; pending items first; "Next comms window in N min" counted from `next_window_t` minus the API time (not the wall clock, since simulated time can run fast). Approve is optimistic (shown approved at once), kept approved from the server's reply until polling agrees, and rolled back with an alert if the request fails.
+- Verify: `make check` green; 71 vitest tests: list contents from the `earth_queue.pending` fixture, ordering, countdown from `next_window_t`, one POST to `/api/earth-queue/q-2/approve` and the item stays approved, optimistic state before the server answers then rollback plus alert on a 500, empty queue message.
+- Commit: see git log (feat(dashboard): add earth queue panel)
+- Notes: the test helper `mockApi` now accepts a Response or a promise to control timing and status.
+follows the crew strip.
 - Commit: see git log (feat(dashboard): add fused co2 and pulse-rate variability timeline)
 - Notes: test setup now stubs `fetch` (no network in tests; `mockApi` in helpers routes by URL) and gives Recharts a size, since jsdom has no layout.
 rs.tsx` (`renderRoute(path, polled(...))`, `status("air_yellow")`, `fixture(name)`).

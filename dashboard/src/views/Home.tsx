@@ -1,4 +1,5 @@
 import { CrewStrip } from "../components/CrewStrip";
+import { EarthQueuePanel } from "../components/EarthQueuePanel";
 import { RiskCards } from "../components/RiskCards";
 import { StatusBar } from "../components/StatusBar";
 import { Timeline } from "../components/Timeline";
@@ -11,6 +12,7 @@ export default function Home() {
       <CrewStrip />
       <RiskCards />
       <Timeline />
+      <EarthQueuePanel />
     </div>
   );
 }

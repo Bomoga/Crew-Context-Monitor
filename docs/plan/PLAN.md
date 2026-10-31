@@ -487,7 +487,7 @@ Copy rules apply to every view (from the onboarding doc): one plain sentence per
   - Accept: tests with `history_prv_6h`, `events_mixed`, `correlation_active` fixtures: markers count equals events in range; lag label text matches the fixture sentence; toggle switches series.
   - Commit: `feat(dashboard): add fused co2 and pulse-rate variability timeline`
 
-- [ ] **T6.7 Earth queue panel**
+- [x] **T6.7 Earth queue panel**
   - Depends: T6.5
   - Do: pending items with tier, approval state, size in bytes, countdown to the next comms window, payload preview, Approve button (optimistic update, rollback on error).
   - Accept: tests: approve calls the endpoint once, updates state, rolls back on a 500; countdown renders from `next_window_t`.
