@@ -1,0 +1,18 @@
+name: sleep_debt_drift
+title: Sleep debt drift (W1)
+description: >
+  W1's resting heart rate rises 1 bpm per day and pulse-rate variability falls 3 ms per day for
+  6 days. The drift is slow, not spiky, and applies to W1 only so attribution says individual.
+duration: 6d
+crew: [W1, W2, W3]
+events:
+  - at: 0s
+    name: sleep_debt_drift
+    label: Sleep debt drift begins
+    effects:
+      - {target: crew.W1.hr, op: drift_per_day, delta: 1, days: 6}
+      - {target: crew.W1.rmssd, op: drift_per_day, delta: -3, days: 6}
+expect:
+  - {no_events: [spike]}
+  - {card: cardio, level: yellow, from: 4d, attribution: individual, crew: [W1], reason: drift}
+  - {quiet: [air, thermal, radiation]}

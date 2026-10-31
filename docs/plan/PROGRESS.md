@@ -1,10 +1,10 @@
 
-## T3.5 solar_particle_event (done) 2026-10-30
-- What: `solar_particle_event.yaml` (3 h): cpm 18 to 240 for 40 min from +1 h, then back; start and end events published; expect block: radiation yellow 70 to 80 min, red 80 to 110 min, green from 110 min.
-- Verify: `make check` green. 5 seeds: all four 10-minute windows inside the step exceed 180 + 4*sqrt(180) = 233.67 counts; at most one quiet-window exceedance across all seeds (test allows one).
-- Commit: see git log (feat(sim): add solar particle event scenario)
-- Notes: windows are tumbling and aligned to the scenario start; the step is window-aligned (starts at 1 h).
-ew.W3.*` versus `cabin.C1`). expect block: `quiet: [cardio, air]` and `no_correlation: true` (handled in T3.10).
+## T3.6 sleep_debt_drift (done) 2026-10-30
+- What: `sleep_debt_drift.yaml` (6 d): W1 resting HR +1 bpm/day, RMSSD -3 ms/day via `drift_per_day`, W1 only (D22). Expect block: no spike events, cardio yellow from day 4 with a drift reason, attribution individual.
+- Verify: `make check` green. Fast test checks truth slopes and W1-only; the slow test (`pytest -m slow`, 62 s for 5 seeds) against a paired quiet control: measured HR slope within 20% of 1 bpm/day, RMSSD slope within 20% of -3 ms/day, and no 5-minute window departs from the truth line by more than the quiet-day spread.
+- Commit: see git log (feat(sim): add sleep debt drift scenario)
+- Notes: slow tests run under `make sim-eval` (T3.10) and `make check-all`.
+dled in T3.10).
 .
 ommit: see git log (feat(sim): add scrubber failure scenario)
 - Notes: see D21 for the interpretation of the "red raised above the ramp peak" test and the 5 minute tolerance.

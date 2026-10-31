@@ -376,7 +376,7 @@ Each task lists **Depends**, **Do**, **Accept** (commands and checks that must p
   - Accept (5 seeds): every 10-minute window fully inside the step has $N > \lambda + 4\sqrt{\lambda}$ against the 18 cpm baseline; windows before and after do not (allow at most one exceedance across all quiet windows of all seeds).
   - Commit: `feat(sim): add solar particle event scenario`
 
-- [ ] **T3.6 sleep_debt_drift**
+- [x] **T3.6 sleep_debt_drift**
   - Depends: T3.1
   - Do: resting HR +1 bpm per day and RMSSD -3 ms per day for 6 days, applied to W1 only so attribution says individual (record this choice in `DECISIONS.md`).
   - Accept: slopes measured on rest windows within 20% of target over 5 seeds; no single 5-minute window departs from the drifting mean by more than the quiet-day spread (the drift is slow, not spiky).

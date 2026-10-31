@@ -32,3 +32,7 @@ Two schemas beyond the plan's list: `checkin_response` (the `{ok, event_id}` rep
 ## D20 Beat generator calibration factor (2026-10-30)
 
 Measured on a 1 h quiet run at HR 62 and RMSSD target 45 ms, seeds 1 to 5: mean HR 61.86 to 62.09 bpm; median 5-minute RMSSD 44.6 to 46.1 ms (about 1% above target). No calibration factor is needed; `BeatGenerator(calibration=1.0)` stays the default. Phi 0.3, respiratory amplitude 3 ms, period 4 s.
+
+## D22 Sleep debt drift applies to W1 only (2026-10-30)
+
+T3.6 asks to record the crew choice. The `sleep_debt_drift` scenario drifts W1 only (HR +1 bpm/day, RMSSD -3 ms/day for 6 days). Because W2, W3 and the cabin stay flat, attribution can only say individual, as the v2 scenario library expects. The scenario lasts 6 days; the offsets hold at day 6 values (+6 bpm, -18 ms) if a longer duration is requested.
