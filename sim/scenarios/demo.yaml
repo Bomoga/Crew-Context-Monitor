@@ -1,0 +1,9 @@
+# Simulator-driven demo steps, in order (see docs/demo.md). Each step runs one scenario; time
+# continues from the end of the previous step and sequence numbers carry on, so the dashboard
+# sees one unbroken run. Speeds are simulated seconds per real second.
+name: demo
+title: Simulator-driven demo
+steps:
+  - {scenario: scrubber_failure, speed: 60, label: "CO2 scrubber failure"}
+  - {scenario: individual_illness, speed: 120, label: "One crew member changes"}
+  - {scenario: solar_particle_event, speed: 60, label: "Solar particle event"}

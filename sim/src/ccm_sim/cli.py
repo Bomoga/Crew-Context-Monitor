@@ -9,6 +9,7 @@ from collections.abc import Sequence
 
 from ccm_sim import __version__
 from ccm_sim.engine import World, build_world, run_world
+from ccm_sim.playlist import load_playlist, run_playlist
 from ccm_sim.scenario import ScenarioError, load_scenario
 from ccm_sim.sinks import JsonlSink, MqttSink, Sink
 from ccm_sim.timeutil import DEFAULT_START, parse_duration, parse_iso
@@ -21,6 +22,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     def common(p: argparse.ArgumentParser) -> None:
         p.add_argument("--scenario", default="quiet", help="scenario name (default: quiet)")
+        p.add_argument("--playlist", help="run a playlist of scenarios instead (such as demo)")
         p.add_argument("--crew", help="comma-separated crew ids (default: the scenario's crew)")
         p.add_argument("--seed", type=int, default=1)
         p.add_argument("--start", help="start time, ISO 8601 (default: fixed for generate)")
@@ -28,7 +30,9 @@ def build_parser() -> argparse.ArgumentParser:
 
     run = sub.add_parser("run", help="publish a scenario to a broker or stdout")
     common(run)
-    run.add_argument("--speed", default="1", help="speed multiplier or 'max'")
+    run.add_argument(
+        "--speed", help="speed multiplier or 'max' (default: 1, or each playlist step's speed)"
+    )
     run.add_argument("--broker", help="host:port of the MQTT broker (default: print JSONL)")
 
     scen = sub.add_parser("scenarios", help="list scenarios or check their expectations")
@@ -81,6 +85,22 @@ def _scenarios(action: str, names: list[str]) -> int:
     return 1 if failed else 0
 
 
+def _run(
+    args: argparse.Namespace, sink: Sink, default_start: float, speed: float | str | None
+) -> None:
+    """Run the chosen scenario or playlist into ``sink``."""
+    if args.playlist:
+        try:
+            playlist = load_playlist(args.playlist)
+        except ScenarioError as exc:
+            raise SystemExit(str(exc)) from exc
+        crew = [c.strip() for c in args.crew.split(",") if c.strip()] if args.crew else None
+        t0 = parse_iso(args.start) if args.start else default_start
+        run_playlist(playlist, sink, args.seed, t0, crew, speed)
+        return
+    run_world(_world(args, default_start), sink, 1.0 if speed is None else speed)
+
+
 def _parse_speed(text: str) -> float | str:
     return "max" if text == "max" else float(text)
 
@@ -98,19 +118,19 @@ def main(argv: Sequence[str] | None = None) -> int:
     if args.command == "generate":
         sink: Sink = JsonlSink(args.out)
         try:
-            run_world(_world(args, DEFAULT_START), sink, "max")
+            _run(args, sink, DEFAULT_START, "max")
         finally:
             sink.close()
         return 0
     if args.command == "run":
-        world = _world(args, float(int(time.time())))
         if args.broker:
             host, port = _broker(args.broker)
             sink = MqttSink(host, port)
         else:
             sink = JsonlSink("-")
         try:
-            run_world(world, sink, _parse_speed(args.speed))
+            speed = _parse_speed(args.speed) if args.speed else None
+            _run(args, sink, float(int(time.time())), speed)
         except KeyboardInterrupt:
             print("stopped", file=sys.stderr)
         finally:

@@ -91,13 +91,15 @@ class Publisher:
             if offline:
                 self.sink.publish(offline)
 
-    def run(self, until: float, finish: bool = True) -> int:
+    def run(self, until: float, finish: bool = True, start: bool = True) -> int:
         """Publish everything with ``t_meas <= until``; return the number of records sent.
 
-        With ``finish=False`` the offline statuses are left unsent (tests kill nodes instead).
+        With ``finish=False`` the offline statuses are left unsent (tests kill nodes instead);
+        with ``start=False`` the nodes are assumed to be open already (later playlist steps).
         """
         sent = 0
-        self.start()
+        if start:
+            self.start()
         while self.sources:
             source = min(self.sources, key=lambda s: s.next_t)
             if source.next_t > until:

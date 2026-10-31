@@ -406,7 +406,7 @@ Each task lists **Depends**, **Do**, **Accept** (commands and checks that must p
   - Accept: `make sim-eval` green; `ccm-sim scenarios check` lists every scenario as consistent.
   - Commit: `feat(sim): encode scenario expectations and sim-eval`
 
-- [ ] **T3.11 Demo playlist**
+- [x] **T3.11 Demo playlist**
   - Depends: T3.10
   - Do: `sim/scenarios/demo.yaml`: the simulator-driven demo steps in order (scrubber_failure at 60x, individual_illness, solar_particle_event), each with a label; `ccm-sim run --playlist demo`. Run gate G2.
   - Accept: `ccm-sim generate --playlist demo --out data/demo.jsonl` succeeds and its sim events appear in order.

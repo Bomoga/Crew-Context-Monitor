@@ -86,3 +86,9 @@ the truth, and a driver that never crosses its threshold raises an error mention
 - Verify: skip note in PLAN.md and OPEN_QUESTIONS.md.
 - Commit: see git log (chore(plan): skip optional wesad derivation)
 - Notes: nothing depends on this task.
+
+## T3.11 Demo playlist (done) 2026-10-30
+- What: `sim/scenarios/demo.yaml` (scrubber_failure at 60x, individual_illness at 120x, solar_particle_event at 60x, each with a label), `ccm_sim.playlist`, `ccm-sim run|generate --playlist demo`. Steps run back to back as one run: time and `seq` continue, nodes stay online between steps, and each step starts with a `demo_step_N` mark event carrying its label. `Publisher.run(start=, finish=)` and `World.seq_state()` support this.
+- Verify: `make check` green (194 tests). `ccm-sim generate --playlist demo --out data/demo.jsonl` writes 37,817 lines in 3 s with events in order: step 1, scrubber fault, CO2 passes yellow, CO2 passes red, step 2, W2 illness, step 3, particle event start and end. Gate G2: `make sim-eval` green (153 tests, 3 min, 5 seeds), T2.7 passing (real broker via amqtt), `quiet_week` in 24 s.
+- Commit: see git log (feat(sim): add demo playlist)
+- Notes: gate G2 passed; branch pushed. `--speed` on `run` overrides step speeds; without it playlists use each step's speed and plain scenarios use 1.

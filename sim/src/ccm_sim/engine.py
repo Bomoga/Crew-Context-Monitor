@@ -78,6 +78,11 @@ class World:
     seed: int
     events: list[SimEvent] = field(default_factory=list)
     missing_marks: list[str] = field(default_factory=list)
+    nodes: dict[str, WearableNode | CabinNode] = field(default_factory=dict)
+
+    def seq_state(self) -> dict[str, int]:
+        """The last sequence number of each node, to continue from in a following run."""
+        return {node_id: node.seq for node_id, node in self.nodes.items()}
 
 
 def _fmt(value: float) -> str:
@@ -163,6 +168,7 @@ def build_world(
     crew: list[str] | None = None,
     duration: float | None = None,
     thresholds: Thresholds | None = None,
+    seq_start: dict[str, int] | None = None,
 ) -> World:
     thresholds = thresholds or load_thresholds()
     crew = crew or list(scenario.crew)
@@ -183,6 +189,7 @@ def build_world(
 
     cabin = CabinModel(cabin_params, seed, t0, cabin_offsets)
     sources: list[Source] = []
+    nodes: dict[str, WearableNode | CabinNode] = {}
     events, missing = build_timeline(scenario, truth, thresholds, t0 + duration)
     sources.append(EventSource(events))
     for cid in crew:
@@ -191,9 +198,17 @@ def build_world(
             return truth.offset(_prefix + target, t)
 
         phys = CrewPhysiology(cid, crew_params[cid], seed, t0, cabin.temp_fn, crew_offsets)
-        sources.append(_silenced(NodeSource(WearableNode(phys, seed, t0)), truth))
-    sources.append(_silenced(NodeSource(CabinNode(cabin, seed, t0)), truth))
-    return World(sources, t0, duration, scenario.name, scenario, truth, crew, seed, events, missing)
+        wearable = WearableNode(phys, seed, t0)
+        wearable.seq = (seq_start or {}).get(wearable.id, 0)
+        nodes[wearable.id] = wearable
+        sources.append(_silenced(NodeSource(wearable), truth))
+    cabin_node = CabinNode(cabin, seed, t0)
+    cabin_node.seq = (seq_start or {}).get(cabin_node.id, 0)
+    nodes[cabin_node.id] = cabin_node
+    sources.append(_silenced(NodeSource(cabin_node), truth))
+    return World(
+        sources, t0, duration, scenario.name, scenario, truth, crew, seed, events, missing, nodes
+    )
 
 
 def build_quiet(crew: list[str], seed: int, t0: float, duration: float) -> World:
@@ -201,7 +216,14 @@ def build_quiet(crew: list[str], seed: int, t0: float, duration: float) -> World
     return build_world(load_scenario("quiet"), seed, t0, crew, duration)
 
 
-def run_world(world: World, sink: Sink, speed: float | str = "max") -> int:
+def run_world(
+    world: World,
+    sink: Sink,
+    speed: float | str = "max",
+    start: bool = True,
+    finish: bool = True,
+) -> int:
     """Publish the world's messages to ``sink``; return the number of records sent."""
     clock = SimClock(world.t0, speed)
-    return Publisher(world.sources, sink, clock, world.t0).run(world.t0 + world.duration)
+    publisher = Publisher(world.sources, sink, clock, world.t0)
+    return publisher.run(world.t0 + world.duration, finish=finish, start=start)
