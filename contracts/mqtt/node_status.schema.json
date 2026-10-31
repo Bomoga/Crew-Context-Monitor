@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ccm.local/contracts/mqtt/node_status.schema.json",
+  "title": "Node status (ccm/wearable/status/{id} and ccm/cabin/status/{id}, retained)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["node", "id", "state", "t"],
+  "properties": {
+    "node": {"enum": ["wearable", "cabin"]},
+    "id": {"type": "string", "pattern": "^[WC][0-9]+$"},
+    "state": {"enum": ["online", "offline"]},
+    "t": {"type": "number", "description": "unix seconds"}
+  }
+}

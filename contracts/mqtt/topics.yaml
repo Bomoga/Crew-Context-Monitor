@@ -1,0 +1,33 @@
+# MQTT topic map. Contract version: see ../VERSION.
+# All payloads are JSON (D3). qos: telemetry 0, status and sim events 1.
+topics:
+  - topic: ccm/wearable/telemetry
+    schema: wearable_telemetry
+    publisher: wearable bridge (hardware W1) or ccm_sim (W2, W3)
+    rate: one message per node every 5 s
+    retained: false
+    qos: 0
+  - topic: ccm/cabin/telemetry
+    schema: cabin_telemetry
+    publisher: cabin node C1 or ccm_sim
+    rate: one message every 10 s
+    retained: false
+    qos: 0
+  - topic: ccm/wearable/status/{id}
+    schema: node_status
+    publisher: each wearable node, last will sets offline
+    rate: on connect and on disconnect
+    retained: true
+    qos: 1
+  - topic: ccm/cabin/status/{id}
+    schema: node_status
+    publisher: each cabin node, last will sets offline
+    rate: on connect and on disconnect
+    retained: true
+    qos: 1
+  - topic: ccm/sim/event
+    schema: sim_event
+    publisher: ccm_sim only
+    rate: at each scenario event start, end and mark
+    retained: false
+    qos: 1

@@ -1,0 +1,8 @@
+{
+  "scenario": "scrubber_failure",
+  "name": "co2_passes_yellow",
+  "label": "CO2 passes 2.5 mmHg",
+  "phase": "mark",
+  "t_meas": 1760007200.0,
+  "crew": 5
+}

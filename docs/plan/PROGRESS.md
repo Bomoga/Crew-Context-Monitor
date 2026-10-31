@@ -24,3 +24,9 @@
 - Verify: yaml parses (jobs python, dashboard); `make check` green; actionlint not installed, skipped.
 - Commit: see git log (ci: add check workflow for python and dashboard)
 - Notes: the dashboard job reruns `make setup check` with Node 20 so the dashboard steps run once they exist in the Makefile.
+
+## T1.1 MQTT topics and message schemas (done) 2026-10-30
+- What: `contracts/mqtt/topics.yaml`, four 2020-12 schemas (wearable, cabin, node_status, sim_event), 8 valid and 16 invalid examples, `ccm_sim.contracts` (validate, errors, check_examples) and `make contracts`, now part of `make check`.
+- Verify: `make contracts` prints "4 schemas, 8 valid examples passing, 16 invalid examples failing, 0 problems"; `make check` green (5 tests).
+- Commit: see git log (feat(contracts): define mqtt topics and telemetry schemas)
+- Notes: example files are named `<kind>.<name>.json` under `contracts/examples/{mqtt,api}/{valid,invalid}/`; the kind is the part before the first dot. API schemas go in `contracts/api/` and are discovered automatically; API kinds need 1 valid and 3 invalid examples each.

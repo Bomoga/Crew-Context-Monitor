@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ccm.local/contracts/mqtt/wearable_telemetry.schema.json",
+  "title": "Wearable telemetry (ccm/wearable/telemetry)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["node", "id", "crew", "src", "seq", "t_node", "t_meas", "hr", "spo2", "skin_c", "act", "motion", "ibi", "batt"],
+  "properties": {
+    "node": {"const": "wearable"},
+    "id": {"type": "string", "pattern": "^W[0-9]+$", "description": "device id"},
+    "crew": {"type": "string", "pattern": "^W[0-9]+$", "description": "crew member id (D1)"},
+    "src": {"enum": ["hw", "sim"], "description": "hardware or simulator (D9)"},
+    "seq": {"type": "integer", "minimum": 0},
+    "t_node": {"type": "number", "description": "raw node clock, unix seconds"},
+    "t_meas": {"type": "number", "description": "measured time on the synced clock, unix seconds (D2)"},
+    "hr": {"type": ["integer", "null"], "minimum": 25, "maximum": 250},
+    "spo2": {"type": ["integer", "null"], "minimum": 50, "maximum": 100},
+    "skin_c": {"type": "number", "minimum": 20, "maximum": 45},
+    "act": {"type": "number", "minimum": 0},
+    "motion": {"type": "boolean"},
+    "ibi": {"type": "array", "maxItems": 20, "items": {"type": "integer", "minimum": 300, "maximum": 2000}},
+    "batt": {"type": "number", "minimum": 3.0, "maximum": 4.3},
+    "finger": {"const": false, "description": "present only when no finger is detected (D15)"}
+  }
+}

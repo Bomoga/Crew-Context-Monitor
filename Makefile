@@ -5,7 +5,7 @@ PYTHON ?= python
 VENV := .venv
 VBIN := $(shell if [ -d $(VENV)/Scripts ]; then echo $(VENV)/Scripts; else echo $(VENV)/bin; fi)
 
-.PHONY: setup lint test check clean
+.PHONY: setup lint test contracts check clean
 
 setup:
 	$(PYTHON) -m venv $(VENV)
@@ -19,7 +19,10 @@ lint:
 test:
 	cd sim && ../$(VBIN)/python -m pytest -q
 
-check: lint test
+contracts:
+	$(VBIN)/python -m ccm_sim.contracts
+
+check: contracts lint test
 
 clean:
 	rm -rf .pytest_cache .mypy_cache .ruff_cache sim/.pytest_cache sim/.mypy_cache sim/.ruff_cache
