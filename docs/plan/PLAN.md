@@ -535,7 +535,7 @@ Copy rules apply to every view (from the onboarding doc): one plain sentence per
   - Accept: suite green; deliberately breaking a fixture string makes it fail (prove once, then revert).
   - Commit: `test(dashboard): enforce copy rules on every view`
 
-- [ ] **T6.15 Production build served without Node**
+- [x] **T6.15 Production build served without Node**
   - Depends: T6.14, T5.4
   - Do: `npm run build` to `dashboard/dist`; JS bundle budget: warn above 400 kB gzip; `make serve-mock` serves it from the Python process. Run gate G3.
   - Accept: Playwright smoke against `make serve-mock` (no Vite running): home renders, cards visible, footer present.

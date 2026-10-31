@@ -89,3 +89,9 @@ with `--version`, one smoke test, Makefile `setup`, `lint`, `test`, `check`.
 - Verify: `make check` green (194 tests). `ccm-sim generate --playlist demo --out data/demo.jsonl` writes 37,817 lines in 3 s with events in order: step 1, scrubber fault, CO2 passes yellow, CO2 passes red, step 2, W2 illness, step 3, particle event start and end. Gate G2: `make sim-eval` green (153 tests, 3 min, 5 seeds), T2.7 passing (real broker via amqtt), `quiet_week` in 24 s.
 - Commit: see git log (feat(sim): add demo playlist)
 - Notes: gate G2 passed; branch pushed. `--speed` on `run` overrides step speeds; without it playlists use each step's speed and plain scenarios use 1.
+
+## T6.15 Production build served without Node (done) 2026-10-31
+- What: `npm run build` now also runs `scripts/check-bundle.mjs` (prints gzip sizes, warns above 400 kB, never fails). Makefile gained `build`, `serve-mock` (builds, then `ccm-sim serve-mock --scenario $(SCENARIO) --speed $(SPEED) --port 8000`), `dashboard-dev` and `check-all` (= check, sim-eval, build, e2e). `e2e/smoke.spec.ts` checks the page is served by uvicorn from `/assets/*.js`, a full load of `/domain/air` works, and `/api/nope` is a JSON 404.
+- Verify: JavaScript is 184.7 kB gzip (budget 400). `make serve-mock` started in the background, then `CCM_BASE_URL=http://127.0.0.1:8000 npx playwright test e2e/smoke.spec.ts`: 3 passed with no Vite running (`server: uvicorn`; `/` 200 text/html). Gate G3: `make check sim-eval build` exit 0 (sim-eval 189 passed in 6 min 10 s); the full e2e suite (19 tests from T6.13) passed earlier on the same build.
+- Commit: see git log (build(dashboard): serve production build from mock api)
+- Notes: gate G3 passed; branch pushed. `make e2e` builds first and starts its own mock via Playwright's webServer; `CCM_BASE_URL` points it at a server you started yourself.

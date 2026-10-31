@@ -6,8 +6,10 @@ VENV := .venv
 VBIN := $(shell if [ -d $(VENV)/Scripts ]; then echo $(VENV)/Scripts; else echo $(VENV)/bin; fi)
 
 DASH := dashboard
+SCENARIO ?= scrubber_failure
+SPEED ?= 60
 
-.PHONY: setup lint test contracts types dashboard-check check sim-eval e2e clean
+.PHONY: setup lint test contracts types dashboard-check check sim-eval build serve-mock dashboard-dev e2e check-all clean
 
 setup:
 	$(PYTHON) -m venv $(VENV)
@@ -36,6 +38,17 @@ check: contracts lint test dashboard-check
 sim-eval:
 	$(VBIN)/ccm-sim scenarios check
 	cd sim && ../$(VBIN)/python -m pytest -q -m '' tests/test_scenario_*.py tests/test_sim_eval.py tests/test_quiet_week.py tests/test_mockapi.py tests/test_mockapi_copy.py
+
+build:
+	cd $(DASH) && npm run build
+
+serve-mock: build
+	$(VBIN)/ccm-sim serve-mock --scenario $(SCENARIO) --speed $(SPEED) --port 8000
+
+dashboard-dev:
+	cd $(DASH) && npm run dev
+
+check-all: check sim-eval build e2e
 
 e2e:
 	cd $(DASH) && npm run build && npx playwright test

@@ -6,7 +6,7 @@
   "description": "Crew Context Monitor dashboard (decision-support prototype, not a medical device)",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit && vite build",
+    "build": "tsc --noEmit && vite build && node scripts/check-bundle.mjs",
     "preview": "vite preview",
     "lint": "eslint . && prettier --check .",
     "format": "prettier --write .",
