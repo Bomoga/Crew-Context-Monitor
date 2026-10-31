@@ -1,0 +1,9 @@
+name: quiet_week
+title: Quiet week (baseline pre-seed)
+description: Nothing happens for 7 days with three crew. Pre-seeds baselines and measures false alarms.
+duration: 7d
+crew: [W1, W2, W3]
+events: []
+marks: []
+expect:
+  - {quiet: [cardio, air, thermal, radiation]}

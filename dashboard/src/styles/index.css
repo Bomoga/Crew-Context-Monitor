@@ -1,0 +1,89 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens. Level colors change; layout and size never do (D14): every level also shows its
+ * word. Text/background pairs below are chosen for at least 4.5:1 contrast in both schemes.
+ */
+:root {
+  color-scheme: light dark;
+  --surface: #f4f6f9;
+  --panel: #ffffff;
+  --ink: #111827;
+  --muted: #4b5563;
+  --line: #cfd6e0;
+  --accent: #1f4fcf;
+
+  --green: #14602b;
+  --green-bg: #e3f3e8;
+  --green-mark: #1f9d4d;
+  --yellow: #6b4600;
+  --yellow-bg: #fff1c2;
+  --yellow-mark: #d99a00;
+  --red: #9b1c14;
+  --red-bg: #fde3e0;
+  --red-mark: #d3342a;
+
+  --series-co2: #b45309;
+  --series-prv: #1d4ed8;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --surface: #0e1218;
+    --panel: #171c24;
+    --ink: #e8ecf2;
+    --muted: #a9b3c2;
+    --line: #2c3541;
+    --accent: #8fb0ff;
+
+    --green: #7fdc9b;
+    --green-bg: #12301d;
+    --green-mark: #3ec46d;
+    --yellow: #f2c85b;
+    --yellow-bg: #3a2d06;
+    --yellow-mark: #f0b429;
+    --red: #ff9d94;
+    --red-bg: #3d1311;
+    --red-mark: #ff5a4d;
+
+    --series-co2: #f2b66d;
+    --series-prv: #8fb0ff;
+  }
+}
+
+@theme inline {
+  --color-surface: var(--surface);
+  --color-panel: var(--panel);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-level-green: var(--green);
+  --color-level-green-bg: var(--green-bg);
+  --color-level-green-mark: var(--green-mark);
+  --color-level-yellow: var(--yellow);
+  --color-level-yellow-bg: var(--yellow-bg);
+  --color-level-yellow-mark: var(--yellow-mark);
+  --color-level-red: var(--red);
+  --color-level-red-bg: var(--red-bg);
+  --color-level-red-mark: var(--red-mark);
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+html {
+  font-size: 16px;
+}
+
+body {
+  margin: 0;
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  line-height: 1.45;
+}
+
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}

@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ccm.local/contracts/api/reset_request.schema.json",
+  "title": "POST /api/settings/reset-baseline request body",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["crew", "metric"],
+  "properties": {
+    "crew": {"type": "string", "pattern": "^W[0-9]+$"},
+    "metric": {"type": ["string", "null"], "description": "null resets every metric for the crew member"}
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "crew": [],
+  "auto_approve": {
+    "crew_only": true,
+    "flight_surgeon": false,
+    "urgent": false
+  }
+}

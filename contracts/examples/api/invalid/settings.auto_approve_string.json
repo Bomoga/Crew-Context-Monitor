@@ -1,0 +1,19 @@
+{
+  "crew": [
+    {
+      "id": "W1",
+      "name": "W1",
+      "enrolled_t": 1759405200.0
+    },
+    {
+      "id": "W2",
+      "name": "W2",
+      "enrolled_t": 1759405200.0
+    }
+  ],
+  "auto_approve": {
+    "crew_only": "on",
+    "flight_surgeon": false,
+    "urgent": false
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ccm.local/contracts/api/history.schema.json",
+  "title": "GET /api/history?metric=&crew=&hours=6&step=60",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["metric", "unit", "crew", "points", "baseline", "cusum", "limits"],
+  "properties": {
+    "metric": {"enum": ["hr", "hr_resid", "prv", "spo2", "skin_c", "act", "co2_mmhg", "temp_c", "rh", "voc", "pm25", "cpm"]},
+    "unit": {"type": "string"},
+    "crew": {"type": ["string", "null"], "pattern": "^W[0-9]+$", "description": "null for cabin metrics"},
+    "points": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["t", "mean", "min", "max"],
+        "properties": {
+          "t": {"type": "number"},
+          "mean": {"type": "number"},
+          "min": {"type": "number"},
+          "max": {"type": "number"}
+        }
+      }
+    },
+    "baseline": {
+      "type": ["array", "null"],
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["t", "mean", "lo", "hi"],
+        "properties": {
+          "t": {"type": "number"},
+          "mean": {"type": "number"},
+          "lo": {"type": "number"},
+          "hi": {"type": "number"}
+        }
+      }
+    },
+    "cusum": {
+      "type": ["array", "null"],
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["t", "pos", "neg", "h"],
+        "properties": {
+          "t": {"type": "number"},
+          "pos": {"type": "number"},
+          "neg": {"type": "number"},
+          "h": {"type": "number"}
+        }
+      }
+    },
+    "limits": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["yellow", "red"],
+          "properties": {
+            "yellow": {"type": ["number", "null"]},
+            "red": {"type": ["number", "null"]}
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,19 @@
+name: wifi_dropout
+title: Cabin Wi-Fi dropout
+description: >
+  The cabin node C1 loses Wi-Fi for 8 minutes. The broker reports it offline through its last
+  will; the node buffers its readings, reconnects and flushes them in order with their original
+  sequence numbers and measured times, so analysis sees no gap.
+duration: 40m
+crew: [W1, W2, W3]
+events:
+  - at: 10m
+    name: wifi_dropout
+    label: Cabin Wi-Fi drops
+    end_label: Cabin Wi-Fi returns
+    effects:
+      - {op: silence, node: C1, for: 8m, buffer: true}
+expect:
+  - {node: C1, state: offline, from: 10m, until: 18m}
+  - {node: C1, state: online, from: 18m}
+  - {coverage: {node: C1, step: 1m}}

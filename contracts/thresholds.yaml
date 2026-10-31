@@ -1,0 +1,82 @@
+# Provisional thresholds (D5). Backend owns the final values.
+# Every leaf is {value, unit, source, status}. Scenarios and the mock API reference leaves by
+# dotted path, for example `air.co2.red`.
+status: provisional
+
+cabin:
+  pressure_mmhg:
+    value: 760
+    unit: mmHg
+    source: sea-level default; configurable (D4)
+    status: provisional
+
+air:
+  co2:
+    yellow:
+      value: 2.5
+      unit: mmHg
+      source: provisional choice; OCHMO CO2 brief cites 2.5 mmHg 7-day average for headache risk below 1%
+      status: provisional
+    red:
+      value: 3.0
+      unit: mmHg
+      source: NASA-STD-3001 Vol 2 Rev D [V2 6004], 1-hour average
+      status: provisional
+  voc_index:
+    yellow:
+      value: 250
+      unit: index
+      source: provisional choice
+      status: provisional
+
+thermal:
+  cabin_temp_c:
+    lo:
+      value: 18
+      unit: C
+      source: OCHMO ECLSS brief operating limit
+      status: provisional
+    hi:
+      value: 27
+      unit: C
+      source: OCHMO ECLSS brief operating limit
+      status: provisional
+  skin_residual_c:
+    yellow:
+      value: 0.5
+      unit: C
+      source: provisional choice
+      status: provisional
+    red:
+      value: 1.0
+      unit: C
+      source: provisional choice
+      status: provisional
+    duration_min:
+      value: 30
+      unit: min
+      source: provisional choice
+      status: provisional
+
+radiation:
+  poisson:
+    window_s:
+      value: 600
+      unit: s
+      source: provisional choice (10-minute window)
+      status: provisional
+    k_sigma:
+      value: 4
+      unit: sigma
+      source: provisional choice; exceed when N > lambda + k*sqrt(lambda)
+      status: provisional
+    yellow_windows:
+      value: 1
+      unit: windows
+      source: provisional choice
+      status: provisional
+    red_windows:
+      value: 2
+      unit: windows in a row
+      source: provisional choice
+      status: provisional

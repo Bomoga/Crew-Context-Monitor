@@ -1,0 +1,22 @@
+name: coincident_trends
+title: Coincident trends (no link)
+description: >
+  Cabin CO2 creeps from 800 to 1300 ppm over 3 hours and stays below yellow. Independently, W3's
+  resting heart rate rises 6 bpm over 3 hours, starting 30 minutes earlier (D12). The two trends
+  share no coupling and use independent random streams; a correct pipeline reports nothing.
+duration: 6h
+crew: [W1, W2, W3]
+events:
+  - at: 1h
+    name: w3_hr_trend
+    label: W3 resting heart rate trend begins
+    effects:
+      - {target: crew.W3.hr, op: ramp, delta: 6, over: 3h}
+  - at: 90m
+    name: co2_trend
+    label: Cabin CO2 trend begins
+    effects:
+      - {target: cabin.co2, op: ramp, to: 1300, over: 3h}
+expect:
+  - {quiet: [cardio, air]}
+  - {no_correlation: true}

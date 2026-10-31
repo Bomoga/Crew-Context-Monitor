@@ -1,0 +1,18 @@
+name: ble_dropout
+title: Wearable Bluetooth dropout
+description: >
+  W1's Bluetooth link drops for 60 seconds. The wearable keeps its readings for 60 seconds and
+  resends them when the link returns, with the original sequence numbers and measured times.
+duration: 30m
+crew: [W1, W2, W3]
+events:
+  - at: 10m
+    name: ble_dropout
+    label: W1 Bluetooth link drops
+    end_label: W1 Bluetooth link returns
+    effects:
+      - {op: silence, node: W1, for: 60s, buffer: true}
+expect:
+  - {node: W1, state: offline, from: 10m, until: 11m}
+  - {node: W1, state: online, from: 11m}
+  - {coverage: {node: W1, step: 1m}}

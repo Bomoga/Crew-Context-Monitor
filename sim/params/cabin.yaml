@@ -1,0 +1,20 @@
+# Cabin environment parameters (D11). Every parameter carries a `source:`.
+defaults:
+  co2_base: {value: 800, unit: ppm, source: "PLAN D11 (v2 slides)"}
+  co2_diurnal_amp: {value: 60, unit: ppm, source: "provisional: crew metabolic diurnal term, peak near 14:00 UTC"}
+  co2_noise_sd: {value: 15, unit: ppm, source: "provisional choice"}
+  co2_noise_tau_s: {value: 300, unit: s, source: "provisional choice"}
+  temp_base: {value: 22.0, unit: C, source: "PLAN D11 (v2 slides)"}
+  temp_diurnal_amp: {value: 0.15, unit: C, source: "provisional choice"}
+  temp_noise_sd: {value: 0.1, unit: C, source: "provisional choice"}
+  temp_noise_tau_s: {value: 600, unit: s, source: "provisional choice"}
+  rh_base: {value: 41, unit: "%", source: "PLAN D11 (v2 slides)"}
+  rh_noise_sd: {value: 0.7, unit: "%", source: "provisional choice"}
+  rh_noise_tau_s: {value: 900, unit: s, source: "provisional choice"}
+  voc_base: {value: 100, unit: index, source: "PLAN D11 (v2 slides)"}
+  voc_noise_sd: {value: 4, unit: index, source: "provisional choice"}
+  voc_noise_tau_s: {value: 600, unit: s, source: "provisional choice"}
+  pm1_base: {value: 2, unit: ug/m3, source: "PLAN A.2 example"}
+  pm25_base: {value: 4, unit: ug/m3, source: "PLAN A.2 example"}
+  pm10_base: {value: 6, unit: ug/m3, source: "PLAN A.2 example"}
+  cpm_base: {value: 18, unit: counts/min, source: "PLAN D11 (v2 slides)"}

@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ccm.local/contracts/mqtt/cabin_telemetry.schema.json",
+  "title": "Cabin telemetry (ccm/cabin/telemetry)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["node", "id", "src", "seq", "t_node", "t_meas", "co2", "temp_c", "rh", "voc", "pm1", "pm25", "pm10"],
+  "properties": {
+    "node": {"const": "cabin"},
+    "id": {"type": "string", "pattern": "^C[0-9]+$"},
+    "src": {"enum": ["hw", "sim"]},
+    "seq": {"type": "integer", "minimum": 0},
+    "t_node": {"type": "number"},
+    "t_meas": {"type": "number"},
+    "co2": {"type": "integer", "minimum": 0, "maximum": 40000, "description": "ppm (D4)"},
+    "temp_c": {"type": "number", "minimum": -20, "maximum": 80},
+    "rh": {"type": "number", "minimum": 0, "maximum": 100},
+    "voc": {"type": "integer", "minimum": 0, "maximum": 500},
+    "pm1": {"type": "integer", "minimum": 0},
+    "pm25": {"type": "integer", "minimum": 0},
+    "pm10": {"type": "integer", "minimum": 0},
+    "cpm": {"type": "integer", "minimum": 0, "description": "optional: Geiger counts per minute"},
+    "c10s": {"type": "integer", "minimum": 0, "description": "optional: Geiger counts in the last 10 s"}
+  }
+}

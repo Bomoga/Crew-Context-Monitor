@@ -1,0 +1,13 @@
+{
+  "id": "q-2",
+  "t": 1760009800.0,
+  "tier": "flight_surgeon",
+  "approved": false,
+  "sent": false,
+  "bytes": 318,
+  "summary": "Cabin CO2 3.1 mmHg; 3 of 3 crew show lower pulse-rate variability.",
+  "payload": [
+    1,
+    2
+  ]
+}

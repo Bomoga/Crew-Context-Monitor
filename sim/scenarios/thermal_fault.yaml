@@ -1,0 +1,20 @@
+name: thermal_fault
+title: Cabin thermal fault
+description: >
+  Cabin temperature climbs from 22 to 29 C over 2 hours. Skin temperature follows through its
+  20 minute lag; heart rate changes only through the model's cabin-temperature term, so
+  cardiovascular stays green.
+duration: 5h
+crew: [W1, W2, W3]
+events:
+  - at: 30m
+    name: thermal_fault
+    label: Cooling fault begins
+    effects:
+      - {target: cabin.temp, op: ramp, to: 29, over: 2h}
+marks:
+  - {when: "cabin.temp >= thermal.cabin_temp_c.hi", name: temp_passes_hi, label: "Cabin passes {thermal.cabin_temp_c.hi} C"}
+expect:
+  - {card: thermal, level: yellow, from: "cabin.temp >= 24.5", until: "cabin.temp >= thermal.cabin_temp_c.hi"}
+  - {card: thermal, level: red, from: "cabin.temp >= thermal.cabin_temp_c.hi"}
+  - {quiet: [cardio]}

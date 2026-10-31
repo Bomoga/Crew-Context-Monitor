@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ccm.local/contracts/api/checkin_response.schema.json",
+  "title": "POST /api/checkin response",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["ok", "event_id"],
+  "properties": {
+    "ok": {"const": true},
+    "event_id": {"type": "string", "minLength": 1}
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "node": "wearable",
+  "id": "W2",
+  "crew": "W2",
+  "src": "hw",
+  "seq": 1842,
+  "t_node": 1760000001.8,
+  "t_meas": 1760000000.0,
+  "hr": null,
+  "spo2": null,
+  "skin_c": 33.4,
+  "act": 0.12,
+  "motion": false,
+  "ibi": [],
+  "batt": 3.91,
+  "finger": false
+}

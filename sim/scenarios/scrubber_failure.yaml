@@ -1,0 +1,26 @@
+name: scrubber_failure
+title: CO2 scrubber failure
+description: >
+  CO2 ramps from the 800 ppm baseline to 1.3 times the red threshold over 3 hours. Every crew
+  member's pulse-rate variability falls and heart rate rises, starting 20 minutes after CO2
+  passes the yellow threshold (D6).
+duration: 4h
+crew: [W1, W2, W3]
+events:
+  - at: 30m
+    name: scrubber_fault
+    label: Scrubber fault begins
+    effects:
+      - {target: cabin.co2, op: ramp, to: {threshold: air.co2.red, factor: 1.3}, over: 3h}
+      - {target: "crew.*.rmssd", op: coupled, driver: cabin.co2,
+         start: {above_threshold: air.co2.yellow, lag: 20m}, gain_at_peak: -12}
+      - {target: "crew.*.hr", op: coupled, driver: cabin.co2,
+         start: {above_threshold: air.co2.yellow, lag: 20m}, gain_at_peak: 6}
+marks:
+  - {when: "cabin.co2 >= air.co2.yellow", name: co2_passes_yellow, label: "CO2 passes {air.co2.yellow} mmHg"}
+  - {when: "cabin.co2 >= air.co2.red", name: co2_passes_red, label: "CO2 passes {air.co2.red} mmHg"}
+expect:
+  - {card: air, level: yellow, from: "cabin.co2 >= air.co2.yellow", until: "cabin.co2 >= air.co2.red"}
+  - {card: air, level: red, from: "cabin.co2 >= air.co2.red"}
+  - {card: cardio, level: yellow, from: "mark:co2_passes_yellow + 75m", attribution: cabin, crew: "*"}
+  - {correlation: {x: co2_mmhg, y: prv, lag_min: [15, 25]}}

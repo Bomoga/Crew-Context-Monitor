@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ccm.local/contracts/api/status.schema.json",
+  "title": "GET /api/status",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["t", "source_mode", "thresholds_status", "crew_status", "crew", "cards", "nodes", "correlation", "checkin_due"],
+  "$defs": {
+    "level": {"enum": ["green", "yellow", "red"]},
+    "domain": {"enum": ["cardio", "air", "thermal", "radiation"]},
+    "attribution": {"enum": ["cabin", "individual", "unclear", null]},
+    "crewId": {"type": "string", "pattern": "^W[0-9]+$"},
+    "card": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["domain", "level", "reason", "action", "attribution", "crew", "numbers", "detector", "model"],
+      "properties": {
+        "domain": {"$ref": "#/$defs/domain"},
+        "level": {"$ref": "#/$defs/level"},
+        "reason": {"type": "string", "minLength": 1},
+        "action": {"type": ["string", "null"]},
+        "attribution": {"$ref": "#/$defs/attribution"},
+        "crew": {"type": "array", "items": {"$ref": "#/$defs/crewId"}},
+        "numbers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["label", "value", "unit", "baseline"],
+            "properties": {
+              "label": {"type": "string", "minLength": 1},
+              "value": {"type": ["number", "null"]},
+              "unit": {"type": "string"},
+              "baseline": {"type": ["number", "null"]}
+            }
+          }
+        },
+        "detector": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "state", "detail"],
+          "properties": {
+            "name": {"type": "string", "minLength": 1},
+            "state": {"$ref": "#/$defs/level"},
+            "detail": {"type": "string"}
+          }
+        },
+        "model": {
+          "oneOf": [
+            {"type": "null"},
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["beta0", "beta1", "beta2", "fitted_t"],
+              "properties": {
+                "beta0": {"type": "number"},
+                "beta1": {"type": "number"},
+                "beta2": {"type": "number"},
+                "fitted_t": {"type": "number"}
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  "properties": {
+    "t": {"type": "number"},
+    "source_mode": {"enum": ["live", "mock"]},
+    "thresholds_status": {"enum": ["provisional", "final"]},
+    "crew_status": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["level", "domain", "sentence", "attribution", "action"],
+      "properties": {
+        "level": {"$ref": "#/$defs/level"},
+        "domain": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/domain"}]},
+        "sentence": {"type": "string", "minLength": 1},
+        "attribution": {"$ref": "#/$defs/attribution"},
+        "action": {"type": ["string", "null"]}
+      }
+    },
+    "crew": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name", "src", "online", "level", "baseline", "learning_ends_t", "last_seen_t"],
+        "properties": {
+          "id": {"$ref": "#/$defs/crewId"},
+          "name": {"type": "string", "minLength": 1},
+          "src": {"enum": ["hw", "sim"]},
+          "online": {"type": "boolean"},
+          "level": {"$ref": "#/$defs/level"},
+          "baseline": {"enum": ["learning", "ready"]},
+          "learning_ends_t": {"type": ["number", "null"]},
+          "last_seen_t": {"type": ["number", "null"]}
+        }
+      }
+    },
+    "cards": {
+      "type": "array",
+      "description": "exactly four entries, fixed order: cardio, air, thermal, radiation",
+      "prefixItems": [
+        {"$ref": "#/$defs/card", "properties": {"domain": {"const": "cardio"}}},
+        {"$ref": "#/$defs/card", "properties": {"domain": {"const": "air"}}},
+        {"$ref": "#/$defs/card", "properties": {"domain": {"const": "thermal"}}},
+        {"$ref": "#/$defs/card", "properties": {"domain": {"const": "radiation"}}}
+      ],
+      "items": false,
+      "minItems": 4
+    },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["node", "id", "state", "last_seen_t"],
+        "properties": {
+          "node": {"enum": ["wearable", "cabin"]},
+          "id": {"type": "string", "pattern": "^[WC][0-9]+$"},
+          "state": {"enum": ["online", "offline"]},
+          "last_seen_t": {"type": ["number", "null"]}
+        }
+      }
+    },
+    "correlation": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["x", "y", "crew", "lag_min", "r", "sentence"],
+          "properties": {
+            "x": {"type": "string"},
+            "y": {"type": "string"},
+            "crew": {"$ref": "#/$defs/crewId"},
+            "lag_min": {"type": "number"},
+            "r": {"type": "number", "minimum": -1, "maximum": 1},
+            "sentence": {"type": "string", "minLength": 1}
+          }
+        }
+      ]
+    },
+    "checkin_due": {"type": "boolean"}
+  }
+}

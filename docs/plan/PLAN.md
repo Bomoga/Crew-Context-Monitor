@@ -249,19 +249,19 @@ Each task lists **Depends**, **Do**, **Accept** (commands and checks that must p
   - Accept: `git branch --show-current` prints `build/sim-dashboard`; versions recorded.
   - Commit: `chore(repo): record toolchain and start build branch`
 
-- [ ] **T0.2 Repository skeleton and tracking files**
+- [x] **T0.2 Repository skeleton and tracking files**
   - Depends: T0.1
   - Do: `README.md` (one paragraph, prototype disclaimer, link to this plan), `.gitignore` (Python, Node, `.venv`, `dist`, `data/`, Playwright reports, `.env`), `.editorconfig`, `.gitattributes` (`* text=auto eol=lf`), `docs/plan/DECISIONS.md` (Section 2 table as D1 to D16), `BLOCKERS.md`, `OPEN_QUESTIONS.md` (seed it with the "Confirm with" column of Section 2 and "repository license"), a `Makefile` whose `check` target exists and passes.
   - Accept: `make check` exits 0; `git check-ignore data/x.jsonl .venv dashboard/dist` lists all three.
   - Commit: `chore(repo): scaffold repository layout and tracking docs`
 
-- [ ] **T0.3 Python package skeleton**
+- [x] **T0.3 Python package skeleton**
   - Depends: T0.2
   - Do: `sim/pyproject.toml` (package `ccm_sim`, src layout, console script `ccm-sim`), deps from Section 5, ruff config (line length 100), mypy strict on `src/`, `ccm_sim/cli.py` with `--version`, one smoke test; Makefile `setup`, `lint`, `test`, `check` wired for Python.
   - Accept: `make setup && make check`; `.venv/bin/ccm-sim --version` prints a version.
   - Commit: `build(sim): add python package skeleton and tooling`
 
-- [ ] **T0.4 CI workflow**
+- [x] **T0.4 CI workflow**
   - Depends: T0.3
   - Do: `.github/workflows/ci.yml` with a Python job (3.11, `make setup check`) and a dashboard job guarded by `hashFiles('dashboard/package.json') != ''`.
   - Accept: `python -c "import yaml,sys; yaml.safe_load(open('.github/workflows/ci.yml'))"`; `actionlint` passes if installed.
@@ -269,25 +269,25 @@ Each task lists **Depends**, **Do**, **Accept** (commands and checks that must p
 
 ### P1. Contracts (closes gate G1)
 
-- [ ] **T1.1 MQTT topics and message schemas**
+- [x] **T1.1 MQTT topics and message schemas**
   - Depends: T0.3
   - Do: `contracts/mqtt/topics.yaml` (topics, publisher, rate, retained, QoS: telemetry 0, status and sim events 1). JSON Schema 2020-12 files per Appendix A.1 to A.4 with `additionalProperties: false`. Examples: at least 2 valid and 3 invalid per schema (missing required, wrong type, out of range). `make contracts` validates them using `ccm_sim.contracts`.
   - Accept: `make contracts` reports every valid example passing and every invalid one failing.
   - Commit: `feat(contracts): define mqtt topics and telemetry schemas`
 
-- [ ] **T1.2 Dashboard API schemas and fixtures**
+- [x] **T1.2 Dashboard API schemas and fixtures**
   - Depends: T1.1
   - Do: schemas per Appendix A.5 to A.10. Valid API fixtures for these states: `all_green`, `learning`, `air_yellow`, `air_red_cabin`, `cardio_yellow_individual`, `radiation_red`, `thermal_red`, `node_offline`, `correlation_active`, `earth_queue_pending`, `history_prv_6h`, `events_mixed`. Invalid fixtures: at least 3 per schema.
   - Accept: `make contracts`.
   - Commit: `feat(contracts): define dashboard api schemas and fixtures`
 
-- [ ] **T1.3 Units and provisional thresholds**
+- [x] **T1.3 Units and provisional thresholds**
   - Depends: T1.1
   - Do: `contracts/thresholds.yaml` per D5, each value with `source:` and `status: provisional`. `ccm_sim/units.py` (`ppm_to_mmhg`, `mmhg_to_ppm`, cabin pressure parameter) and `ccm_sim/thresholds.py` loader.
   - Accept: tests show `ppm_to_mmhg(5000)` equals 3.8 within 1e-9 at 760 mmHg (the OCHMO brief states 0.5% CO2 = 3.8 mmHg; do not use `==` on floats) and the round trip holds within 1e-9; loader rejects a missing key.
   - Commit: `feat(contracts): add co2 unit conversion and provisional thresholds`
 
-- [ ] **T1.4 Contract loader, version and freeze**
+- [x] **T1.4 Contract loader, version and freeze**
   - Depends: T1.2, T1.3
   - Do: `ccm_sim.contracts.validate(kind, obj)` with cached validators; `contracts/VERSION` = `1.0.0`; `contracts/CHANGELOG.md`; `contracts/README.md` (topics, fields, units, the change process from Section 9). Run gate G1.
   - Accept: `make contracts`; a test validates every example through the public loader.
@@ -295,117 +295,118 @@ Each task lists **Depends**, **Do**, **Accept** (commands and checks that must p
 
 ### P2. Simulator core
 
-- [ ] **T2.1 Clock and random streams**
+- [x] **T2.1 Clock and random streams**
   - Depends: T1.4
   - Do: `SimClock(start, speed)` where `speed` is a float or `"max"`; `now()`, `sleep_until(t_sim)`; an injectable real-time source for tests. `rng.py`: per-stream generators derived from `(seed, stream_name)` so adding a crew member does not change another member's numbers.
   - Accept: tests: at speed 60 one fake real second advances 60 sim seconds; `max` never sleeps; same seed gives byte-identical output; adding W3 leaves W1's stream identical.
   - Commit: `feat(sim): add simulation clock and seeded random streams`
 
-- [ ] **T2.2 Beat-level inter-beat intervals**
+- [x] **T2.2 Beat-level inter-beat intervals**
   - Depends: T2.1
   - Do: `beats.py` per Appendix C: RR from target HR(t) and target RMSSD(t), AR(1) beat-to-beat term, small respiratory term; produce beat times and integer-ms intervals.
   - Accept (5 seeds, 1 h quiet): mean HR within 1 bpm of target; median 5-minute RMSSD within 15% of target; when target RMSSD drops by 15 ms, the measured 5-minute RMSSD reaches within 15% of the new target within 10 minutes; beat times strictly increasing; every RR in [300, 2000] ms.
   - Commit: `feat(sim): generate beat-level inter-beat intervals`
 
-- [ ] **T2.3 Crew physiology model**
+- [x] **T2.3 Crew physiology model**
   - Depends: T2.2
   - Do: `physiology.py`: $HR(t) = HR_0 + c_{HR}(t) + \beta_1\,\text{act}(t) + \beta_2\,(T_{\text{cabin}}(t) - 22) + \Delta_{\text{scenario}}(t) + \text{noise}$; RMSSD with circadian term; SpO2 (integer, clamp 90 to 100, noisier under motion); skin temperature as a first-order lag (tau 20 min) toward a cabin-coupled target plus circadian; activity process (rest about 0.06, exercise about 1.2, std of acceleration magnitude in g); `motion = act > 0.3`; battery slow discharge from 4.15 V. Per-crew variation (W2 base HR 66, W3 base HR 58). All values in `sim/params/physiology.yaml` with `source:` (D11).
   - Accept: tests: quiet-day means match params within tolerance; a +3 C cabin step raises HR by `beta2 * 3` within 1 bpm after settling; a rest-to-exercise step raises HR by `beta1 * delta_act` within 3 bpm; skin temperature reaches 63% of a step in 20 +/- 3 min.
   - Commit: `feat(sim): model crew physiology with activity and cabin coupling`
 
-- [ ] **T2.4 Cabin environment and radiation counts**
+- [x] **T2.4 Cabin environment and radiation counts**
   - Depends: T2.1
   - Do: `cabin.py`: CO2 ppm baseline with noise and a crew-metabolic diurnal term; temperature, RH, VOC index, PM1/PM2.5/PM10 as integers; Geiger counts as Poisson per 10 s (`c10s`) at rate cpm/6, and `cpm` as the rolling 60 s sum. Params in `sim/params/cabin.yaml`.
   - Accept (5 seeds, 6 h): mean cpm within 1 of 18; `c10s` variance/mean between 0.8 and 1.2; all fields inside schema ranges.
   - Commit: `feat(sim): model cabin environment and radiation counts`
 
-- [ ] **T2.5 Message builders**
+- [x] **T2.5 Message builders**
   - Depends: T2.3, T2.4
   - Do: `messages.py`: wearable message every 5 s of sim time (ibi = beats in the window, `hr = round(60000 / mean(ibi))`), cabin message every 10 s; `seq` per node from 1, step 1; `t_meas` = window end; `t_node` = `t_meas` plus a per-node offset (within 2 s) and 30 ppm drift; `src`, `crew`; `finger` handling per D15.
   - Accept: 10,000 generated messages all pass `contracts.validate`; `seq` strictly +1 per node; `t_meas` spacing exactly 5 s and 10 s.
   - Commit: `feat(sim): build schema-valid wearable and cabin messages`
 
-- [ ] **T2.6 Sinks, publisher and CLI**
+- [x] **T2.6 Sinks, publisher and CLI**
   - Depends: T2.5
   - Do: `Sink` protocol; `MemorySink`, `JsonlSink` (one `{"topic":..., "payload":..., "retain":...}` per line), `MqttSink` (paho v2, one client per node per D10, last will on the node's status topic, retained `online` on connect). Publisher merges node streams by `t_meas` and paces by the clock. CLI: `ccm-sim run --scenario NAME [--speed N|max] [--crew W1,W2,W3] [--broker host:port] [--seed N] [--start ISO]` and `ccm-sim generate --scenario NAME --out FILE.jsonl [--seed N]` (max speed, no broker). Until P3 exists, `--scenario quiet` is built in.
   - Accept: `ccm-sim generate --scenario quiet --duration 2h --out data/q.jsonl` writes 1440 wearable messages per crew and 720 cabin messages, plus status records; JSONL round trip test; output order is non-decreasing in `t_meas`.
   - Commit: `feat(sim): publish to mqtt, jsonl and memory sinks`
 
-- [ ] **T2.7 Broker integration test**
+- [x] **T2.7 Broker integration test**
   - Depends: T2.6
   - Do: pytest fixture starts `mosquitto -p <free port>` if on PATH; otherwise tries `amqtt` in-process. Test: subscribe `ccm/#`, run 10 sim minutes at max speed, assert message counts, retained `online` on each status topic, and that killing one node's client delivers its `offline` last will. If neither broker works after 2 attempts, mark the test `skip(reason=...)`, add a `BLOCKERS.md` entry (non-fatal, task still `[x]`), and note it in `OPEN_QUESTIONS.md`.
   - Accept: test passes, or the documented skip path is followed exactly.
   - Commit: `test(sim): add mqtt broker integration test`
 
-- [ ] **T2.8 (optional) WESAD/OSDR-derived parameters**
+- [x] **T2.8 (optional) WESAD/OSDR-derived parameters**
   - Depends: T2.3
   - Do: only if `CCM_WESAD_DIR` is set and points at an extracted WESAD copy: a script `sim/tools/derive_params.py` that computes resting HR and RMSSD ranges and writes `sim/params/physiology.derived.yaml` with `source: WESAD`. Otherwise mark `[x]` with the note "skipped, dataset not present" and add an `OPEN_QUESTIONS.md` line.
   - Accept: script runs on the dataset, or the skip note exists.
   - Commit: `feat(sim): derive physiology ranges from wesad` (or `chore(plan): skip optional wesad derivation`)
+  - Notes: skipped, dataset not present (`CCM_WESAD_DIR` unset).
 
 ### P3. Scenarios (closes gate G2)
 
-- [ ] **T3.1 Scenario engine and quiet baselines**
+- [x] **T3.1 Scenario engine and quiet baselines**
   - Depends: T2.6
   - Do: `scenario.py` + `effects.py` per Appendix B: YAML loader validated by `sim/scenarios/scenario.schema.json`; duration parsing; effect ops `set`, `step`, `ramp`, `drift_per_day`, `coupled`, `exercise`, `rate`, `silence`; truth channels (`truth.py`) recording every applied offset per target per minute; sim events published to `ccm/sim/event` at each event's start and end. Scenarios `quiet_day` (24 h) and `quiet_week` (7 d, 3 crew).
   - Accept: one unit test per op; `ccm-sim generate --scenario quiet_week --out data/qw.jsonl` finishes in under 120 s and contains 3 crew x 7 days of wearable messages.
   - Commit: `feat(sim): add scenario engine and quiet baselines`
 
-- [ ] **T3.2 scrubber_failure**
+- [x] **T3.2 scrubber_failure**
   - Depends: T3.1, T1.3
   - Do: per D6. CO2 ramp start at +30 min; all three crew: RMSSD falls (up to -12 ms at peak) and HR rises (up to +6 bpm at peak), coupled to CO2 above yellow with a 20 min lag; sim events "Scrubber fault begins", "CO2 passes yellow", "CO2 passes red".
   - Accept (5 seeds): CO2 crosses yellow and red per `thresholds.yaml`; each crew's 5-minute RMSSD starts falling 20 +/- 3 min after the yellow crossing; a test that loads a modified thresholds file with red raised above the ramp peak fails with a clear message.
   - Commit: `feat(sim): add scrubber failure scenario`
 
-- [ ] **T3.3 individual_illness**
+- [x] **T3.3 individual_illness**
   - Depends: T3.1
   - Do: per D12.
   - Accept (5 seeds): W2 shifts as specified within 10%; W1 and W3 means stay within 1 bpm / 3 ms of their quiet values; CO2 and cabin temperature stay inside normal.
   - Commit: `feat(sim): add individual illness scenario`
 
-- [ ] **T3.4 coincident_trends**
+- [x] **T3.4 coincident_trends**
   - Depends: T3.1
   - Do: per D12, with the two trends driven by independent random streams.
   - Accept: CO2 stays below yellow; W3 HR trend starts 30 min before the CO2 trend; the truth channels show no coupling between them.
   - Commit: `feat(sim): add coincident trends scenario`
 
-- [ ] **T3.5 solar_particle_event**
+- [x] **T3.5 solar_particle_event**
   - Depends: T3.1
   - Do: cpm rate steps 18 to 240 for 40 min, then back to 18.
   - Accept (5 seeds): every 10-minute window fully inside the step has $N > \lambda + 4\sqrt{\lambda}$ against the 18 cpm baseline; windows before and after do not (allow at most one exceedance across all quiet windows of all seeds).
   - Commit: `feat(sim): add solar particle event scenario`
 
-- [ ] **T3.6 sleep_debt_drift**
+- [x] **T3.6 sleep_debt_drift**
   - Depends: T3.1
   - Do: resting HR +1 bpm per day and RMSSD -3 ms per day for 6 days, applied to W1 only so attribution says individual (record this choice in `DECISIONS.md`).
   - Accept: slopes measured on rest windows within 20% of target over 5 seeds; no single 5-minute window departs from the drifting mean by more than the quiet-day spread (the drift is slow, not spiky).
   - Commit: `feat(sim): add sleep debt drift scenario`
 
-- [ ] **T3.7 exercise_block**
+- [x] **T3.7 exercise_block**
   - Depends: T3.1
   - Do: activity high for 30 min, HR toward 150 through the model's `beta1` term, exponential recovery (tau 3 min); `motion: true` throughout the block.
   - Accept: HR peaks at 150 +/- 8; HR minus the model's prediction stays within +/- 5 bpm (the model explains it); motion flag true for at least 95% of block windows.
   - Commit: `feat(sim): add exercise block scenario`
 
-- [ ] **T3.8 thermal_fault**
+- [x] **T3.8 thermal_fault**
   - Depends: T3.1
   - Do: cabin temperature 22 to 29 C over 2 h; skin temperature follows through the lag; HR change only through the `beta2` term.
   - Accept: cabin leaves the 18 to 27 C band at the expected time; skin follows within the lag tolerance; HR minus model prediction within +/- 3 bpm.
   - Commit: `feat(sim): add thermal fault scenario`
 
-- [ ] **T3.9 wifi_dropout and ble_dropout**
+- [x] **T3.9 wifi_dropout and ble_dropout**
   - Depends: T3.1
   - Do: `wifi_dropout`: C1 goes silent for 8 min (MqttSink drops the connection without a clean disconnect so the broker fires the last will; other sinks emit an `offline` status record), buffers messages, then reconnects (`online`) and flushes the buffer in order with original `seq` and `t_meas`. `ble_dropout`: W1 silent 60 s then resends its last 60 s.
   - Accept: after the flush, `seq` has no gaps; flushed messages carry `t_meas` inside the silent window; every sim minute of the scenario has at least one cabin message by `t_meas`.
   - Commit: `feat(sim): add wifi and ble dropout scenarios`
 
-- [ ] **T3.10 Scenario expectations and sim-eval**
+- [x] **T3.10 Scenario expectations and sim-eval**
   - Depends: T3.2 to T3.9
   - Do: an `expect:` block in every scenario per Appendix B.3 (encoding the "what the pipeline should show" column of the v2 scenario library). `ccm-sim scenarios check` verifies each expectation is consistent with the truth channels and thresholds (for example, an Air red window lies where CO2 is at or above red). `make sim-eval` runs every scenario x 5 seeds through its physics tests and the consistency check (pytest marker `slow`).
   - Accept: `make sim-eval` green; `ccm-sim scenarios check` lists every scenario as consistent.
   - Commit: `feat(sim): encode scenario expectations and sim-eval`
 
-- [ ] **T3.11 Demo playlist**
+- [x] **T3.11 Demo playlist**
   - Depends: T3.10
   - Do: `sim/scenarios/demo.yaml`: the simulator-driven demo steps in order (scrubber_failure at 60x, individual_illness, solar_particle_event), each with a label; `ccm-sim run --playlist demo`. Run gate G2.
   - Accept: `ccm-sim generate --playlist demo --out data/demo.jsonl` succeeds and its sim events appear in order.
@@ -413,7 +414,7 @@ Each task lists **Depends**, **Do**, **Accept** (commands and checks that must p
 
 ### P4. Record and replay
 
-- [ ] **T4.1 Record and replay modes**
+- [x] **T4.1 Record and replay modes**
   - Depends: T3.11
   - Do: `contracts/replay_csv.md` (columns `topic,t_meas,retain,payload_json`, one row per message). `ccm-sim record --broker H:P --out FILE.csv [--duration 30m]`; `ccm-sim replay --file FILE.csv [--speed N] [--retime]` (`--retime` shifts `t_meas` and `t_node` so the recording ends now, for the live fallback; off for eval).
   - Accept: generate, record through MemorySink, replay, compare: identical messages without `--retime`; with `--retime` only time fields differ and spacing is preserved; replay payloads validate.
@@ -421,25 +422,25 @@ Each task lists **Depends**, **Do**, **Accept** (commands and checks that must p
 
 ### P5. Mock API
 
-- [ ] **T5.1 Status, history and events**
+- [x] **T5.1 Status, history and events**
   - Depends: T4.1
   - Do: `ccm_sim.mockapi` FastAPI app. Runs the selected scenario in a background thread on a SimClock; keeps 1-minute rollups in memory. `GET /api/status`: card levels and attribution from the active `expect` entries, numbers from the generated data and params baseline, reasons from templates (T5.3). `GET /api/history` and `GET /api/events` per Appendix A. `POST /api/_mock/scenario {name, speed}` switches scenario (dev only, documented as such). CLI `ccm-sim serve-mock --scenario NAME --speed N --port 8000 [--fast-forward] [--learning]`.
   - Accept: TestClient tests: for every scenario, at five sim times spread over its duration, every endpoint response passes `contracts.validate`; card levels at those times equal the expectations.
   - Commit: `feat(mockapi): serve status, history and events from scenarios`
 
-- [ ] **T5.2 Earth queue, settings and check-in**
+- [x] **T5.2 Earth queue, settings and check-in**
   - Depends: T5.1
   - Do: in-memory Earth queue seeded with one item per tier, plus a generated summary each time a card turns red (payload compact, `bytes` = UTF-8 length); `POST /api/earth-queue/{id}/approve`; settings get/put, enroll, reset-baseline (resets the mock's learning timer for that crew); `POST /api/checkin` adds a `checkin` event and never changes a level.
   - Accept: schema-valid responses; approving twice is idempotent; auto-approve on a tier approves new items of that tier; a check-in leaves every card level unchanged.
   - Commit: `feat(mockapi): add earth queue, settings and check-in`
 
-- [ ] **T5.3 Copy templates and copy-rule tests**
+- [x] **T5.3 Copy templates and copy-rule tests**
   - Depends: T5.1
   - Do: `templates.py` with one sentence per domain and state, each with a number and a baseline comparison ("resting HR 71, baseline 65"), attribution phrasing ("3 of 3 crew show lower pulse-rate variability since 09:10; cabin CO2 up 2.1 mmHg", "Only W2 changed; cabin within normal", "Not enough data to attribute"), and the correlation sentence ("Pulse-rate variability began dropping 20 min after CO2 passed 2.5 mmHg").
   - Accept: a test renders every template for every scenario state and asserts: no "caused by"; no "z-score" or raw z values; "HRV" never appears without "pulse-rate variability"; radiation text includes "proxy"; every reason contains a digit.
   - Commit: `feat(mockapi): add plain-language reason templates`
 
-- [ ] **T5.4 Static dashboard hosting**
+- [x] **T5.4 Static dashboard hosting**
   - Depends: T5.1
   - Do: if `dashboard/dist` exists, mount it at `/` with SPA fallback (unknown non-`/api` paths return `index.html`); `/api/*` 404s stay JSON.
   - Accept: TestClient: `/history` and `/domain/air` return `index.html` when a fake dist exists; `/api/nope` returns JSON 404.
@@ -449,92 +450,92 @@ Each task lists **Depends**, **Do**, **Accept** (commands and checks that must p
 
 Copy rules apply to every view (from the onboarding doc): one plain sentence per reason with a number and a baseline comparison; no raw z-scores on home; HRV is always "pulse-rate variability"; radiation is always a "proxy"; "consistent with", never "caused by"; footer "Decision-support prototype, not a medical device" on every screen; source badge (Hardware or Simulator) on every crew chip; the check-in never changes a color.
 
-- [ ] **T6.1 Scaffold and generated types**
+- [x] **T6.1 Scaffold and generated types**
   - Depends: T1.4
   - Do: Vite React TS app in `dashboard/` with the deps from Section 5; Vite proxy `/api` to `127.0.0.1:8000`; scripts `lint`, `typecheck`, `test`, `build`, `gen:types`, `check:types-fresh` (regenerate then `git diff --exit-code`), `e2e`. Wire into `make setup`, `make check`, `make types`. Two commits.
   - Accept: `make check` runs the dashboard steps green; `npm run gen:types` output is committed and fresh.
   - Commit 1: `build(dashboard): scaffold vite react app with tooling`
   - Commit 2: `feat(dashboard): generate api types from contracts`
 
-- [ ] **T6.2 API client and polling**
+- [x] **T6.2 API client and polling**
   - Depends: T6.1
   - Do: typed client for every endpoint; `useStatus` polls every 5 s with abort on unmount; stale when the last success is older than 15 s; error state keeps the last data; in dev builds ajv validates every response and logs contract violations.
   - Accept: Vitest with fake timers: polls at 5 s, marks stale at 15 s, recovers; a malformed fixture logs a violation in dev mode.
   - Commit: `feat(dashboard): add typed api client with status polling`
 
-- [ ] **T6.3 App shell**
+- [x] **T6.3 App shell**
   - Depends: T6.2
   - Do: router with `/`, `/domain/:name`, `/history`, `/events`, `/settings`; nav; footer on every route; a reserved banner slot for stale or offline state so nothing shifts; level color tokens (Tailwind) and the level word (D14).
   - Accept: test renders every route and finds the footer text; banner slot height is constant with and without a banner.
   - Commit: `feat(dashboard): add app shell, routes and footer`
 
-- [ ] **T6.4 Status bar and crew strip**
+- [x] **T6.4 Status bar and crew strip**
   - Depends: T6.3
   - Do: status bar shows the worst card's sentence, attribution and action in one line; learning state shows the time until alerts start; crew strip with one chip per crew (level, online, source badge), clicking a chip selects the crew for the timeline.
   - Accept: tests over the `all_green`, `air_yellow`, `air_red_cabin`, `learning` fixtures; the status bar bounding box is identical across them; each chip shows Hardware or Simulator.
   - Commit: `feat(dashboard): add status bar and crew strip`
 
-- [ ] **T6.5 Risk cards**
+- [x] **T6.5 Risk cards**
   - Depends: T6.4
   - Do: four cards in fixed order (Cardiovascular, Air quality, Thermal, Radiation (proxy)), each with level, two or three numbers against baseline, the reason; whole card links to `/domain/:name`.
   - Accept: tests for each level fixture; card positions do not change between fixtures; no z values rendered.
   - Commit: `feat(dashboard): add risk cards`
 
-- [ ] **T6.6 Fused timeline**
+- [x] **T6.6 Fused timeline**
   - Depends: T6.5
   - Do: Recharts chart: cabin CO2 (mmHg, left axis) over the selected crew's pulse-rate variability (ms, right axis), toggle to HR residual; last 6 h; vertical markers for events, with simulated events drawn distinctly; when `correlation` is present, both markers and the lag label appear.
   - Accept: tests with `history_prv_6h`, `events_mixed`, `correlation_active` fixtures: markers count equals events in range; lag label text matches the fixture sentence; toggle switches series.
   - Commit: `feat(dashboard): add fused co2 and pulse-rate variability timeline`
 
-- [ ] **T6.7 Earth queue panel**
+- [x] **T6.7 Earth queue panel**
   - Depends: T6.5
   - Do: pending items with tier, approval state, size in bytes, countdown to the next comms window, payload preview, Approve button (optimistic update, rollback on error).
   - Accept: tests: approve calls the endpoint once, updates state, rolls back on a 500; countdown renders from `next_window_t`.
   - Commit: `feat(dashboard): add earth queue panel`
 
-- [ ] **T6.8 Domain detail view**
+- [x] **T6.8 Domain detail view**
   - Depends: T6.6
   - Do: `/domain/:name`: raw series with baseline band, limit lines, detector state, model coefficients for Cardiovascular; Radiation shows the Poisson threshold line and one sentence on why a fixed threshold misfires.
   - Accept: tests for each domain fixture; unknown domain shows a not-found message inside the shell.
   - Commit: `feat(dashboard): add domain detail view`
 
-- [ ] **T6.9 History view**
+- [x] **T6.9 History view**
   - Depends: T6.8
   - Do: metric and crew selectors; 7-day trend; CUSUM panel with the alarm line.
   - Accept: tests switch metric and crew and assert the requested query parameters.
   - Commit: `feat(dashboard): add history view`
 
-- [ ] **T6.10 Events view**
+- [x] **T6.10 Events view**
   - Depends: T6.3
   - Do: chronological log, newest first, kind filter, "Simulated" badge on simulator events, check-ins shown as context.
   - Accept: tests with `events_mixed`.
   - Commit: `feat(dashboard): add events view`
 
-- [ ] **T6.11 Settings view**
+- [x] **T6.11 Settings view**
   - Depends: T6.3
   - Do: enroll crew, reset baseline (in-app confirm dialog; no browser `confirm()`), auto-approve toggles per tier.
   - Accept: tests assert request bodies; reset requires confirmation.
   - Commit: `feat(dashboard): add settings view`
 
-- [ ] **T6.12 Daily check-in**
+- [x] **T6.12 Daily check-in**
   - Depends: T6.4
   - Do: per D13; shown when `checkin_due`; completes in three taps; posts and dismisses.
   - Accept: tests: three taps submit; no level or color changes after submit.
   - Commit: `feat(dashboard): add daily check-in`
 
-- [ ] **T6.13 Responsive layout and accessibility**
+- [x] **T6.13 Responsive layout and accessibility**
   - Depends: T6.5 to T6.12
   - Do: tablet first at 1280 x 800; phone at 390 x 844 stacks the cards in one column; visible focus states; level words present.
   - Accept: Playwright against the mock API: at phone width the four cards are vertically stacked (each card's top below the previous card's bottom); axe reports no serious or critical violations on any route.
   - Commit: `feat(dashboard): add responsive layout and accessibility fixes`
 
-- [ ] **T6.14 Copy-rule tests**
+- [x] **T6.14 Copy-rule tests**
   - Depends: T6.13
   - Do: one Vitest suite that renders every route with every fixture and scans visible text for the copy rules listed at the top of P6.
   - Accept: suite green; deliberately breaking a fixture string makes it fail (prove once, then revert).
   - Commit: `test(dashboard): enforce copy rules on every view`
 
-- [ ] **T6.15 Production build served without Node**
+- [x] **T6.15 Production build served without Node**
   - Depends: T6.14, T5.4
   - Do: `npm run build` to `dashboard/dist`; JS bundle budget: warn above 400 kB gzip; `make serve-mock` serves it from the Python process. Run gate G3.
   - Accept: Playwright smoke against `make serve-mock` (no Vite running): home renders, cards visible, footer present.
@@ -542,31 +543,31 @@ Copy rules apply to every view (from the onboarding doc): one plain sentence per
 
 ### P7. End-to-end, demo and handoff (closes gate G4)
 
-- [ ] **T7.1 End-to-end per scenario**
+- [x] **T7.1 End-to-end per scenario**
   - Depends: T6.15, T3.10
   - Do: Playwright suite that, for each scenario, starts `serve-mock` at high speed (choose the speed so each run takes under 60 s), waits for each expected state, and asserts card levels, attribution text and timeline markers; saves screenshots to the gitignored report folder.
   - Accept: `make e2e` green for every scenario.
   - Commit: `test(e2e): verify dashboard states for every scenario`
 
-- [ ] **T7.2 Demo runbook and targets**
+- [x] **T7.2 Demo runbook and targets**
   - Depends: T7.1
   - Do: `make demo-mock`, `make demo-live`; `docs/demo.md` maps the 8-step v2 demo script to commands, marks which steps need hardware, and documents the `--replay` fallback line.
   - Accept: every command in `docs/demo.md` runs (hardware steps excepted, marked as such).
   - Commit: `docs(demo): add simulator and dashboard demo runbook`
 
-- [ ] **T7.3 Backend handoff**
+- [x] **T7.3 Backend handoff**
   - Depends: T7.1
   - Do: `docs/handoff-backend.md`: contract v1 and the change process; `/api` prefix and static mount code; the CO2 conversion location; `thresholds.yaml` as the source of limits; scenario `expect` blocks as the eval oracle for `make eval`; `quiet_week` JSONL for baseline pre-seeding; open items from `OPEN_QUESTIONS.md`.
   - Accept: every file path and command in the doc exists or runs.
   - Commit: `docs: add backend lane handoff`
 
-- [ ] **T7.4 README quickstart**
+- [x] **T7.4 README quickstart**
   - Depends: T7.2
   - Do: setup, run the simulator, run the mock API, run the dashboard in dev, run tests, repo map, conventions, prototype disclaimer.
   - Accept: commands in the README run on a fresh clone.
   - Commit: `docs(repo): write readme quickstart`
 
-- [ ] **T7.5 Final verification and close-out**
+- [x] **T7.5 Final verification and close-out**
   - Depends: T7.1 to T7.4
   - Do: fresh clone into a temp directory; `make setup && make check-all`; record timings; grep for `TODO`/`FIXME` without a task or blocker reference; write the final report in `PROGRESS.md` (tasks done, blocked, open questions, how to run) and the line `LOOP_COMPLETE`; push; if `gh` is available and authenticated, open a draft PR from `build/sim-dashboard` to `main` titled "Simulator, mock API and dashboard". Run gate G4.
   - Accept: `check-all` green on the fresh clone.

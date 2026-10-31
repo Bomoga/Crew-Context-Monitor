@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ccm-sim"
+version = "0.1.0"
+description = "Crew Context Monitor simulator and mock API"
+requires-python = ">=3.11"
+dependencies = [
+  "numpy",
+  "pyyaml",
+  "jsonschema",
+  "paho-mqtt>=2,<3",
+  "fastapi",
+  "uvicorn",
+  "httpx",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "ruff", "mypy", "types-PyYAML", "types-jsonschema", "amqtt"]
+
+[project.scripts]
+ccm-sim = "ccm_sim.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+
+[tool.mypy]
+strict = true
+files = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["slow: long-running statistical or scenario tests"]
+addopts = "-m 'not slow'"
