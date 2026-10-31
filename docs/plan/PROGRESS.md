@@ -1,7 +1,10 @@
 
-## T6.8 Domain detail view (done) 2026-10-31
-- What: `/domain/:name` shows the card's level, reason and next step, the detector line (name, state, detail), and 6-hour series charts with the baseline band and the yellow/red limit lines drawn from the API (`MetricChart`; limit lines extend the axis so they are always visible). Cardiovascular: heart rate, pulse-rate variability and heart-rate residual for the selected crew member plus the model coefficients (beta0, beta1, beta2). Air: CO2 and VOC. Thermal: cabin and skin temperature. Radiation: counts per minute with the Poisson threshold line and the sentence "Why not a fixed threshold? ...". Unknown domains show "Domain not found" inside the shell with a way back.
-- Verify: `make check` green; 77 vitest tests: each domain's charts, baseline bands, limit lines (2 for CO2, 1 for temperature and for the Poisson line), detector text, model coefficients (38.2, 21.5, 0.7), the radiation sentence with "proxy", and the not-found case.
+## T6.9 History view (done) 2026-10-31
+- What: `/history` with selectors for measure (12 metrics), crew member (disabled for cabin measures) and time span (24 hours or 7 days, default 7 days at hourly steps), the trend chart with baseline band and limit lines, and a CUSUM panel (`CusumChart`: the two sums plus the alarm line, with a plain-language caption) shown when the API sends `cusum`.
+- Verify: `make check` green; 83 vitest tests assert the requested query strings: `metric=prv&crew=W1&hours=168&step=3600` at first, then `metric=hr&crew=W1...`, `crew=W3`, `hours=24&step=600`, and `metric=co2_mmhg&hours=168&step=3600` with no crew; the CUSUM alarm line appears once; a measure without CUSUM says so; CO2 shows both limit lines.
+- Commit: see git log (feat(dashboard): add history view)
+- Notes: the crew selector shares the selection with the crew strip.
+son line), detector text, model coefficients (38.2, 21.5, 0.7), the radiation sentence with "proxy", and the not-found case.
 - Commit: see git log (feat(dashboard): add domain detail view)
 - Notes: the baseline band and limits are whatever the API sends; the dashboard decides nothing.
 work in tests; `mockApi` in helpers routes by URL) and gives Recharts a size, since jsdom has no layout.

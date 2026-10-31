@@ -499,7 +499,7 @@ Copy rules apply to every view (from the onboarding doc): one plain sentence per
   - Accept: tests for each domain fixture; unknown domain shows a not-found message inside the shell.
   - Commit: `feat(dashboard): add domain detail view`
 
-- [ ] **T6.9 History view**
+- [x] **T6.9 History view**
   - Depends: T6.8
   - Do: metric and crew selectors; 7-day trend; CUSUM panel with the alarm line.
   - Accept: tests switch metric and crew and assert the requested query parameters.
