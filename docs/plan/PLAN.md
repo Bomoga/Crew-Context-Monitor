@@ -529,7 +529,7 @@ Copy rules apply to every view (from the onboarding doc): one plain sentence per
   - Accept: Playwright against the mock API: at phone width the four cards are vertically stacked (each card's top below the previous card's bottom); axe reports no serious or critical violations on any route.
   - Commit: `feat(dashboard): add responsive layout and accessibility fixes`
 
-- [ ] **T6.14 Copy-rule tests**
+- [x] **T6.14 Copy-rule tests**
   - Depends: T6.13
   - Do: one Vitest suite that renders every route with every fixture and scans visible text for the copy rules listed at the top of P6.
   - Accept: suite green; deliberately breaking a fixture string makes it fail (prove once, then revert).
