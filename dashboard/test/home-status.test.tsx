@@ -94,7 +94,7 @@ describe("crew strip", () => {
   it("keeps the chip frame identical across levels", () => {
     const frames = ["all_green", "air_red_cabin"].map((name) => {
       const { unmount } = renderRoute("/", polled(status(name)));
-      const classes = screen
+      const classes = within(screen.getByTestId("crew-strip"))
         .getAllByRole("button")
         .map((b) => b.className.replace(/border-accent|ring-2|ring-accent|border-line/g, ""));
       unmount();

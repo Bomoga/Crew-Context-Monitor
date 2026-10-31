@@ -1,10 +1,10 @@
 
-## T6.11 Settings view (done) 2026-10-31
-- What: `/settings`: crew list with a Reset baseline button per member that opens an in-app `ConfirmDialog` (role alertdialog, focus starts on Cancel, Escape cancels, Tab stays inside; the browser `confirm()` is never used); an enroll form (id must be W plus a number, name 1 to 40 characters, checked before any request); three auto-approve checkboxes (crew only, flight surgeon, urgent) that save the whole object optimistically and roll back with an alert on failure.
-- Verify: `make check` green; 97 vitest tests assert request bodies: PUT `/api/settings` `{crew_only:true, flight_surgeon:true, urgent:false}`; POST `/api/settings/enroll` `{id:"W4", name:"Alex"}`; POST `/api/settings/reset-baseline` `{crew:"W2", metric:null}` only after confirmation (none on Cancel or Escape, `window.confirm` never called); bad ids or empty names send nothing; failures show alerts.
-- Commit: see git log (feat(dashboard): add settings view)
- not-found case.
-- Commit: see git log (feat(dashboard): add domain detail view)
+## T6.12 Daily check-in (done) 2026-10-31
+- What: `CheckinPrompt` (in the shell, so it appears on any page): shown only when `checkin_due`; floats at the bottom right so it never moves the page. Mood row and sleep row of 1 to 5 taps, an optional note behind "Add a note", Send check-in (disabled until both scales are chosen), Not now. Posts `{crew, mood, sleep, note}` for the crew member selected in the strip (default first), then dismisses and refreshes the status. Errors keep it open with a message.
+- Verify: `make check` green; 103 vitest tests: three taps (mood, sleep, send) produce one POST with `{crew:"W1", mood:4, sleep:3, note:null}`; the note is trimmed and the strip's crew is used; the DOM's level data attributes, badge classes and status bar text are identical before and after sending (checked on `air_red_cabin`); failure and dismissal paths.
+- Commit: see git log (feat(dashboard): add daily check-in)
+- Notes: test helper `status(name, checkinDue)` can override the flag.
+mit: see git log (feat(dashboard): add domain detail view)
 - Notes: the baseline band and limits are whatever the API sends; the dashboard decides nothing.
 work in tests; `mockApi` in helpers routes by URL) and gives Recharts a size, since jsdom has no layout.
 rs.tsx` (`renderRoute(path, polled(...))`, `status("air_yellow")`, `fixture(name)`).

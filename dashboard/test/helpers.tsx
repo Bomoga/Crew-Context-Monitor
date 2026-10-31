@@ -18,8 +18,9 @@ export function fixture<T = unknown>(name: string): T {
   return fixtures[key] as T;
 }
 
-export function status(name: string): Status {
-  return fixture<Status>(`status.${name}`);
+export function status(name: string, checkinDue?: boolean): Status {
+  const s = fixture<Status>(`status.${name}`);
+  return checkinDue === undefined ? s : { ...s, checkin_due: checkinDue };
 }
 
 export function polled(data: Status | null, over: Partial<Polled<Status>> = {}): Polled<Status> {

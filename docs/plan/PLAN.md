@@ -517,7 +517,7 @@ Copy rules apply to every view (from the onboarding doc): one plain sentence per
   - Accept: tests assert request bodies; reset requires confirmation.
   - Commit: `feat(dashboard): add settings view`
 
-- [ ] **T6.12 Daily check-in**
+- [x] **T6.12 Daily check-in**
   - Depends: T6.4
   - Do: per D13; shown when `checkin_due`; completes in three taps; posts and dismisses.
   - Accept: tests: three taps submit; no level or color changes after submit.

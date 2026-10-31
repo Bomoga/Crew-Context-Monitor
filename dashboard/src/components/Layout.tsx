@@ -1,6 +1,7 @@
 import { NavLink, Outlet } from "react-router";
 import { useStatusContext } from "../hooks/StatusContext";
 import { Banner } from "./Banner";
+import { CheckinPrompt } from "./CheckinPrompt";
 
 export const FOOTER_TEXT = "Decision-support prototype, not a medical device";
 
@@ -42,6 +43,7 @@ export function Layout() {
       <footer className="border-t border-line py-4 text-center text-sm text-muted">
         {FOOTER_TEXT}
       </footer>
+      <CheckinPrompt />
     </div>
   );
 }
