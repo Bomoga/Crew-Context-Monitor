@@ -364,7 +364,7 @@ Each task lists **Depends**, **Do**, **Accept** (commands and checks that must p
   - Accept (5 seeds): W2 shifts as specified within 10%; W1 and W3 means stay within 1 bpm / 3 ms of their quiet values; CO2 and cabin temperature stay inside normal.
   - Commit: `feat(sim): add individual illness scenario`
 
-- [ ] **T3.4 coincident_trends**
+- [x] **T3.4 coincident_trends**
   - Depends: T3.1
   - Do: per D12, with the two trends driven by independent random streams.
   - Accept: CO2 stays below yellow; W3 HR trend starts 30 min before the CO2 trend; the truth channels show no coupling between them.

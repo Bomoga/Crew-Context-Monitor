@@ -1,9 +1,10 @@
 
-## T3.3 individual_illness (done) 2026-10-30
-- What: `individual_illness.yaml` (8 h, onset +1 h): W2 resting HR +12 bpm, RMSSD -15 ms, skin +0.8 C, ramped over 2 h (D12). Added a relative form to `ramp`: exactly one of `to` (absolute) or `delta` (relative to baseline).
-- Verify: `make check` green; 16 tests over seeds 1 to 5: W2 shifts within 10% of spec versus a paired quiet control (settled window 5 h to 8 h); W1 and W3 within 1 bpm / 3 ms of control; cabin CO2 under 2.0 mmHg and temperature inside 18 to 27 C; the event names only W2.
-- Commit: see git log (feat(sim): add individual illness scenario)
-- Notes: expect block uses `from: 3h`, `crew: [W2]` for T3.10. Paired control = `quiet_day` with the same seed, start and duration.
+## T3.4 coincident_trends (done) 2026-10-30
+- What: `coincident_trends.yaml` (6 h): W3 resting HR +6 bpm over 3 h from +1 h; cabin CO2 800 to 1300 ppm over 3 h from +1.5 h (about 1 mmHg, under yellow). Two separate events, no `coupled` effect.
+- Verify: `make check` green. Tests: CO2 never reaches yellow; the W3 trend starts 30 min before the CO2 trend; truth has no coupling; removing the CO2 event leaves W3's messages byte-identical, removing the HR event leaves the cabin messages byte-identical.
+- Commit: see git log (feat(sim): add coincident trends scenario)
+- Notes: independence comes from named random streams (`crew.W3.*` versus `cabin.C1`). expect block: `quiet: [cardio, air]` and `no_correlation: true` (handled in T3.10).
+.
 ommit: see git log (feat(sim): add scrubber failure scenario)
 - Notes: see D21 for the interpretation of the "red raised above the ramp peak" test and the 5 minute tolerance.
 ines. `ramp` and `set` hold after finishing unless `for` is given; an event emits an end event only if every effect has `for` (or it has `end_label`). Coupled effects follow the noise-free driver level; peak excess is computed from the truth, and a driver that never crosses its threshold raises an error mentioning thresholds.yaml (D6). `silence` is parsed into `truth.silences` and implemented in T3.9. `expect:` is only loosely schema-checked until T3.10.
