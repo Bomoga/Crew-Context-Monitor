@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ccm.local/contracts/api/earth_queue_item.schema.json",
+  "title": "Earth queue item (POST /api/earth-queue/{id}/approve response)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "t", "tier", "approved", "sent", "bytes", "summary", "payload"],
+  "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "t": {"type": "number"},
+    "tier": {"enum": ["crew_only", "flight_surgeon", "urgent"]},
+    "approved": {"type": "boolean"},
+    "sent": {"type": "boolean"},
+    "bytes": {"type": "integer", "minimum": 0},
+    "summary": {"type": "string", "minLength": 1},
+    "payload": {"type": "object"}
+  }
+}

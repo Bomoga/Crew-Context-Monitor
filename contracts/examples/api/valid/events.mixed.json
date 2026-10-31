@@ -1,0 +1,70 @@
+{
+  "events": [
+    {
+      "id": "e-120",
+      "t": 1760009400.0,
+      "kind": "sim_event",
+      "domain": "air",
+      "metric": "co2_mmhg",
+      "crew": null,
+      "score": null,
+      "sentence": "Simulated: CO2 passes 2.5 mmHg",
+      "simulated": true
+    },
+    {
+      "id": "e-121",
+      "t": 1760009520.0,
+      "kind": "drift",
+      "domain": "cardio",
+      "metric": "prv",
+      "crew": "W1",
+      "score": 5.2,
+      "sentence": "Pulse-rate variability 36 ms, baseline 45 ms.",
+      "simulated": false
+    },
+    {
+      "id": "e-122",
+      "t": 1760009700.0,
+      "kind": "correlation",
+      "domain": "cardio",
+      "metric": "prv",
+      "crew": "W1",
+      "score": null,
+      "sentence": "Pulse-rate variability began dropping 20 min after CO2 passed 2.5 mmHg.",
+      "simulated": false
+    },
+    {
+      "id": "e-123",
+      "t": 1760009800.0,
+      "kind": "checkin",
+      "domain": null,
+      "metric": null,
+      "crew": "W2",
+      "score": null,
+      "sentence": "Check-in from W2: mood 4 of 5, sleep 3 of 5.",
+      "simulated": false
+    },
+    {
+      "id": "e-124",
+      "t": 1760009900.0,
+      "kind": "node",
+      "domain": null,
+      "metric": null,
+      "crew": null,
+      "score": null,
+      "sentence": "Cabin sensor C1 offline for 2 min.",
+      "simulated": false
+    },
+    {
+      "id": "e-125",
+      "t": 1760009950.0,
+      "kind": "spike",
+      "domain": "radiation",
+      "metric": "cpm",
+      "crew": null,
+      "score": 4.1,
+      "sentence": "Radiation proxy 120 counts per minute, baseline 18.",
+      "simulated": false
+    }
+  ]
+}

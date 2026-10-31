@@ -28,3 +28,7 @@ D1 to D16 are the settled defaults from PLAN.md Section 2. Later decisions appen
 ## D18 Windows toolchain (2026-10-30)
 
 The build host is Windows 11 with Git Bash. GNU Make comes from `C:\msys64\usr\bin` (not on PATH by default). The Makefile detects `.venv/Scripts` versus `.venv/bin`. Python 3.11.9 is used; Node v24.14.0.
+
+## D19 Extra API schemas and fixture naming (2026-10-30)
+
+Two schemas beyond the plan's list: `checkin_response` (the `{ok, event_id}` reply in Appendix A.10) and `settings_update` (the PUT body, the `auto_approve` object), so the dashboard has a generated type and a validator for every request and response. Fixture files are named `<kind>.<name>.json`; the plan's state names map to `status.<name>` for the nine status states, `earth_queue.pending` (earth_queue_pending), `history.prv_6h` (history_prv_6h) and `events.mixed` (events_mixed). `status.cards` is enforced as exactly four entries in the fixed order cardio, air, thermal, radiation via `prefixItems`. `source_mode` allows `mock` or `live`; `thresholds_status` allows `provisional` or `final`.

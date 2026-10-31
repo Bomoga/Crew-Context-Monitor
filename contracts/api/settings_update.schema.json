@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ccm.local/contracts/api/settings_update.schema.json",
+  "title": "PUT /api/settings request body (the auto_approve object)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["crew_only", "flight_surgeon", "urgent"],
+  "properties": {
+    "crew_only": {"type": "boolean"},
+    "flight_surgeon": {"type": "boolean"},
+    "urgent": {"type": "boolean"}
+  }
+}

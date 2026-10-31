@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ccm.local/contracts/api/events.schema.json",
+  "title": "GET /api/events?since=&limit=",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["events"],
+  "properties": {
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "t", "kind", "domain", "metric", "crew", "score", "sentence", "simulated"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "t": {"type": "number"},
+          "kind": {"enum": ["spike", "drift", "correlation", "sim_event", "checkin", "node"]},
+          "domain": {"enum": ["cardio", "air", "thermal", "radiation", null]},
+          "metric": {"type": ["string", "null"]},
+          "crew": {"type": ["string", "null"], "pattern": "^W[0-9]+$"},
+          "score": {"type": ["number", "null"]},
+          "sentence": {"type": "string", "minLength": 1},
+          "simulated": {"type": "boolean"}
+        }
+      }
+    }
+  }
+}

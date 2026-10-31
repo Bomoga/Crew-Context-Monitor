@@ -1,0 +1,18 @@
+{
+  "next_window_t": 1760011800.0,
+  "items": [
+    {
+      "id": "q-1",
+      "t": 1760009900.0,
+      "tier": "crew_only",
+      "approved": true,
+      "sent": false,
+      "bytes": -5,
+      "summary": "Daily crew summary: all four domains normal.",
+      "payload": {
+        "domain": "air",
+        "level": "red"
+      }
+    }
+  ]
+}

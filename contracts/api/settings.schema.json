@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ccm.local/contracts/api/settings.schema.json",
+  "title": "GET /api/settings",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["crew", "auto_approve"],
+  "properties": {
+    "crew": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name", "enrolled_t"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^W[0-9]+$"},
+          "name": {"type": "string", "minLength": 1},
+          "enrolled_t": {"type": "number"}
+        }
+      }
+    },
+    "auto_approve": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["crew_only", "flight_surgeon", "urgent"],
+      "properties": {
+        "crew_only": {"type": "boolean"},
+        "flight_surgeon": {"type": "boolean"},
+        "urgent": {"type": "boolean"}
+      }
+    }
+  }
+}

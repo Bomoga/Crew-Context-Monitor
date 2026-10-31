@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ccm.local/contracts/api/checkin_request.schema.json",
+  "title": "POST /api/checkin request body",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["crew", "mood", "sleep", "note"],
+  "properties": {
+    "crew": {"type": "string", "pattern": "^W[0-9]+$"},
+    "mood": {"type": "integer", "minimum": 1, "maximum": 5},
+    "sleep": {"type": "integer", "minimum": 1, "maximum": 5},
+    "note": {"type": ["string", "null"], "maxLength": 500}
+  }
+}

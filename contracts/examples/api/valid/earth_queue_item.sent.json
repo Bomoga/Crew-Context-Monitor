@@ -1,0 +1,13 @@
+{
+  "id": "q-1",
+  "t": 1760009900.0,
+  "tier": "crew_only",
+  "approved": true,
+  "sent": true,
+  "bytes": 212,
+  "summary": "Daily crew summary: all four domains normal.",
+  "payload": {
+    "domain": "air",
+    "level": "red"
+  }
+}

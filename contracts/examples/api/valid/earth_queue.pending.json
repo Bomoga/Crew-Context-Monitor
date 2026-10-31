@@ -1,0 +1,44 @@
+{
+  "next_window_t": 1760011800.0,
+  "items": [
+    {
+      "id": "q-1",
+      "t": 1760009900.0,
+      "tier": "crew_only",
+      "approved": true,
+      "sent": false,
+      "bytes": 212,
+      "summary": "Daily crew summary: all four domains normal.",
+      "payload": {
+        "domain": "air",
+        "level": "red"
+      }
+    },
+    {
+      "id": "q-2",
+      "t": 1760009800.0,
+      "tier": "flight_surgeon",
+      "approved": false,
+      "sent": false,
+      "bytes": 318,
+      "summary": "Cabin CO2 3.1 mmHg; 3 of 3 crew show lower pulse-rate variability.",
+      "payload": {
+        "domain": "air",
+        "level": "red"
+      }
+    },
+    {
+      "id": "q-3",
+      "t": 1760009700.0,
+      "tier": "urgent",
+      "approved": false,
+      "sent": false,
+      "bytes": 190,
+      "summary": "Radiation proxy 238 counts per minute for 2 windows.",
+      "payload": {
+        "domain": "air",
+        "level": "red"
+      }
+    }
+  ]
+}

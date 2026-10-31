@@ -275,7 +275,7 @@ Each task lists **Depends**, **Do**, **Accept** (commands and checks that must p
   - Accept: `make contracts` reports every valid example passing and every invalid one failing.
   - Commit: `feat(contracts): define mqtt topics and telemetry schemas`
 
-- [ ] **T1.2 Dashboard API schemas and fixtures**
+- [x] **T1.2 Dashboard API schemas and fixtures**
   - Depends: T1.1
   - Do: schemas per Appendix A.5 to A.10. Valid API fixtures for these states: `all_green`, `learning`, `air_yellow`, `air_red_cabin`, `cardio_yellow_individual`, `radiation_red`, `thermal_red`, `node_offline`, `correlation_active`, `earth_queue_pending`, `history_prv_6h`, `events_mixed`. Invalid fixtures: at least 3 per schema.
   - Accept: `make contracts`.

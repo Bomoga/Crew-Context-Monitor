@@ -1,0 +1,190 @@
+{
+  "t": 1760010000.0,
+  "thresholds_status": "provisional",
+  "crew_status": {
+    "level": "green",
+    "domain": null,
+    "sentence": "All four domains are normal; resting HR 62, baseline 62.",
+    "attribution": null,
+    "action": null
+  },
+  "crew": [
+    {
+      "id": "W1",
+      "name": "W1",
+      "src": "hw",
+      "online": true,
+      "level": "green",
+      "baseline": "ready",
+      "learning_ends_t": null,
+      "last_seen_t": 1760009995.0
+    },
+    {
+      "id": "W2",
+      "name": "W2",
+      "src": "sim",
+      "online": true,
+      "level": "green",
+      "baseline": "ready",
+      "learning_ends_t": null,
+      "last_seen_t": 1760009995.0
+    },
+    {
+      "id": "W3",
+      "name": "W3",
+      "src": "sim",
+      "online": true,
+      "level": "green",
+      "baseline": "ready",
+      "learning_ends_t": null,
+      "last_seen_t": 1760009995.0
+    }
+  ],
+  "cards": [
+    {
+      "domain": "cardio",
+      "level": "green",
+      "reason": "Resting HR 62, baseline 62; pulse-rate variability 45 ms, baseline 45 ms.",
+      "action": null,
+      "attribution": null,
+      "crew": [],
+      "numbers": [
+        {
+          "label": "Resting HR",
+          "value": 62,
+          "unit": "bpm",
+          "baseline": 62
+        },
+        {
+          "label": "Pulse-rate variability",
+          "value": 45,
+          "unit": "ms",
+          "baseline": 45
+        },
+        {
+          "label": "SpO2",
+          "value": 97,
+          "unit": "%",
+          "baseline": 97
+        }
+      ],
+      "detector": {
+        "name": "residual cusum",
+        "state": "green",
+        "detail": "no drift"
+      },
+      "model": {
+        "beta0": 38.2,
+        "beta1": 21.5,
+        "beta2": 0.7,
+        "fitted_t": 1759923600.0
+      }
+    },
+    {
+      "domain": "air",
+      "level": "green",
+      "reason": "Cabin CO2 0.6 mmHg, baseline 0.6 mmHg.",
+      "action": null,
+      "attribution": null,
+      "crew": [],
+      "numbers": [
+        {
+          "label": "CO2",
+          "value": 0.6,
+          "unit": "mmHg",
+          "baseline": 0.6
+        },
+        {
+          "label": "VOC index",
+          "value": 100,
+          "unit": "index",
+          "baseline": 100
+        }
+      ],
+      "detector": {
+        "name": "threshold",
+        "state": "green",
+        "detail": "within normal"
+      },
+      "model": null
+    },
+    {
+      "domain": "thermal",
+      "level": "green",
+      "reason": "Cabin 22.0 C, normal band 18 to 27 C; skin 0.0 C from baseline.",
+      "action": null,
+      "attribution": null,
+      "crew": [],
+      "numbers": [
+        {
+          "label": "Cabin temperature",
+          "value": 22.0,
+          "unit": "C",
+          "baseline": 22.0
+        },
+        {
+          "label": "Skin residual",
+          "value": 0.0,
+          "unit": "C",
+          "baseline": 0.0
+        }
+      ],
+      "detector": {
+        "name": "threshold",
+        "state": "green",
+        "detail": "within normal"
+      },
+      "model": null
+    },
+    {
+      "domain": "radiation",
+      "level": "green",
+      "reason": "Radiation proxy 18 counts per minute, baseline 18.",
+      "action": null,
+      "attribution": null,
+      "crew": [],
+      "numbers": [
+        {
+          "label": "Counts per minute",
+          "value": 18,
+          "unit": "cpm",
+          "baseline": 18
+        }
+      ],
+      "detector": {
+        "name": "poisson window",
+        "state": "green",
+        "detail": "0 of 2 windows above threshold"
+      },
+      "model": null
+    }
+  ],
+  "nodes": [
+    {
+      "node": "wearable",
+      "id": "W1",
+      "state": "online",
+      "last_seen_t": 1760009995.0
+    },
+    {
+      "node": "wearable",
+      "id": "W2",
+      "state": "online",
+      "last_seen_t": 1760009995.0
+    },
+    {
+      "node": "wearable",
+      "id": "W3",
+      "state": "online",
+      "last_seen_t": 1760009995.0
+    },
+    {
+      "node": "cabin",
+      "id": "C1",
+      "state": "online",
+      "last_seen_t": 1760009992.0
+    }
+  ],
+  "correlation": null,
+  "checkin_due": true
+}

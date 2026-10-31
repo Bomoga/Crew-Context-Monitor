@@ -1,0 +1,186 @@
+{
+  "t": 1760010000.0,
+  "source_mode": "mock",
+  "thresholds_status": "provisional",
+  "crew_status": {
+    "level": "yellow",
+    "domain": "air",
+    "sentence": "Cabin CO2 2.7 mmHg, baseline 0.6 mmHg.",
+    "attribution": "cabin",
+    "action": "Check scrubber"
+  },
+  "crew": [
+    {
+      "id": "W1",
+      "name": "W1",
+      "src": "hw",
+      "online": true,
+      "level": "yellow",
+      "baseline": "ready",
+      "learning_ends_t": null,
+      "last_seen_t": 1760009995.0
+    },
+    {
+      "id": "W2",
+      "name": "W2",
+      "src": "sim",
+      "online": true,
+      "level": "green",
+      "baseline": "ready",
+      "learning_ends_t": null,
+      "last_seen_t": 1760009995.0
+    },
+    {
+      "id": "W3",
+      "name": "W3",
+      "src": "sim",
+      "online": true,
+      "level": "green",
+      "baseline": "ready",
+      "learning_ends_t": null,
+      "last_seen_t": 1760009995.0
+    }
+  ],
+  "cards": [
+    {
+      "domain": "cardio",
+      "level": "yellow",
+      "reason": "Pulse-rate variability 36 ms, baseline 45 ms; falling since 10:05.",
+      "action": "Retest in 30 min",
+      "attribution": "unclear",
+      "crew": [
+        "W1"
+      ],
+      "numbers": [
+        {
+          "label": "Pulse-rate variability",
+          "value": 36,
+          "unit": "ms",
+          "baseline": 45
+        }
+      ],
+      "detector": {
+        "name": "residual cusum",
+        "state": "yellow",
+        "detail": "alarm 10 min ago"
+      },
+      "model": {
+        "beta0": 38.2,
+        "beta1": 21.5,
+        "beta2": 0.7,
+        "fitted_t": 1759923600.0
+      }
+    },
+    {
+      "domain": "air",
+      "level": "yellow",
+      "reason": "Cabin CO2 2.7 mmHg, baseline 0.6 mmHg.",
+      "action": "Check scrubber",
+      "attribution": "cabin",
+      "crew": [
+        "W1",
+        "W2",
+        "W3"
+      ],
+      "numbers": [
+        {
+          "label": "CO2",
+          "value": 2.7,
+          "unit": "mmHg",
+          "baseline": 0.6
+        }
+      ],
+      "detector": {
+        "name": "threshold",
+        "state": "yellow",
+        "detail": "above 2.5 mmHg for 9 min"
+      },
+      "model": null
+    },
+    {
+      "domain": "thermal",
+      "level": "green",
+      "reason": "Cabin 22.0 C, normal band 18 to 27 C; skin 0.0 C from baseline.",
+      "action": null,
+      "attribution": null,
+      "crew": [],
+      "numbers": [
+        {
+          "label": "Cabin temperature",
+          "value": 22.0,
+          "unit": "C",
+          "baseline": 22.0
+        },
+        {
+          "label": "Skin residual",
+          "value": 0.0,
+          "unit": "C",
+          "baseline": 0.0
+        }
+      ],
+      "detector": {
+        "name": "threshold",
+        "state": "green",
+        "detail": "within normal"
+      },
+      "model": null
+    },
+    {
+      "domain": "radiation",
+      "level": "green",
+      "reason": "Radiation proxy 18 counts per minute, baseline 18.",
+      "action": null,
+      "attribution": null,
+      "crew": [],
+      "numbers": [
+        {
+          "label": "Counts per minute",
+          "value": 18,
+          "unit": "cpm",
+          "baseline": 18
+        }
+      ],
+      "detector": {
+        "name": "poisson window",
+        "state": "green",
+        "detail": "0 of 2 windows above threshold"
+      },
+      "model": null
+    }
+  ],
+  "nodes": [
+    {
+      "node": "wearable",
+      "id": "W1",
+      "state": "online",
+      "last_seen_t": 1760009995.0
+    },
+    {
+      "node": "wearable",
+      "id": "W2",
+      "state": "online",
+      "last_seen_t": 1760009995.0
+    },
+    {
+      "node": "wearable",
+      "id": "W3",
+      "state": "online",
+      "last_seen_t": 1760009995.0
+    },
+    {
+      "node": "cabin",
+      "id": "C1",
+      "state": "online",
+      "last_seen_t": 1760009992.0
+    }
+  ],
+  "correlation": {
+    "x": "co2_mmhg",
+    "y": "prv",
+    "crew": "W1",
+    "lag_min": 20,
+    "r": -0.71,
+    "sentence": "Pulse-rate variability began dropping 20 min after CO2 passed 2.5 mmHg."
+  },
+  "checkin_due": false
+}
