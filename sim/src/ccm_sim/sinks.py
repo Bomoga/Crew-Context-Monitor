@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import sys
+import time
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Protocol, TextIO
@@ -21,6 +22,7 @@ class Record:
     retain: bool = False
     qos: int = 0
     node: str | None = None
+    action: str | None = None  # "drop" or "restore": a node connection event
 
 
 class Sink(Protocol):
@@ -29,6 +31,10 @@ class Sink(Protocol):
     ) -> None: ...
 
     def publish(self, record: Record) -> None: ...
+
+    def drop_node(self, key: str, offline: Record) -> None: ...
+
+    def restore_node(self, key: str) -> None: ...
 
     def close(self) -> None: ...
 
@@ -44,6 +50,13 @@ class MemorySink:
 
     def publish(self, record: Record) -> None:
         self.records.append(record)
+
+    def drop_node(self, key: str, offline: Record) -> None:
+        """Without a broker there is no last will, so the offline status is written directly."""
+        self.records.append(offline)
+
+    def restore_node(self, key: str) -> None:
+        return None
 
     def close(self) -> None:
         return None
@@ -76,6 +89,12 @@ class JsonlSink:
     def publish(self, record: Record) -> None:
         self._fh.write(record_to_line(record) + "\n")
 
+    def drop_node(self, key: str, offline: Record) -> None:
+        self.publish(offline)
+
+    def restore_node(self, key: str) -> None:
+        return None
+
     def close(self) -> None:
         if self._own:
             self._fh.close()
@@ -101,12 +120,14 @@ class MqttSink:
         self._prefix = client_prefix
         self._clients: dict[str, mqtt.Client] = {}
         self._last: dict[str, mqtt.MQTTMessageInfo] = {}
+        self._wills: dict[str, tuple[str | None, dict[str, Any] | None]] = {}
 
     def open_node(
         self, key: str, will_topic: str | None, will_payload: dict[str, Any] | None
     ) -> None:
         if key in self._clients:
             return
+        self._wills[key] = (will_topic, will_payload)
         client = mqtt.Client(CallbackAPIVersion.VERSION2, client_id=f"{self._prefix}-{key}")
         if will_topic is not None and will_payload is not None:
             client.will_set(will_topic, json.dumps(will_payload), qos=1, retain=True)
@@ -133,6 +154,15 @@ class MqttSink:
         client.loop_stop()
         if sock is not None:
             sock.close()
+
+    def drop_node(self, key: str, offline: Record) -> None:
+        """Cut the connection without DISCONNECT; the broker publishes the last will."""
+        self.kill_node(key)
+        time.sleep(0.2)  # let the broker fire the will before this node reconnects
+
+    def restore_node(self, key: str) -> None:
+        will_topic, will_payload = self._wills.get(key, (None, None))
+        self.open_node(key, will_topic, will_payload)
 
     def close(self) -> None:
         for info in self._last.values():

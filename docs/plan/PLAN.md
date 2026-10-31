@@ -394,7 +394,7 @@ Each task lists **Depends**, **Do**, **Accept** (commands and checks that must p
   - Accept: cabin leaves the 18 to 27 C band at the expected time; skin follows within the lag tolerance; HR minus model prediction within +/- 3 bpm.
   - Commit: `feat(sim): add thermal fault scenario`
 
-- [ ] **T3.9 wifi_dropout and ble_dropout**
+- [x] **T3.9 wifi_dropout and ble_dropout**
   - Depends: T3.1
   - Do: `wifi_dropout`: C1 goes silent for 8 min (MqttSink drops the connection without a clean disconnect so the broker fires the last will; other sinks emit an `offline` status record), buffers messages, then reconnects (`online`) and flushes the buffer in order with original `seq` and `t_meas`. `ble_dropout`: W1 silent 60 s then resends its last 60 s.
   - Accept: after the flush, `seq` has no gaps; flushed messages carry `t_meas` inside the silent window; every sim minute of the scenario has at least one cabin message by `t_meas`.

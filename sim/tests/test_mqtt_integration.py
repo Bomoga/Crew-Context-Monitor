@@ -90,3 +90,30 @@ def test_ten_sim_minutes_through_a_real_broker(broker: tuple[str, int]) -> None:
     late.stop()
     everything.stop()
     sink.close()
+
+
+def test_wifi_dropout_fires_the_last_will_and_flushes(broker: tuple[str, int]) -> None:
+    from ccm_sim.engine import build_world, run_world
+    from ccm_sim.scenario import load_scenario
+
+    host, port = broker
+    status = Collector(host, port, "ccm/cabin/status/C1", "test-dropout-status")
+    cabin = Collector(host, port, "ccm/cabin/telemetry", "test-dropout-cabin")
+    time.sleep(0.3)
+    world = build_world(load_scenario("wifi_dropout"), 4, DEFAULT_START)
+    sink = MqttSink(host, port)
+    run_world(world, sink)
+    sink.close()
+    expected = int(world.duration / 10)
+    assert cabin.wait_for(lambda items: len(items) >= expected)
+    assert status.wait_for(lambda items: len(items) >= 4), status.snapshot()
+    assert [p["state"] for _, p, _ in status.snapshot()] == [
+        "online",
+        "offline",
+        "online",
+        "offline",
+    ]
+    seqs = [p["seq"] for _, p, _ in cabin.snapshot()]
+    assert seqs == list(range(1, expected + 1))
+    status.stop()
+    cabin.stop()

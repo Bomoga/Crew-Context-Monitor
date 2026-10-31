@@ -15,8 +15,8 @@ from ccm_sim.messages import (
     sim_event_message,
 )
 from ccm_sim.physiology import CrewPhysiology, load_physiology
-from ccm_sim.publisher import NodeSource, Publisher, Source
-from ccm_sim.scenario import EventSpec, Scenario, load_scenario
+from ccm_sim.publisher import NodeSource, Publisher, SilencedSource, Source
+from ccm_sim.scenario import EffectSpec, EventSpec, Scenario, load_scenario
 from ccm_sim.sinks import Record, Sink
 from ccm_sim.thresholds import Thresholds, load_thresholds
 from ccm_sim.truth import Truth
@@ -88,8 +88,16 @@ def _fill(label: str, thresholds: Thresholds) -> str:
     return _PLACEHOLDER.sub(lambda m: _fmt(thresholds.value(m.group(1))), label)
 
 
+def _effect_target(spec: EffectSpec) -> str:
+    """The target of an effect; a silence on a wearable counts as a crew target."""
+    if spec.target:
+        return spec.target
+    node = str(spec.args.get("node", ""))
+    return f"crew.{node}.link" if node.startswith("W") else ""
+
+
 def _event_crew(event: EventSpec) -> str | None:
-    targets = [s.target or "" for s in event.effects]
+    targets = [_effect_target(s) for s in event.effects]
     crews = {t.split(".")[1] for t in targets if t.startswith("crew.")}
     others = any(not t.startswith("crew.") for t in targets)
     if len(crews) == 1 and not others and "*" not in crews:
@@ -143,6 +151,11 @@ def build_timeline(
     return [e for e in events if e.t <= t_end], missing
 
 
+def _silenced(source: NodeSource, truth: Truth) -> Source:
+    silences = [s for s in truth.silences if s.node == source.key]
+    return SilencedSource(source, silences) if silences else source
+
+
 def build_world(
     scenario: Scenario,
     seed: int,
@@ -178,8 +191,8 @@ def build_world(
             return truth.offset(_prefix + target, t)
 
         phys = CrewPhysiology(cid, crew_params[cid], seed, t0, cabin.temp_fn, crew_offsets)
-        sources.append(NodeSource(WearableNode(phys, seed, t0)))
-    sources.append(NodeSource(CabinNode(cabin, seed, t0)))
+        sources.append(_silenced(NodeSource(WearableNode(phys, seed, t0)), truth))
+    sources.append(_silenced(NodeSource(CabinNode(cabin, seed, t0)), truth))
     return World(sources, t0, duration, scenario.name, scenario, truth, crew, seed, events, missing)
 
 

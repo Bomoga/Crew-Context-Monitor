@@ -15,6 +15,7 @@ from ccm_sim.messages import (
     status_topic,
 )
 from ccm_sim.sinks import Record, Sink
+from ccm_sim.truth import Silence
 
 
 class Source(Protocol):
@@ -103,8 +104,76 @@ class Publisher:
                 break
             self.clock.sleep_until(source.next_t)
             for record in source.pop():
+                if record.action == "drop" and record.node:
+                    self.sink.drop_node(record.node, record)
+                    continue
+                if record.action == "restore" and record.node:
+                    self.sink.restore_node(record.node)
                 self.sink.publish(record)
                 sent += 1
         if finish:
             self.finish(until)
         return sent
+
+
+class SilencedSource:
+    """Wraps a node source with silences: the node drops off, buffers, then flushes in order.
+
+    At a silence start the node's connection is dropped (the broker fires the last will; sinks
+    without a broker get an ``offline`` status record). At its end the node reconnects, publishes
+    ``online`` and flushes the messages it measured meanwhile with their original ``seq`` and
+    ``t_meas`` (``buffer: false`` discards them instead, leaving a ``seq`` gap).
+    """
+
+    def __init__(self, base: NodeSource, silences: Sequence[Silence]) -> None:
+        self._base = base
+        self._silences = sorted(silences, key=lambda s: s.t_start)
+        self._i = 0
+        self._silent = False
+
+    @property
+    def key(self) -> str:
+        return self._base.key
+
+    @property
+    def node_type(self) -> str | None:
+        return self._base.node_type
+
+    @property
+    def node_id(self) -> str | None:
+        return self._base.node_id
+
+    @property
+    def next_t(self) -> float:
+        if self._silent:
+            return self._silences[self._i].t_end
+        if self._i < len(self._silences):
+            return min(self._base.next_t, self._silences[self._i].t_start)
+        return self._base.next_t
+
+    def _status(self, state: str, t: float, action: str | None) -> Record:
+        assert self._base.node_type is not None and self._base.node_id is not None
+        return Record(
+            status_topic(self._base.node_type, self._base.node_id),
+            status_message(self._base.node_type, self._base.node_id, state, t),
+            retain=True,
+            qos=1,
+            node=self._base.key,
+            action=action,
+        )
+
+    def pop(self) -> list[Record]:
+        if self._silent:
+            silence = self._silences[self._i]
+            out = [self._status("online", silence.t_end, "restore")]
+            while self._base.next_t < silence.t_end:
+                messages = self._base.pop()
+                if silence.buffer:
+                    out.extend(messages)
+            self._silent = False
+            self._i += 1
+            return out
+        if self._i < len(self._silences) and self._base.next_t >= self._silences[self._i].t_start:
+            self._silent = True
+            return [self._status("offline", self._silences[self._i].t_start, "drop")]
+        return self._base.pop()
