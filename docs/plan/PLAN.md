@@ -561,7 +561,7 @@ Copy rules apply to every view (from the onboarding doc): one plain sentence per
   - Accept: every file path and command in the doc exists or runs.
   - Commit: `docs: add backend lane handoff`
 
-- [ ] **T7.4 README quickstart**
+- [x] **T7.4 README quickstart**
   - Depends: T7.2
   - Do: setup, run the simulator, run the mock API, run the dashboard in dev, run tests, repo map, conventions, prototype disclaimer.
   - Accept: commands in the README run on a fresh clone.
