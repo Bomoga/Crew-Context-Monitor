@@ -287,7 +287,7 @@ Each task lists **Depends**, **Do**, **Accept** (commands and checks that must p
   - Accept: tests show `ppm_to_mmhg(5000)` equals 3.8 within 1e-9 at 760 mmHg (the OCHMO brief states 0.5% CO2 = 3.8 mmHg; do not use `==` on floats) and the round trip holds within 1e-9; loader rejects a missing key.
   - Commit: `feat(contracts): add co2 unit conversion and provisional thresholds`
 
-- [ ] **T1.4 Contract loader, version and freeze**
+- [x] **T1.4 Contract loader, version and freeze**
   - Depends: T1.2, T1.3
   - Do: `ccm_sim.contracts.validate(kind, obj)` with cached validators; `contracts/VERSION` = `1.0.0`; `contracts/CHANGELOG.md`; `contracts/README.md` (topics, fields, units, the change process from Section 9). Run gate G1.
   - Accept: `make contracts`; a test validates every example through the public loader.
