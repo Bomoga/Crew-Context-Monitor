@@ -48,3 +48,9 @@ T3.7 and T3.8 compare message HR with the model's prediction. A single message H
 PLAN Appendix B.1 gives the scrubber cardio expectation as `mark:co2_passes_yellow + 25m`. With the coupling proportional to CO2 excess, the crew response is only 0.8 ms at that time, so no detector could flag it. The oracle first reaches the line 71 minutes after the yellow crossing, and the scenario ends 106 minutes after, so `scrubber_failure.yaml` now says `+ 75m`. Spec text is otherwise unchanged. The Backend lane should confirm both the detectability line and the time (OPEN_QUESTIONS.md).
 
 A coupled effect's peak excess is taken over the scenario's own duration, not a shortened run, so `--duration 1h` on `scrubber_failure` keeps the full-scale response.
+
+## D25 Replay file format added to the contract; what `--retime` means (2026-10-30)
+
+T4.1 asks for `contracts/replay_csv.md`. It is an additive document, so the Section 9 process was followed: this entry, `contracts/VERSION` 1.0.0 to 1.1.0, a CHANGELOG line, and the README pointer. No schema, example, simulator or type changes were needed.
+
+`--retime` shifts every time field (`t_meas`, `t_node`, status `t`) by one constant, so spacing is preserved. The constant is chosen so the recording's last message lands at the moment the replay finishes: `now + duration / speed - last_t`. At `--speed max` that is exactly "the recording ends now"; at real speed each message carries about the wall time at which it is published, so the dashboard sees live-looking data rather than a constant lag of the whole recording length.

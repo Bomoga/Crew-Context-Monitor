@@ -4,12 +4,14 @@ from __future__ import annotations
 
 import argparse
 import sys
+import threading
 import time
 from collections.abc import Sequence
 
 from ccm_sim import __version__
 from ccm_sim.engine import World, build_world, run_world
 from ccm_sim.playlist import load_playlist, run_playlist
+from ccm_sim.replay import CsvWriter, MqttRecorder, read_rows, replay
 from ccm_sim.scenario import ScenarioError, load_scenario
 from ccm_sim.sinks import JsonlSink, MqttSink, Sink
 from ccm_sim.timeutil import DEFAULT_START, parse_duration, parse_iso
@@ -38,6 +40,17 @@ def build_parser() -> argparse.ArgumentParser:
     scen = sub.add_parser("scenarios", help="list scenarios or check their expectations")
     scen.add_argument("action", choices=["list", "check"])
     scen.add_argument("names", nargs="*", help="scenario names (default: all)")
+
+    rec = sub.add_parser("record", help="record ccm/# from a broker to a replay CSV")
+    rec.add_argument("--broker", required=True, help="host:port of the MQTT broker")
+    rec.add_argument("--out", required=True, help="output CSV path")
+    rec.add_argument("--duration", help="stop after this much real time, such as 30m")
+
+    rep = sub.add_parser("replay", help="publish a recorded CSV to a broker or stdout")
+    rep.add_argument("--file", required=True, help="replay CSV to publish")
+    rep.add_argument("--speed", default="1", help="speed multiplier or 'max'")
+    rep.add_argument("--retime", action="store_true", help="shift times so the replay looks live")
+    rep.add_argument("--broker", help="host:port of the MQTT broker (default: print JSONL)")
 
     gen = sub.add_parser("generate", help="write a scenario to a JSONL file at max speed")
     common(gen)
@@ -101,6 +114,41 @@ def _run(
     run_world(_world(args, default_start), sink, 1.0 if speed is None else speed)
 
 
+def _record(args: argparse.Namespace) -> int:
+    host, port = _broker(args.broker)
+    writer = CsvWriter(args.out)
+    recorder = MqttRecorder(host, port, writer)
+    seconds = parse_duration(args.duration) if args.duration else None
+    try:
+        if seconds is not None:
+            time.sleep(seconds)
+        else:
+            threading.Event().wait()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        recorder.stop()
+    print(f"recorded {writer.rows} messages to {args.out}", file=sys.stderr)
+    return 0
+
+
+def _replay(args: argparse.Namespace) -> int:
+    rows = read_rows(args.file)
+    sink: Sink
+    if args.broker:
+        host, port = _broker(args.broker)
+        sink = MqttSink(host, port)
+    else:
+        sink = JsonlSink("-")
+    try:
+        replay(rows, sink, _parse_speed(args.speed), retime=args.retime)
+    except KeyboardInterrupt:
+        print("stopped", file=sys.stderr)
+    finally:
+        sink.close()
+    return 0
+
+
 def _parse_speed(text: str) -> float | str:
     return "max" if text == "max" else float(text)
 
@@ -115,6 +163,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = parser.parse_args(argv)
     if args.command == "scenarios":
         return _scenarios(args.action, args.names)
+    if args.command == "record":
+        return _record(args)
+    if args.command == "replay":
+        return _replay(args)
     if args.command == "generate":
         sink: Sink = JsonlSink(args.out)
         try:

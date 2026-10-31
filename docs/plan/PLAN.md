@@ -414,7 +414,7 @@ Each task lists **Depends**, **Do**, **Accept** (commands and checks that must p
 
 ### P4. Record and replay
 
-- [ ] **T4.1 Record and replay modes**
+- [x] **T4.1 Record and replay modes**
   - Depends: T3.11
   - Do: `contracts/replay_csv.md` (columns `topic,t_meas,retain,payload_json`, one row per message). `ccm-sim record --broker H:P --out FILE.csv [--duration 30m]`; `ccm-sim replay --file FILE.csv [--speed N] [--retime]` (`--retime` shifts `t_meas` and `t_node` so the recording ends now, for the live fallback; off for eval).
   - Accept: generate, record through MemorySink, replay, compare: identical messages without `--retime`; with `--retime` only time fields differ and spacing is preserved; replay payloads validate.

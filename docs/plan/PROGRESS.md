@@ -1,11 +1,10 @@
 
-## T3.10 Scenario expectations and sim-eval (done) 2026-10-30
-- What: `ccm_sim.expectations` (parse `expect:` entries and times, per-domain oracle from the truth channels, `check_expectations`, `states_at`, `correlation_at` for the mock API); `ccm-sim scenarios list|check`; `make sim-eval`; `tests/test_sim_eval.py` (slow, every scenario x 5 seeds: consistency plus schema-valid output for the first hour). All 11 scenarios carry expect blocks.
-- Verify: `make check` green (about 200 tests); `ccm-sim scenarios check` lists all 11 consistent; `make sim-eval` green, 153 tests in 3 min.
-- Commit: see git log (feat(sim): encode scenario expectations and sim-eval)
-- Notes: scrubber cardio expectation moved from +25m to +75m (D24, flagged in OPEN_QUESTIONS). Fixed a bug found by sim-eval: coupled peaks are now computed over the scenario's duration, so shortened runs keep full-scale effects.
-(sim): add wifi and ble dropout scenarios)
-- Notes: the message exactly at the silence end is published normally, not flushed. `MqttSink.drop_node` sleeps 0.2 s so the will lands before the node reconnects. The will payload carries the connect-time `t`.
+## T4.1 Record and replay modes (done) 2026-10-30
+- What: `contracts/replay_csv.md` (columns `topic,t_meas,retain,payload_json`; contract 1.1.0, additive, process in D25); `ccm_sim.replay` (CSV writer and reader, `replay()` paced by `t_meas`, `--retime` shift, `MqttRecorder`); `ccm-sim record --broker H:P --out FILE.csv [--duration 30m]` and `ccm-sim replay --file FILE.csv [--speed N|max] [--retime] [--broker H:P]`.
+- Verify: `make check` green. Generate, write CSV, read back: lossless; replay without `--retime` is message-for-message identical; with `--retime` only time fields differ by one constant (spacing kept) and the last message lands at the target time; payloads validate; pacing sleeps sum to span/speed and a buffered flush does not wait; a real-broker test records `ccm/#` to CSV and replays it identically.
+- Commit: see git log (feat(sim): add record and replay modes)
+- Notes: D25 explains the contract bump and that `--retime` makes the recording end when the replay finishes (at `max` speed that is exactly now). Replay reconnects each node with its own client and last will.
+. The will payload carries the connect-time `t`.
 the truth, and a driver that never crosses its threshold raises an error mentioning thresholds.yaml (D6). `silence` is parsed into `truth.silences` and implemented in T3.9. `expect:` is only loosely schema-checked until T3.10.
 `, `dist`, `node_modules` without trailing slash so check-ignore matches nonexistent paths.
 

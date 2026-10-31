@@ -6,6 +6,7 @@ import json
 import threading
 import time
 from collections import Counter
+from pathlib import Path
 
 import paho.mqtt.client as mqtt
 from paho.mqtt.enums import CallbackAPIVersion
@@ -117,3 +118,31 @@ def test_wifi_dropout_fires_the_last_will_and_flushes(broker: tuple[str, int]) -
     assert seqs == list(range(1, expected + 1))
     status.stop()
     cabin.stop()
+
+
+def test_record_from_a_broker_then_replay_matches(broker: tuple[str, int], tmp_path: Path) -> None:
+    from ccm_sim.engine import build_quiet, run_world
+    from ccm_sim.replay import CsvWriter, MqttRecorder, read_csv, read_rows, replay
+    from ccm_sim.sinks import MemorySink
+
+    host, port = broker
+    out = tmp_path / "live.csv"
+    writer = CsvWriter(out)
+    recorder = MqttRecorder(host, port, writer)
+    time.sleep(0.3)
+    world = build_quiet(["W1", "W2"], 8, DEFAULT_START, 120.0)
+    sink = MqttSink(host, port)
+    run_world(world, sink)
+    sink.close()
+    expected = 2 * 24 + 12 + 6  # two wearables, one cabin, online and offline for 3 nodes
+    deadline = time.time() + 15
+    while time.time() < deadline and writer.rows < expected:
+        time.sleep(0.05)
+    recorder.stop()
+    assert writer.rows == expected
+    records = read_csv(out)
+    telemetry = [r for r in records if r.topic.endswith("/telemetry")]
+    assert len(telemetry) == 2 * 24 + 12
+    again = MemorySink()
+    replay(read_rows(out), again, "max")
+    assert [(r.topic, r.payload) for r in again.records] == [(r.topic, r.payload) for r in records]
