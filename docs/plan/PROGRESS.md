@@ -1,8 +1,10 @@
 
-## T5.2 Earth queue, settings and check-in (done) 2026-10-30
-- What: `mockapi/earth.py` (`EarthQueue`: seeded with one item per tier, a summary queued once each time a card turns red, tier by domain: radiation urgent, air and thermal flight_surgeon, cardio crew_only; `bytes` is the UTF-8 length of the compact payload; items are carried by the first 30-minute comms window after approval). Routes: `GET /api/earth-queue`, `POST /api/earth-queue/{id}/approve`, `GET|PUT /api/settings`, `POST /api/settings/enroll`, `POST /api/settings/reset-baseline`, `POST /api/checkin`.
-- Verify: `make check` green. Responses validate against the contracts; approving twice returns the identical item; with a tier's auto-approve on, new items of that tier arrive approved while items already waiting do not; reset-baseline puts a crew member back in learning for 2 h; renaming shows in `/api/status`; a check-in adds a `checkin` event, flips `checkin_due` and leaves every card, crew and status level unchanged; bad bodies get 422, unknown crew 404.
-- Commit: see git log (feat(mockapi): add earth queue, settings and check-in)
+## T5.3 Copy templates and copy-rule tests (done) 2026-10-30
+- What: `mockapi/copyrules.py` (the PLAN P6 rules as a checker: no "caused by", no z-scores, no "HRV", radiation always "proxy", every reason one sentence with a digit) plus `test_mockapi_copy.py`. The templates themselves landed with T5.1; this task adds the proof.
+- Verify: `make check` green. The checker catches each violation kind; every `template_cases()` combination (domain x level x attribution x drift) passes; attribution phrases match the plan ("3 of 3 crew show lower pulse-rate variability since 02:30; cabin CO2 up 2.1 mmHg", "Only W2 changed; cabin within normal", "Not enough data to attribute", the correlation sentence); every status, event and Earth queue string for every scenario at five sim times passes (multi-day scenarios `slow`, run by sim-eval); all valid contract fixtures pass too.
+- Commit: see git log (feat(mockapi): add plain-language reason templates)
+- Notes: the same rules must be re-implemented for the dashboard in T6.14 (Vitest scans visible text).
+it log (feat(mockapi): add earth queue, settings and check-in)
 - Notes: crew_only auto-approves by default (matches the `earth_queue.pending` fixture). Reset-baseline ignores `metric` (any value restarts that crew member's learning timer); while any crew member is learning, all alerts are held back and the status bar shows the longest remaining time.
 5.3 formalises the copy-rule tests for `templates.py`.
  paths.

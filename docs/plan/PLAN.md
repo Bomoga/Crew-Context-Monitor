@@ -434,7 +434,7 @@ Each task lists **Depends**, **Do**, **Accept** (commands and checks that must p
   - Accept: schema-valid responses; approving twice is idempotent; auto-approve on a tier approves new items of that tier; a check-in leaves every card level unchanged.
   - Commit: `feat(mockapi): add earth queue, settings and check-in`
 
-- [ ] **T5.3 Copy templates and copy-rule tests**
+- [x] **T5.3 Copy templates and copy-rule tests**
   - Depends: T5.1
   - Do: `templates.py` with one sentence per domain and state, each with a number and a baseline comparison ("resting HR 71, baseline 65"), attribution phrasing ("3 of 3 crew show lower pulse-rate variability since 09:10; cabin CO2 up 2.1 mmHg", "Only W2 changed; cabin within normal", "Not enough data to attribute"), and the correlation sentence ("Pulse-rate variability began dropping 20 min after CO2 passed 2.5 mmHg").
   - Accept: a test renders every template for every scenario state and asserts: no "caused by"; no "z-score" or raw z values; "HRV" never appears without "pulse-rate variability"; radiation text includes "proxy"; every reason contains a digit.
