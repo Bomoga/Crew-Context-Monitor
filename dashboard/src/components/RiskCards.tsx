@@ -12,7 +12,6 @@ export function RiskCard({ card }: { card: Card }) {
       to={`/domain/${card.domain}`}
       data-testid={`card-${card.domain}`}
       data-level={card.level}
-      aria-label={`${DOMAIN_NAME[card.domain]}, ${card.level}. Open details.`}
       className="flex h-72 flex-col gap-3 overflow-hidden rounded-xl border border-line bg-panel p-4 shadow-sm hover:border-accent"
     >
       <div className="flex items-start justify-between gap-2">

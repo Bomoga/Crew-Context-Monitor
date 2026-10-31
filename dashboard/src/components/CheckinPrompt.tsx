@@ -18,7 +18,7 @@ function Scale({
   onPick: (n: number) => void;
 }) {
   return (
-    <div role="group" aria-label={label} className="flex flex-col gap-1">
+    <div role="group" aria-label={`${label}, 1 to 5`} className="flex flex-col gap-1">
       <p className="text-sm font-medium">{label}</p>
       <div className="flex gap-1">
         {words.map((word, i) => {
@@ -28,15 +28,15 @@ function Scale({
               key={n}
               type="button"
               aria-pressed={value === n}
-              aria-label={`${label} ${n} of 5, ${word}`}
               onClick={() => onPick(n)}
+              aria-label={`${label} ${n} ${word}`}
               className={`flex h-12 w-14 flex-col items-center justify-center rounded-md border text-sm ${
                 value === n
                   ? "border-accent bg-surface font-bold ring-2 ring-accent"
                   : "border-line"
               }`}
             >
-              <span className="text-base">{n}</span>
+              <span className="text-base">{n}</span>{" "}
               <span className="text-[11px] text-muted">{word}</span>
             </button>
           );

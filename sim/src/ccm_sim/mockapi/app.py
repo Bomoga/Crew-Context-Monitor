@@ -49,6 +49,8 @@ class Checkin(BaseModel):
 class ScenarioSwitch(BaseModel):
     name: str
     speed: float | Literal["max"] = 60.0
+    fast_forward: float = Field(default=0.0, ge=0)  # simulated seconds already generated
+    learning: bool = False
 
 
 def create_app(state: MockState | None = None, dist: Path | None = None) -> FastAPI:
@@ -130,7 +132,9 @@ def create_app(state: MockState | None = None, dist: Path | None = None) -> Fast
         """Development only: restart the mock on another scenario and speed."""
         state_ = mock()
         try:
-            state_.configure(body.name, body.speed, learning=state_.learning)
+            state_.configure(
+                body.name, body.speed, learning=body.learning, fast_forward=body.fast_forward
+            )
         except ScenarioError as exc:
             raise HTTPException(status_code=404, detail=str(exc)) from exc
         if body.speed != "max":

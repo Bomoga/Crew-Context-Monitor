@@ -523,7 +523,7 @@ Copy rules apply to every view (from the onboarding doc): one plain sentence per
   - Accept: tests: three taps submit; no level or color changes after submit.
   - Commit: `feat(dashboard): add daily check-in`
 
-- [ ] **T6.13 Responsive layout and accessibility**
+- [x] **T6.13 Responsive layout and accessibility**
   - Depends: T6.5 to T6.12
   - Do: tablet first at 1280 x 800; phone at 390 x 844 stacks the cards in one column; visible focus states; level words present.
   - Accept: Playwright against the mock API: at phone width the four cards are vertically stacked (each card's top below the previous card's bottom); axe reports no serious or critical violations on any route.

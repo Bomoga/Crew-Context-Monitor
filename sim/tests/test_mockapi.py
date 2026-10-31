@@ -183,3 +183,17 @@ def test_background_thread_runs_the_scenario_to_the_end() -> None:
 @pytest.fixture(autouse=True)
 def _stop_threads() -> Iterator[None]:
     yield
+
+
+def test_scenario_switch_can_start_already_part_way_in() -> None:
+    state, client = make("quiet_day")
+    r = client.post(
+        "/api/_mock/scenario",
+        json={"name": "scrubber_failure", "speed": "max", "fast_forward": 13200},
+    )
+    assert r.status_code == 200
+    assert state.t_now >= state.t0 + 13200 - 10
+    body = client.get("/api/status").json()
+    assert body["cards"][1]["level"] == "red" and body["cards"][0]["level"] == "yellow"
+    bad = client.post("/api/_mock/scenario", json={"name": "quiet_day", "fast_forward": -5})
+    assert bad.status_code == 422

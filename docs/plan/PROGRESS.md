@@ -1,19 +1,11 @@
 
-## T6.12 Daily check-in (done) 2026-10-31
-- What: `CheckinPrompt` (in the shell, so it appears on any page): shown only when `checkin_due`; floats at the bottom right so it never moves the page. Mood row and sleep row of 1 to 5 taps, an optional note behind "Add a note", Send check-in (disabled until both scales are chosen), Not now. Posts `{crew, mood, sleep, note}` for the crew member selected in the strip (default first), then dismisses and refreshes the status. Errors keep it open with a message.
-- Verify: `make check` green; 103 vitest tests: three taps (mood, sleep, send) produce one POST with `{crew:"W1", mood:4, sleep:3, note:null}`; the note is trimmed and the strip's crew is used; the DOM's level data attributes, badge classes and status bar text are identical before and after sending (checked on `air_red_cabin`); failure and dismissal paths.
-- Commit: see git log (feat(dashboard): add daily check-in)
-- Notes: test helper `status(name, checkinDue)` can override the flag.
-mit: see git log (feat(dashboard): add domain detail view)
-- Notes: the baseline band and limits are whatever the API sends; the dashboard decides nothing.
-work in tests; `mockApi` in helpers routes by URL) and gives Recharts a size, since jsdom has no layout.
-rs.tsx` (`renderRoute(path, polled(...))`, `status("air_yellow")`, `fixture(name)`).
-held back and the status bar shows the longest remaining time.
-5.3 formalises the copy-rule tests for `templates.py`.
- paths.
-
-## T0.3 Python package skeleton (done) 2026-10-30
-- What: `sim/pyproject.toml` (src layout, `ccm-sim` script, ruff line length 100, mypy strict), `ccm_sim.cli` with `--version`, one smoke test, Makefile `setup`, `lint`, `test`, `check`.
+## T6.13 Responsive layout and accessibility (done) 2026-10-31
+- What: Playwright e2e (`dashboard/e2e/`, `playwright.config.ts`, `make e2e` = build then `playwright test`) against the production build served by the mock API (the config starts `ccm-sim serve-mock --scenario scrubber_failure --fast-forward 13200`, so Air is red and Cardiovascular is yellow). Chromium installed at user level with `npx playwright install chromium`. The mock's `/api/_mock/scenario` gained `fast_forward` and `learning` so tests can start from a known state.
+- Verify: `make check` green. 19 Playwright tests pass: at 1280 x 800 the four cards share one row and the page does not scroll sideways; at 390 x 844 each card's top is at or below the previous card's bottom, in one column, with no sideways scroll on any route; every card and the status bar show their level word; keyboard focus shows a 2 px or wider outline on links and buttons; the status bar and card boxes are identical in a red state and a green state; axe (WCAG 2 A and AA tags) reports no serious or critical violation on any of six routes in both light and dark schemes, and on a phone-width home page.
+- Fixes found by axe: the check-in scale buttons and the risk-card links had `aria-label`s that did not contain their visible text (WCAG label-in-name); the card links now take their name from their content, and the scale buttons are named "Mood 4 Good".
+- Commit: see git log (feat(dashboard): add responsive layout and accessibility fixes)
+- Notes: e2e needs `dashboard/dist` built first and the ccm-sim venv script; `CCM_BASE_URL` points it at an already running server.
+with `--version`, one smoke test, Makefile `setup`, `lint`, `test`, `check`.
 - Verify: `make check` green (ruff, ruff format, mypy, 1 pytest pass); `.venv/Scripts/ccm-sim --version` prints `ccm-sim 0.1.0`.
 - Commit: see git log (build(sim): add python package skeleton and tooling)
 - Notes: pytest default addopts `-m 'not slow'`; `slow` marker registered. `types-jsonschema` added to dev extras.

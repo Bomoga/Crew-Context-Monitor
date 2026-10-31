@@ -35,8 +35,8 @@ describe("daily check-in", () => {
     const prompt = screen.getByRole("dialog", { name: "Daily check-in" });
     const send = within(prompt).getByRole("button", { name: "Send check-in" });
     expect(send).toBeDisabled();
-    await userEvent.click(within(prompt).getByRole("button", { name: "Mood 4 of 5, Good" })); // tap 1
-    await userEvent.click(within(prompt).getByRole("button", { name: "Sleep 3 of 5, Okay" })); // tap 2
+    await userEvent.click(within(prompt).getByRole("button", { name: "Mood 4 Good" })); // tap 1
+    await userEvent.click(within(prompt).getByRole("button", { name: "Sleep 3 Okay" })); // tap 2
     expect(send).toBeEnabled();
     await userEvent.click(send); // tap 3
     await waitFor(() => expect(posts()).toHaveLength(1));
@@ -60,8 +60,8 @@ describe("daily check-in", () => {
     expect(prompt).toHaveTextContent("Daily check-in for W3");
     await userEvent.click(within(prompt).getByRole("button", { name: "Add a note" }));
     await userEvent.type(within(prompt).getByLabelText("Note (optional)"), "  Slept badly.  ");
-    await userEvent.click(within(prompt).getByRole("button", { name: "Mood 2 of 5, Down" }));
-    await userEvent.click(within(prompt).getByRole("button", { name: "Sleep 1 of 5, Poor" }));
+    await userEvent.click(within(prompt).getByRole("button", { name: "Mood 2 Down" }));
+    await userEvent.click(within(prompt).getByRole("button", { name: "Sleep 1 Poor" }));
     await userEvent.click(within(prompt).getByRole("button", { name: "Send check-in" }));
     await waitFor(() => expect(posts()).toHaveLength(1));
     expect(JSON.parse(String(posts()[0].init?.body))).toEqual({
@@ -78,8 +78,8 @@ describe("daily check-in", () => {
     const before = levelSnapshot();
     expect(before.length).toBeGreaterThan(5);
     const prompt = screen.getByRole("dialog", { name: "Daily check-in" });
-    await userEvent.click(within(prompt).getByRole("button", { name: "Mood 1 of 5, Low" }));
-    await userEvent.click(within(prompt).getByRole("button", { name: "Sleep 1 of 5, Poor" }));
+    await userEvent.click(within(prompt).getByRole("button", { name: "Mood 1 Low" }));
+    await userEvent.click(within(prompt).getByRole("button", { name: "Sleep 1 Poor" }));
     await userEvent.click(within(prompt).getByRole("button", { name: "Send check-in" }));
     await waitFor(() =>
       expect(screen.queryByRole("dialog", { name: "Daily check-in" })).toBeNull(),
@@ -91,8 +91,8 @@ describe("daily check-in", () => {
     serve(() => new Response('{"detail":"no"}', { status: 500 }));
     renderRoute("/", polled(status("all_green")));
     const prompt = screen.getByRole("dialog", { name: "Daily check-in" });
-    await userEvent.click(within(prompt).getByRole("button", { name: "Mood 5 of 5, Great" }));
-    await userEvent.click(within(prompt).getByRole("button", { name: "Sleep 5 of 5, Great" }));
+    await userEvent.click(within(prompt).getByRole("button", { name: "Mood 5 Great" }));
+    await userEvent.click(within(prompt).getByRole("button", { name: "Sleep 5 Great" }));
     await userEvent.click(within(prompt).getByRole("button", { name: "Send check-in" }));
     expect(await within(prompt).findByRole("alert")).toHaveTextContent("Could not send");
     expect(within(prompt).getByRole("button", { name: "Send check-in" })).toBeEnabled();

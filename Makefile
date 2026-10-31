@@ -7,7 +7,7 @@ VBIN := $(shell if [ -d $(VENV)/Scripts ]; then echo $(VENV)/Scripts; else echo 
 
 DASH := dashboard
 
-.PHONY: setup lint test contracts types dashboard-check check sim-eval clean
+.PHONY: setup lint test contracts types dashboard-check check sim-eval e2e clean
 
 setup:
 	$(PYTHON) -m venv $(VENV)
@@ -36,6 +36,9 @@ check: contracts lint test dashboard-check
 sim-eval:
 	$(VBIN)/ccm-sim scenarios check
 	cd sim && ../$(VBIN)/python -m pytest -q -m '' tests/test_scenario_*.py tests/test_sim_eval.py tests/test_quiet_week.py tests/test_mockapi.py tests/test_mockapi_copy.py
+
+e2e:
+	cd $(DASH) && npm run build && npx playwright test
 
 clean:
 	rm -rf .pytest_cache .mypy_cache .ruff_cache sim/.pytest_cache sim/.mypy_cache sim/.ruff_cache
